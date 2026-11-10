@@ -133,6 +133,57 @@
       body += T(X(1), 146, '+ : aei, bfg, cdh', 'tl') + T(X(3) + 20, 146, '− : ceg, afh, bdi', 'tl').replace('class="tl"', 'class="tl" style="fill:#c4542f"');
       return svg(290, 158, body);
     },
+    // y = f(x) and y = f(x − h) + k
+    transform(lang) {
+      const O = [40, 130], S = 28, P = (x, y) => [O[0] + x * S, O[1] - y * S];
+      const f = x => 0.5 * x * x, g = x => 0.5 * (x - 3) ** 2 + 1.5;
+      const pts = (fn, a, b) => poly(curve(x => 0, a, b).map((_, i, arr) => { const x = a + (b - a) * i / (arr.length - 1); return P(x, fn(x)); }));
+      return svg(270, 150, L(10, O[1], 262, O[1], 'ax') + L(O[0], 8, O[0], 146, 'ax') +
+        Pth(pts(f, -1.2, 2.4), 'ac') + Pth(pts(g, 1.8, 5.4), 'ac2') +
+        `<line x1="${P(0, 0)[0]}" y1="${P(0, 0)[1]}" x2="${P(3, 1.5)[0] - 4}" y2="${P(3, 1.5)[1] + 3}" class="th" marker-end="ARROW"/>` +
+        D(...P(0, 0)) + D(...P(3, 1.5)) + `<text x="${P(1.2, 3.4)[0]}" y="${P(1.2, 3.4)[1]}" class="lab">y = f(x)</text>` + `<text x="${P(5.4, 4.4)[0] - 18}" y="${P(5.4, 4.4)[1]}" class="lab">y = f(x − h) + k</text>` +
+        `<text x="${P(1.5, 0.75)[0] + 30}" y="${P(1.5, 0.75)[1] + 12}" class="lab">(h, k)</text>`);
+    },
+    // a^x and log_a x, mirror images in y = x
+    explog(lang) {
+      const O = [95, 115], S = 26, P = (x, y) => [O[0] + x * S, O[1] - y * S];
+      const pts = (fn, a, b) => { const q = []; for (let i = 0; i <= 80; i++) { const x = a + (b - a) * i / 80, y = fn(x); if (isFinite(y) && y > -4.2 && y < 4.4) q.push(P(x, y)); } return poly(q); };
+      return svg(270, 230, L(10, O[1], 262, O[1], 'ax') + L(O[0], 4, O[0], 226, 'ax') + Pth(pts(x => x, -3.4, 4.2), 'th') +
+        Pth(pts(x => 2 ** x, -3.4, 2.1), 'ac') + Pth(pts(x => Math.log2(x), 0.02, 6), 'ac2') +
+        D(...P(0, 1)) + D(...P(1, 0)) +
+        `<text x="${P(1.6, 3.6)[0] + 30}" y="${P(1.6, 3.6)[1]}" class="lab">y = aˣ</text>` + `<text x="${P(5.2, 2.9)[0]}" y="${P(5.2, 2.9)[1] + 18}" class="lab">y = logₐ x</text>` +
+        `<text x="${P(3.6, 4.1)[0]}" y="${P(3.6, 4.1)[1]}" class="lab">y = x</text>` + `<text x="${P(0, 1)[0] - 24}" y="${P(0, 1)[1] - 6}" class="lab">(0, 1)</text>` + `<text x="${P(1, 0)[0] + 6}" y="${P(1, 0)[1] + 16}" class="lab">(1, 0)</text>`);
+    },
+    // box plot with min, Q1, median, Q3, max
+    boxplot(lang) {
+      const y = 52, X = [30, 85, 128, 190, 250];
+      const names = ['min', 'Q₁', 'Me', 'Q₃', 'max'];
+      let body = L(X[0], y, X[1], y) + L(X[3], y, X[4], y) + `<rect x="${X[1]}" y="${y - 22}" width="${X[3] - X[1]}" height="44" class="fl"/>` + `<rect x="${X[1]}" y="${y - 22}" width="${X[3] - X[1]}" height="44" class="ln"/>` +
+        L(X[2], y - 22, X[2], y + 22, 'ac') + L(X[0], y - 12, X[0], y + 12) + L(X[4], y - 12, X[4], y + 12);
+      X.forEach((x, i) => { body += L(x, y + 26, x, 92, 'th') + `<text x="${x}" y="104" class="lab">${names[i]}</text>`; });
+      body += `<line x1="${X[1]}" y1="124" x2="${X[3]}" y2="124" class="ac2" marker-start="ARROW" marker-end="ARROW"/>` + `<text x="${(X[1] + X[3]) / 2}" y="138" class="lab">IQR = Q₃ − Q₁</text>`;
+      return svg(280, 148, body);
+    },
+    // scatter plot with its regression line through the mean point
+    regression(lang) {
+      const pts = [[30, 120], [48, 104], [60, 112], [76, 92], [92, 96], [104, 78], [122, 82], [136, 64], [150, 70], [168, 52], [184, 58], [204, 38]];
+      const mx = pts.reduce((a, p) => a + p[0], 0) / pts.length, my = pts.reduce((a, p) => a + p[1], 0) / pts.length;
+      let sxy = 0, sxx = 0; pts.forEach(([x, yy]) => { sxy += (x - mx) * (yy - my); sxx += (x - mx) ** 2; }); const b = sxy / sxx;
+      return svg(260, 150, L(16, 136, 250, 136, 'ax') + L(20, 10, 20, 142, 'ax') + L(22, my + b * (22 - mx), 240, my + b * (240 - mx), 'ac2') +
+        pts.map(p => D(p[0], p[1], 'dtc', 3.6)).join('') + L(mx, my, mx, 136, 'th') + L(20, my, mx, my, 'th') + D(mx, my, 'dt', 4.4) +
+        `<text x="${mx + 34}" y="${my + 16}" class="lab">(x̄, ȳ)</text>` + `<text x="196" y="22" class="lab">ŷ = â + b̂x</text>`);
+    },
+    // linear programming: feasible region and the best vertex
+    lp(lang) {
+      const O = [34, 136], S = 22, P = (x, y) => [O[0] + x * S, O[1] - y * S];
+      const V = [[0, 0], [0, 5], [3, 3], [5, 0]];
+      const reg = 'M' + V.map(v => P(...v).join(',')).join('L') + 'Z';
+      return svg(270, 150, `<path d="${reg}" class="fl"/>` + `<path d="${reg}" class="ln"/>` + L(10, O[1], 262, O[1], 'ax') + L(O[0], 6, O[0], 146, 'ax') +
+        L(...P(-0.5, 6), ...P(4.5, 1.5 + 0.0), 'th') + L(...P(1.5, 4.5), ...P(5.8, -0.5), 'th') +
+        L(...P(1, 5.5), ...P(6.2, 0.3), 'ac2') + V.map(v => D(...P(...v))).join('') + D(...P(3, 3), 'dtc', 5) +
+        `<text x="${P(1.6, 1.6)[0]}" y="${P(1.6, 1.6)[1]}" class="lab">${w(lang, 'feasible|admissible|factible|実行可能|可行域')}</text>` +
+        `<text x="${P(3, 3)[0] + 44}" y="${P(3, 3)[1] - 14}" class="lab">${w(lang, 'optimum|optimum|óptimo|最適|最优解')}</text>` + `<text x="${P(6.2, 0.3)[0] - 8}" y="${P(6.2, 0.3)[1] - 30}" class="lab">z = c</text>`);
+    },
     // two vectors and their parallelogram
     vectors(lang) {
       const O = [35, 135], U = [185, 112], V = [90, 42], S = [240, 19];

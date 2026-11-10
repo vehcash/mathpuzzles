@@ -115,7 +115,7 @@ html[data-lang="ja"] .cs-name, html[data-lang="zh"] .cs-name { letter-spacing: .
 .cs-tbl .cs-cell { font-size: 13.5px; font-family: var(--sans); }
 .cs-tbl.left td { text-align: left; }
 
-.cs-card.wide { column-span: all; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr)); column-gap: 30px; align-items: start; }
+.cs-card.wide { column-span: all; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr)); column-gap: 30px; max-width: 1060px; align-items: start; }
 .cs-card.wide > h2, .cs-card.wide > .cf { grid-column: 1 / -1; }
 .cs-card.wide .cs-item { border-top: 1px dashed var(--line); }
 .cs-card.wide > h2 + .cs-item, .cs-card.wide > h2 + .cs-item + .cs-item { border-top: 0; }
@@ -128,3 +128,6 @@ html[data-lang="ja"] .cs-name, html[data-lang="zh"] .cs-name { letter-spacing: .
 .cf text.fade { opacity: .55; }
 @media (max-width: 520px) { .cs-tbl.big { font-size: 12.5px; } .cs-tbl.big td, .cs-tbl.big th { padding: 6px 4px; } }
 .cf text.lab { font: 700 12.5px var(--sans); font-style: normal; fill: var(--ink); paint-order: stroke; stroke: #fbf8f0; stroke-width: 5px; stroke-linejoin: round; letter-spacing: .2px; }
+.cs-tbl.tight { font-size: 13.5px; }
+.cs-tbl.tight th, .cs-tbl.tight td { padding: 5px 3px; }
+.cs-tbl .cs-cell { white-space: nowrap; }
