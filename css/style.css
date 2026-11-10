@@ -576,3 +576,8 @@ html[data-lang="ja"] h1, html[data-lang="zh"] h1, html[data-lang="ja"] .pcard h3
 .shear-2 { stroke: var(--ink); stroke-dasharray: none; stroke-width: 1.8; }
 /* labels in figures get a paper-coloured halo so they stay readable over lines and grids */
 .lbl.len, .lbl.pt { paint-order: stroke fill; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+/* option check rows: formula on the first line, its explanation always on the line below (never a squeezed column) */
+.chk { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; row-gap: 3px; }
+.chk .letter { flex: none; } .chk .v { flex: none; }
+.chk .t { max-width: calc(100% - 64px); overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+.chk .why { flex: 1 1 100%; padding-left: 34px; font-size: 14px; line-height: 1.45; }

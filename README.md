@@ -22,7 +22,7 @@ puzzles/
 - **After adding or editing a puzzle run `node tools/build-index.js`** (needs Node.js). It rebuilds `index.js` and the search files, checks the puzzle (8 options, at most 2 correct, steps present, unique id) and lists any missing translations.
 
 ## Languages and cookies
-- English, Français, Español, 日本語, 简体中文. Click a flag to switch; the first visit follows the browser's language settings.
+- English, Français, Español, 日本語, 简体中文. Click a flag to switch (the page reloads in the new language, on the same puzzle); the first visit follows the browser's language settings.
 - Interface text: `js/lang/<lang>.js` (keys are the English text). Puzzle text: inside each puzzle file.
 - Cookie banner and **Cookies** settings (EU ePrivacy/GDPR): nothing optional is stored until the visitor accepts "Preferences"; "Reject" is as easy as "Accept"; no analytics, ads or third-party content; switching Preferences off deletes what was stored. The choice itself is kept 6 months.
 - Stored with consent: language, ask mode, learned drawings, recent equations. Small values use cookies; opened from disk (`file://`) the browser has no cookies, so localStorage is used under the same rules.
@@ -49,4 +49,4 @@ puzzles/
 - ✨ Ask an AI (puzzle card / System panel) opens the problem in ChatGPT, Copilot, Claude, Perplexity, Le Chat, Gemini or DeepSeek.
 
 ## Calculus syntax
-`d/dx(x^2 sin(x))`, `diff(f, x, 2)`, `diff(f, x=2)`, `lim(sin(x)/x, x→0)` (`x→0+` one-sided, `x→∞`), `int(x^2, 0, 3)`, `tangent(x^2, 1)` — results show automatically; **Steps** explains them; **Plot** draws them. Plotted curves get **f′**, **tangent** and **∫ area** buttons in the Graphs panel.
+`17 mod 5` (also `%`; exact for big powers like `2^100 mod 7`), `d/dx(x^2 sin(x))`, `diff(f, x, 2)`, `diff(f, x=2)`, `lim(sin(x)/x, x→0)` (`x→0+` one-sided, `x→∞`), `int(x^2, 0, 3)`, `tangent(x^2, 1)` — results show automatically; **Steps** explains them; **Plot** draws them. Plotted curves get **f′**, **tangent** and **∫ area** buttons in the Graphs panel.

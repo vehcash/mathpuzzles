@@ -116,6 +116,7 @@
   function load(p) {
     if (!p) return;
     clearTimeout(state.solTimer);
+    try { const url = new URL(location.href); url.searchParams.set('p', p.id); url.searchParams.delete('cat'); history.replaceState(null, '', url); } catch (e) { /* file:// in some browsers */ }
     Object.assign(state, { base: p, order: shuffle(p.options.map((_, i) => i)), selected: new Set(), none: false, confirmed: false, answered: false, stepIdx: -1 });
     localize();
     $$('.cat').forEach(b => b.classList.toggle('on', b.dataset.cat === p.category));

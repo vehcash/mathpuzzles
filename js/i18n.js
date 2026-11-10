@@ -18,6 +18,7 @@
   const norm = s => s.replace(/\s+/g, ' ').trim();
 
   function detect() {
+    try { const u = new URLSearchParams(location.search).get('lang'); if (u && LANGS.some(l => l.code === u)) return u; } catch (e) { /* */ }
     const saved = global.Store && Store.get('cp_lang');
     if (saved && LANGS.some(l => l.code === saved)) return saved;
     const prefs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en']).map(x => String(x).toLowerCase());
@@ -26,7 +27,9 @@
   }
 
   const I18N = {
-    LANGS, lang: 'en',
+    LANGS, lang: 'en', local: null,
+    /** run fn with a puzzle's own word list active ({ english: { fr, es, ja, zh } }) */
+    withLocal(words, fn) { const prev = I18N.local; I18N.local = words || null; try { return fn(); } finally { I18N.local = prev; } },
     add(code, entries) { dict[code] = Object.assign(dict[code] || {}, entries); },
     has(text) { const d = dict[I18N.lang]; return !!(d && d[norm(text)] !== undefined); },
     /** translate an English string; {name} placeholders are filled from vars */
@@ -34,7 +37,8 @@
       if (en === undefined || en === null) return '';
       const key = norm(String(en));
       if (I18N.collect) I18N.collect.add(key);
-      let out = (I18N.lang !== 'en' && dict[I18N.lang] && dict[I18N.lang][key] !== undefined) ? dict[I18N.lang][key] : String(en);
+      const loc = I18N.local && I18N.local[key];   // words of the puzzle being drawn win over the site dictionary
+      let out = I18N.lang === 'en' ? String(en) : (loc && loc[I18N.lang] !== undefined) ? loc[I18N.lang] : (dict[I18N.lang] && dict[I18N.lang][key] !== undefined) ? dict[I18N.lang][key] : String(en);
       if (vars) out = out.replace(/\{(\w+)\}/g, (m, k) => (vars[k] !== undefined ? vars[k] : m));
       return out;
     },
@@ -58,7 +62,13 @@
       LANGS.forEach(L => {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'flag' + (L.code === I18N.lang ? ' on' : ''); b.dataset.lang = L.code; b.title = L.name; b.setAttribute('aria-label', L.name); b.lang = L.html;
         b.innerHTML = '<svg viewBox="0 0 30 20" aria-hidden="true">' + L.flag + '</svg>';
-        b.onclick = () => I18N.set(L.code);
+        // switch language and reload the page so every text (including what scripts built earlier) is in the new language.
+        // The choice travels in the address (?lang=) so it also works when preferences may not be stored.
+        b.onclick = () => {
+          if (L.code === I18N.lang) return;
+          if (global.Store) Store.set('cp_lang', L.code);
+          const url = new URL(location.href); url.searchParams.set('lang', L.code); location.replace(url.href);
+        };
         box.appendChild(b);
       });
       host.appendChild(box); return box;

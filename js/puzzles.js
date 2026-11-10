@@ -100,7 +100,20 @@
     F.text(T([x1, 0]), 'Re', 'tick', -10, 12); F.text(T([0, y1]), 'Im', 'tick', 14, 8);
     return T;
   }
-  const kit = { Figure, unit, mid, lerp, matrix, grid, arrow, argand, S2: Math.SQRT2, S3: Math.sqrt(3) };
+  /** x–y axes (with optional grid) over [x0, x1] × [y0, y1]; returns T([x, y]) in figure units */
+  function axes(F, x0, x1, y0, y1, opts = {}) {
+    const T = ([x, y]) => [x - x0, y - y0];
+    if (opts.grid) grid(F, 0, 0, x1 - x0, y1 - y0);
+    F.seg(T([x0, 0]), T([x1, 0]), 'axis'); F.seg(T([0, y0]), T([0, y1]), 'axis');
+    F.text(T([x1, 0]), opts.xl || 'x', 'tick', -8, 12); F.text(T([0, y1]), opts.yl || 'y', 'tick', 12, 8);
+    return T;
+  }
+  /** graph of f on [a, b] (clipped to [y0, y1] when given); returns the path */
+  function plot(F, T, f, a, b, cls = 'graph', layer = 'base', y0 = -Infinity, y1 = Infinity, n = 160) {
+    const pts = []; for (let k = 0; k <= n; k++) { const x = a + (b - a) * k / n, y = f(x); if (isFinite(y) && y >= y0 && y <= y1) pts.push(T([x, y])); }
+    return F.curve(pts, cls, layer);
+  }
+  const kit = { Figure, unit, mid, lerp, matrix, grid, arrow, argand, axes, plot, S2: Math.SQRT2, S3: Math.sqrt(3) };
 
   // ------- registry and loading -------
   const BASE = (() => { const s = document.currentScript && document.currentScript.src; return s ? s.replace(/js\/puzzles\.js(\?.*)?$/, 'puzzles/') : 'puzzles/'; })();
@@ -111,11 +124,11 @@
   /** called by puzzles/<category>/<id>.js */
   function define(p) {
     loaded.set(p.id, p);
-    // labels drawn in the figure and \text{…} words inside formulas join the dictionaries
+    // labels drawn in the figure and \text{…} words inside formulas are translated with this puzzle's own words only
     if (p.words && global.I18N) {
-      const per = {};
-      Object.entries(p.words).forEach(([en, m]) => Object.entries(m).forEach(([l, t]) => { (per[l] = per[l] || {})[en] = t; }));
-      Object.entries(per).forEach(([l, d]) => I18N.add(l, d));
+      const scoped = f => (typeof f === 'function' ? function () { return I18N.withLocal(p.words, () => f.apply(this, arguments)); } : f);
+      p.figure = scoped(p.figure);
+      (p.steps || []).forEach(st => { if (st.fig) st.fig = scoped(st.fig); });
     }
     const w = waiting.get(p.id); if (w) { waiting.delete(p.id); w.forEach(f => f.ok(p)); }
   }
@@ -151,6 +164,7 @@
   const tx = s => (s && global.I18N ? I18N.tex(s) : s);
   /** a copy of the puzzle in one language (figures, answers and option order are unchanged) */
   function localize(p, lang = langOf()) {
+    if (p.words && global.I18N && I18N.local !== p.words) return I18N.withLocal(p.words, () => localize(p, lang));
     const t = v => pick(v, lang);
     return Object.assign({}, p, {
       title: t(p.title), statement: t(p.statement), hint: t(p.hint), figureText: t(p.figureText), aiHint: t(p.aiHint),

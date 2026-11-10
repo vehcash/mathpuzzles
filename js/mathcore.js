@@ -33,6 +33,7 @@
       if (c === '∞') { out.push({ t: 'id', v: '∞' }); i++; continue; }
       if (/[a-zA-Zπθ]/.test(c)) {
         const rest = s.slice(i);
+        if (/^mod(?![a-z])/.test(rest)) { out.push({ t: '%' }); i += 3; continue; }   // a mod b
         const cf = CALC.find(fn => rest.startsWith(fn) && !/[a-z]/.test(rest[fn.length] || ''));
         if (cf) { out.push({ t: 'calc', v: cf === 'integral' ? 'int' : cf === 'derivative' ? 'diff' : cf }); i += cf.length; continue; }
         const f = FUNCS.find(fn => rest.startsWith(fn));
@@ -43,7 +44,7 @@
       }
       if (s.startsWith('<=', i) || s.startsWith('>=', i)) { out.push({ t: 'rel', v: s.substr(i, 2) }); i += 2; continue; }
       if ('=<>'.includes(c)) { out.push({ t: 'rel', v: c }); i++; continue; }
-      if ('+-*/^()|°!,'.includes(c)) { out.push({ t: c }); i++; continue; }
+      if ('+-*/%^()|°!,'.includes(c)) { out.push({ t: c }); i++; continue; }
       throw new Error(T('Unexpected symbol "{c}"', { c }));
     }
     return out;
@@ -108,7 +109,7 @@
       let n = this.unary();
       for (;;) {
         const k = this.peek();
-        if (k && (k.t === '*' || k.t === '/')) { this.p++; n = { k: 'bin', op: k.t, a: n, b: this.unary() }; }
+        if (k && (k.t === '*' || k.t === '/' || k.t === '%')) { this.p++; n = { k: 'bin', op: k.t, a: n, b: this.unary() }; }
         else if (this.startsPrimary(k)) { n = { k: 'bin', op: 'imp', a: n, b: this.power() }; }
         else return n;
       }
@@ -209,8 +210,17 @@
       case 'fact': return fact(evaluate(n.a, env));
       case 'pow': return Math.pow(evaluate(n.a, env), evaluate(n.b, env));
       case 'bin': {
+        if (n.op === '%') {           // exact for huge powers: a^k mod m with whole numbers uses modular exponentiation
+          const base = n.a.k === 'pow' ? evaluate(n.a.a, env) : null, ex = n.a.k === 'pow' ? evaluate(n.a.b, env) : null, m = evaluate(n.b, env);
+          const whole = v => Number.isInteger(v) && Math.abs(v) < 2 ** 31;
+          if (base !== null && whole(base) && Number.isInteger(ex) && ex >= 0 && whole(m) && m !== 0) {
+            let r = 1n, bb = ((BigInt(base) % BigInt(m)) + BigInt(m)) % BigInt(m), e = BigInt(ex), M = BigInt(m);
+            while (e > 0n) { if (e & 1n) r = r * bb % M; bb = bb * bb % M; e >>= 1n; }
+            const v = Number(r); return m < 0 && v > 0 ? v + m : v;
+          }
+        }
         const a = evaluate(n.a, env), b = evaluate(n.b, env);
-        switch (n.op) { case '+': return a + b; case '-': return a - b; case '/': return a / b; default: return a * b; }
+        switch (n.op) { case '+': return a + b; case '-': return a - b; case '/': return a / b; case '%': return b === 0 ? NaN : a - b * Math.floor(a / b); default: return a * b; }
       }
       case 'call': {
         const a = evaluate(n.a, env);
@@ -243,7 +253,7 @@
   }
 
   // ---------- LaTeX printer ----------
-  const PREC = { '+': 1, '-': 1, '*': 2, '/': 2, imp: 2 };
+  const PREC = { '+': 1, '-': 1, '*': 2, '/': 2, '%': 2, imp: 2 };
   function prec(n) {
     if (n.k === 'bin') return PREC[n.op];
     if (n.k === 'neg') return 1.5;
@@ -278,6 +288,7 @@
       case 'bin': {
         const p = PREC[n.op];
         if (n.op === '/') return '\\frac{' + tex(strip(n.a)) + '}{' + tex(strip(n.b)) + '}';
+        if (n.op === '%') return wrap(n.a, p) + ' \\bmod ' + wrap(n.b, p + 0.1);
         const a = wrap(n.a, p), b = wrap(n.b, n.op === '-' ? p + 0.1 : p);
         if (n.op === '+') return a + '+' + b;
         if (n.op === '-') return a + '-' + b;
@@ -469,6 +480,7 @@
         const a = n.a, b = n.b;
         if (n.op === '+') return add(D(a, v), D(b, v));
         if (n.op === '-') return sub(D(a, v), D(b, v));
+        if (n.op === '%') { if (!dep(b, v)) return D(a, v); throw new Error('mod'); }
         if (n.op === '/') { if (!dep(b, v)) return dvd(D(a, v), b); return dvd(sub(mul(D(a, v), b), mul(a, D(b, v))), pw(b, N(2))); }
         if (!dep(a, v)) return mul(a, D(b, v));
         if (!dep(b, v)) return mul(D(a, v), b);
@@ -544,6 +556,7 @@
       }
       case 'bin': {
         if (n.op === '+' || n.op === '-') return simplifySum(n);
+        if (n.op === '%') { const a = S(n.a), b = S(n.b); if (isNum(a) && isNum(b) && b.v !== 0) return N(a.v - b.v * Math.floor(a.v / b.v)); return { k: 'bin', op: '%', a, b }; }
         if (n.op === '/') {
           const a = S(n.a), b = S(n.b);
           if (isNum(b) && b.v === 1) return a;
@@ -647,6 +660,7 @@
         if (n.op === '-') return toAscii(n.a) + '-' + (n.b.k === 'bin' && (n.b.op === '+' || n.b.op === '-') ? '(' + toAscii(n.b) + ')' : toAscii(n.b));
         const wrapS = m => (m.k === 'bin' && (m.op === '+' || m.op === '-') ? '(' + toAscii(m) + ')' : toAscii(m));
         if (n.op === '/') return P(n.a) + '/' + P(n.b);
+        if (n.op === '%') return P(n.a) + ' mod ' + P(n.b);
         return wrapS(n.a) + '*' + wrapS(n.b);
       }
       case 'call': return n.f + '(' + toAscii(n.a) + ')';

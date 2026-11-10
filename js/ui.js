@@ -272,6 +272,7 @@
       ['x²', '^2'], ['xʸ', '^'], ['√', 'sqrt(', ')'], ['|x|', 'abs(', ')'],
       ['sin', 'sin('], ['cos', 'cos('], ['tan', 'tan('], ['°', '°'],
       ['ln', 'ln('], ['log', 'log('], ['eˣ', 'exp('], ['n!', '!'],
+      ['mod', ' mod ', null, null, 'op'], ['%', '%', null, null, 'op'], ['<', '<', null, null, 'op'], ['>', '>', null, null, 'op'],
       ['(', '('], [')', ')'], ['⌫', null, null, 'back', 'fn'], ['C', null, null, 'clear', 'fn danger'],
       ['7', '7', null, null, 'num'], ['8', '8', null, null, 'num'], ['9', '9', null, null, 'num'], ['÷', '/', null, null, 'op'],
       ['4', '4', null, null, 'num'], ['5', '5', null, null, 'num'], ['6', '6', null, null, 'num'], ['×', '*', null, null, 'op'],
