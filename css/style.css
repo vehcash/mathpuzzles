@@ -25,6 +25,7 @@ html, body { margin: 0; height: 100%; }
 body {
   font-family: var(--sans); color: var(--ink); background: var(--bg);
   background-image: radial-gradient(1200px 600px at 75% -10%, #2b4136 0%, transparent 60%), radial-gradient(800px 500px at 0% 110%, #2a2f24 0%, transparent 60%);
+  background-repeat: no-repeat; background-attachment: fixed;   /* the glows stay put on long pages instead of tiling with a seam */
   display: flex; flex-direction: column; min-height: 100vh;
 }
 button { font: inherit; cursor: pointer; }
