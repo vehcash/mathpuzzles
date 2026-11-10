@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cheat sheets — Mathpuzzles</title>
+<link rel="stylesheet" href="lib/fonts.css">
+<link rel="stylesheet" href="lib/katex/katex.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/cheats.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%E2%88%91%3C/text%3E%3C/svg%3E">
+</head>
+<body class="cheat-page">
+<header class="top">
+  <a class="brand" href="index.html" title="Back to the board"><span class="mark">∑</span><div><b>Mathpuzzles</b><small>cheat sheets</small></div></a>
+  <div class="search cs-search" role="search">
+    <span class="s-ico" aria-hidden="true">⌕</span>
+    <input id="cs-q" type="search" autocomplete="off" spellcheck="false" placeholder="Search formulas — e.g. sine rule, ellipse, chain rule…" aria-label="Search formulas">
+    <kbd class="s-key">/</kbd>
+  </div>
+  <span id="cs-count" class="lcount"></span>
+  <a href="index.html" class="btn ghost list-link">✎ Open the board</a>
+  <div class="hdr-right"><span id="lang-host"></span><button type="button" class="cookie-link tool svg" data-cookie-settings title="Cookie settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 1 0 9.4 10.9 3 3 0 0 1-3.6-3.3 3 3 0 0 1-3.7-3.7A3 3 0 0 1 12 2.5Z"/><circle cx="8.5" cy="10" r="1" class="dot"/><circle cx="9.5" cy="15.5" r="1" class="dot"/><circle cx="14.5" cy="14.5" r="1" class="dot"/></svg><span>Cookies</span></button></div>
+</header>
+
+<div class="cs-wrap">
+  <nav class="cs-side" aria-label="Topics">
+    <div class="cs-side-h">Topics</div>
+    <div id="cs-topics" data-no-i18n></div>
+    <p class="cs-tip">Click a formula to copy its LaTeX</p>
+  </nav>
+  <main id="cs-main" class="cs-main" data-no-i18n></main>
+</div>
+<p id="cs-empty" class="lempty" hidden></p>
+<div id="cs-toast" class="cs-toast" role="status" aria-live="polite"></div>
+
+<script src="lib/katex/katex.min.js"></script>
+<script src="js/consent.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/lang/fr.js"></script>
+<script src="js/lang/es.js"></script>
+<script src="js/lang/ja.js"></script>
+<script src="js/lang/zh.js"></script>
+<script>I18N.start();</script>
+<script src="js/consent-ui.js"></script>
+<script src="js/cheat-figs.js"></script>
+<script>window.Cheats = { topics: [], topic(t) { this.topics.push(t); } };</script>
+<script src="cheats/algebra.js"></script>
+<script src="cheats/geometry.js"></script>
+<script src="cheats/trigonometry.js"></script>
+<script src="cheats/analytic.js"></script>
+<script src="cheats/space.js"></script>
+<script src="cheats/vectors.js"></script>
+<script src="cheats/complex.js"></script>
+<script src="cheats/limits.js"></script>
+<script src="cheats/derivatives.js"></script>
+<script src="cheats/integrals.js"></script>
+<script src="cheats/combinatorics.js"></script>
+<script src="cheats/probability.js"></script>
+<script src="cheats/number.js"></script>
+<script src="js/cheats.js"></script>
+<script>I18N.flags(document.getElementById('lang-host')); CookieUI.init();</script>
+</body>
+</html>
