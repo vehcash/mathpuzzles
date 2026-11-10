@@ -39,13 +39,13 @@
       if (!v) { pv.innerHTML = '<span class="muted">live preview</span>'; root.classList.remove('can-plot', 'can-solve'); return; }
       const d = describe(v);
       if (!d.ok) { pv.innerHTML = '<span class="err">' + esc(d.err) + '</span>'; root.classList.remove('can-plot', 'can-solve'); return; }
-      pv.innerHTML = K(d.tex) + (d.hint ? ' <span class="hint">' + K(d.hint) + '</span>' : '');
+      pv.innerHTML = K(d.tex) + (d.hint ? ' <span class="hint">' + K(I18N.tex(d.hint)) + '</span>' : '');
       root.classList.toggle('can-plot', d.plottable); root.classList.toggle('can-solve', d.solvable); root.classList.toggle('can-steps', d.calc);
     };
     inp.addEventListener('input', update);
-    let recent = []; try { recent = JSON.parse(localStorage.getItem('chalkproof.recent')) || []; } catch (e) { /* */ }
-    const remember = v => { recent = [v].concat(recent.filter(r => r !== v)).slice(0, 8); try { localStorage.setItem('chalkproof.recent', JSON.stringify(recent)); } catch (e) { /* */ } api.onRecent && api.onRecent(); };
-    const plot = () => { const v = inp.value.trim(); if (!v) return inp.focus(); try { board.plotEquation(v); remember(v); board.onStatus('Plotted ' + v + ' — scroll on the axes to zoom, hover the curve to trace'); inp.select(); } catch (e) { board.onStatus(e.message); } };
+    let recent = Store.getJSON('chalkproof.recent', []) || [];
+    const remember = v => { recent = [v].concat(recent.filter(r => r !== v)).slice(0, 8); Store.setJSON('chalkproof.recent', recent); api.onRecent && api.onRecent(); };
+    const plot = () => { const v = inp.value.trim(); if (!v) return inp.focus(); try { board.plotEquation(v); remember(v); board.onStatus(tr('Plotted {x} — scroll on the axes to zoom, hover the curve to trace', { x: v })); inp.select(); } catch (e) { board.onStatus(e.message); } };
     const place = (opts = {}) => { const v = inp.value.trim(); if (!v) return inp.focus(); if (!describe(v).ok) { board.onStatus('Check the equation first'); return; } board.startPlacing(Object.assign({ ascii: v }, opts)); remember(v); inp.blur(); };
     inp.addEventListener('keydown', e => {
       e.stopPropagation();
@@ -66,7 +66,7 @@
       clear: () => { inp.value = ''; update(); inp.focus(); },
       left: () => { const a = Math.max(0, (inp.selectionStart ?? 0) - 1); inp.focus(); inp.setSelectionRange(a, a); },
       right: () => { const a = Math.min(inp.value.length, (inp.selectionEnd ?? 0) + 1); inp.focus(); inp.setSelectionRange(a, a); },
-      plot, place: () => place(), solve, steps, recent: () => recent, onRecent: null, onSteps: null
+      refresh: update, plot, place: () => place(), solve, steps, recent: () => recent, onRecent: null, onSteps: null
     };
     return api;
   }
@@ -90,9 +90,9 @@
     const solve = () => {
       const l = list(); if (!l.length) return;
       let res; try { res = MathCore.solveSystem(l); } catch (e) { out.innerHTML = '<p class="err">' + esc(e.message) + '</p>'; return; }
-      let html = '<div class="sys-answer">' + K(BoardUtil.solutionTex(res)) + '</div><ol class="sys-steps">';
+      let html = '<div class="sys-answer">' + K(I18N.tex(BoardUtil.solutionTex(res))) + '</div><ol class="sys-steps">';
       res.steps.forEach(s => {
-        html += '<li><div class="t">' + esc(s.text) + '</div>' + (s.ops && s.ops.length ? '<div class="ops">' + K(s.ops.join(',\\quad ')) + '</div>' : '') + (s.tex ? '<div class="m">' + K(s.tex, { displayMode: true }) + '</div>' : '') + '</li>';
+        html += '<li><div class="t">' + esc(s.text) + '</div>' + (s.ops && s.ops.length ? '<div class="ops">' + K(s.ops.join(',\\quad ')) + '</div>' : '') + (s.tex ? '<div class="m">' + K(I18N.tex(s.tex), { displayMode: true }) + '</div>' : '') + '</li>';
       });
       if (res.status === 'unique' || res.status === 'numeric') {
         const s0 = res.solutions[0];
@@ -105,7 +105,7 @@
     };
     $('.sys-add', el).onclick = () => addRow().querySelector('input').focus();
     $('.sys-solve', el).onclick = solve;
-    $('.sys-plot', el).onclick = () => { const l = list(); if (!l.length) return; try { const r = board.plotSystem(l); board.onStatus(r.sol && r.sol.solutions && r.sol.solutions.length ? 'Plotted — intersections marked' : 'Plotted'); } catch (e) { board.onStatus(e.message); } };
+    $('.sys-plot', el).onclick = () => { const l = list(); if (!l.length) return; try { const r = board.plotSystem(l); board.onStatus(r.sol && r.sol.solutions && r.sol.solutions.length ? tr('Plotted — intersections marked') : tr('Plotted')); } catch (e) { board.onStatus(e.message); } };
     $('.sys-place', el).onclick = () => {
       const l = list(); if (!l.length) return;
       if (editing && board.objects.includes(editing)) { board.pushHistory(); editing.system = l; editing.ascii = l.join(' ; '); editing.solved = false; editing.plotted = false; board.render(); editing = null; close(); return; }
@@ -129,7 +129,7 @@
   // ======================================================= graph list
   function GraphsPanel(board, el) {
     const list = $('.gl-list', el);
-    $('.gl-toggle', el).onclick = () => { el.classList.toggle('collapsed'); $('.gl-toggle', el).textContent = (el.classList.contains('collapsed') ? '▸' : '▾') + ' Graphs'; };
+    $('.gl-toggle', el).onclick = () => { el.classList.toggle('collapsed'); $('.gl-toggle', el).textContent = (el.classList.contains('collapsed') ? '▸ ' : '▾ ') + tr('Graphs'); };
     $('.gl-keys', el).onchange = e => { board.showKeyPoints = e.target.checked; board.render(); };
     $('.gl-trace', el).onchange = e => { board.trace = e.target.checked; };
     $('.gl-zin', el).onclick = () => { const ax = board.objects.filter(o => o.type === 'axes' && !o.hidden).pop(); if (ax) board.zoomAxes(ax, 1.25); };
@@ -138,7 +138,7 @@
     return {
       sync() {
         const gs = board.graphs();
-        const key = gs.map(g => g.id + g.eq + g.color + !!g.hidden).join('|');
+        const key = gs.map(g => g.id + g.eq + g.color + !!g.hidden).join('|') + I18N.lang;
         el.hidden = !gs.length;
         if (key === last) return; last = key;
         list.innerHTML = '';
@@ -162,7 +162,7 @@
             };
             r.querySelector('[data-t="d"]').onclick = () => { try { board.addDerivativeOf(g); board.onStatus('Derivative plotted'); } catch (e) { board.onStatus(e.message); } };
             r.querySelector('[data-t="t"]').onclick = () => ask([['x =', '1']], a => board.addTangentTo(g, a));
-            r.querySelector('[data-t="a"]').onclick = () => ask([['from', g.shade ? g.shade.a : '0'], ['to', g.shade ? g.shade.b : '2']], (a, b) => { const v = board.shadeArea(g, a, b); board.onStatus('∫ from ' + a + ' to ' + b + ' = ' + (Math.round(v * 1e6) / 1e6)); });
+            r.querySelector('[data-t="a"]').onclick = () => ask([['from', g.shade ? g.shade.a : '0'], ['to', g.shade ? g.shade.b : '2']], (a, b) => { const v = board.shadeArea(g, a, b); board.onStatus(tr('∫ from {a} to {b} = {v}', { a, b, v: Math.round(v * 1e6) / 1e6 })); });
           }
           list.appendChild(r);
         });
@@ -172,20 +172,23 @@
 
   // ======================================================= geometry panel
   function GeoPanel(board, el) {
+    const statusText = (conf, dof) => conf ? '⚠ ' + tr(conf > 1 ? '{n} constraints cannot all hold' : '1 constraint cannot hold', { n: conf }) : dof === 0 ? '✓ ' + tr('Fully determined') : tr(dof > 1 ? '{n} degrees of freedom left' : '1 degree of freedom left', { n: dof });
+    // info labels like "Length AB" / "Distance AB": translate the word, keep the names
+    const trLabel = k => { const m = k.match(/^(Length|Distance) (\S+)$/); return m ? tr(m[1]) + ' ' + m[2] : tr(k); };
     const G = () => board.geo;
     let lastKey = '';
     const names = s => {
       const g = G(), parts = [];
-      s.P.forEach(p => parts.push('point ' + p.name));
-      s.S.forEach(e => parts.push((e.aux ? 'line ' : 'segment ') + g.P(e.a).name + g.P(e.b).name));
-      s.C.forEach(e => parts.push('circle (' + g.P(e.c).name + ')'));
-      s.G.forEach(e => parts.push((e.pts.length === 3 ? 'triangle ' : e.pts.length === 4 ? 'quadrilateral ' : 'polygon ') + e.pts.map(id => g.P(id).name).join('')));
+      s.P.forEach(p => parts.push(tr('point {name}', { name: p.name })));
+      s.S.forEach(e => parts.push(tr(e.aux ? 'line {name}' : 'segment {name}', { name: g.P(e.a).name + g.P(e.b).name })));
+      s.C.forEach(e => parts.push(tr('circle ({name})', { name: g.P(e.c).name })));
+      s.G.forEach(e => parts.push(tr(e.pts.length === 3 ? 'triangle {name}' : e.pts.length === 4 ? 'quadrilateral {name}' : 'polygon {name}', { name: e.pts.map(id => g.P(id).name).join('') })));
       return parts.join(', ');
     };
     const consLabel = c => {
       const g = G(), nm = id => { const p = g.P(id); if (p) return p.name; const e = g.E(id); if (!e) return '?'; if (e.type === 'seg') return g.P(e.a).name + g.P(e.b).name; if (e.type === 'circle') return '○' + g.P(e.c).name; return 'poly'; };
       const d = GEO_CONSTRAINTS[c.type] || { label: c.type };
-      return d.label + ' ' + c.refs.map(nm).join(', ') + (c.val !== undefined ? ' = ' + geoFmt(c.val) + (c.type === 'angle' ? '°' : '') : '');
+      return tr(d.label) + ' ' + c.refs.map(nm).join(', ') + (c.val !== undefined ? ' = ' + geoFmt(c.val) + (c.type === 'angle' ? '°' : '') : '');
     };
     return {
       sync() {
@@ -194,23 +197,23 @@
         if (hint && !g.tmp) {
           const tips = { 'g-select': 'Click a figure, side or point to measure & constrain it · Shift-click for several · drag points', 'g-point': 'Click to add a point (on a side or circle it stays attached)', 'g-seg': 'Click–click or drag · snaps to points · near-horizontal/vertical locks', 'g-poly': 'Click the corners, click the first one (or Enter) to close', 'g-rect': 'Drag from corner to corner', 'g-circle': 'Click the centre, then the radius', 'g-reg': 'Click the centre, then a corner' };
           let st = '';
-          if (!g.isEmpty()) { const conf = g.conflicts().length, dof = g.freedom(); st = conf ? ' · ⚠ ' + conf + ' conflicting' : dof === 0 ? ' · ✓ fully determined' : ' · ' + dof + ' degrees of freedom'; }
-          hint.textContent = (tips[board.tool] || '1 unit = 1 grid square') + st;
+          if (!g.isEmpty()) { const conf = g.conflicts().length, dof = g.freedom(); st = ' · ' + (conf ? '⚠ ' + tr('{n} conflicting', { n: conf }) : dof === 0 ? '✓ ' + tr('fully determined') : tr('{n} degrees of freedom', { n: dof })); }
+          hint.textContent = tr(tips[board.tool] || '1 unit = 1 grid square') + st;
         }
         el.hidden = !any;
         if (el.hidden) { lastKey = ''; return; }
-        const key = [...g.sel].join(',') + '|' + g.cons.length + '|' + g.ents.length + '|' + (board.geo.tmp ? 1 : 0) + '|' + g.points.map(p => Math.round(p.x) + ',' + Math.round(p.y)).join(';') + g.ents.map(e => e.r ? Math.round(e.r) : '').join(',');
+        const key = I18N.lang + [...g.sel].join(',') + '|' + g.cons.length + '|' + g.ents.length + '|' + (board.geo.tmp ? 1 : 0) + '|' + g.points.map(p => Math.round(p.x) + ',' + Math.round(p.y)).join(';') + g.ents.map(e => e.r ? Math.round(e.r) : '').join(',');
         if (key === lastKey) return; lastKey = key;
         let html = '';
         if (!any) {
           const dof = g.freedom(), conf = g.conflicts().length;
           html = '<div class="gp-title">Geometry</div><p class="gp-hint">Click a shape, a side or a point to measure it and add constraints. <kbd>Shift</kbd>-click to select several (two sides → perpendicular, parallel, equal, angle…).</p>' +
-            '<div class="gp-status ' + (conf ? 'bad' : dof === 0 ? 'good' : '') + '">' + (conf ? conf + ' conflicting constraint' + (conf > 1 ? 's' : '') : dof === 0 ? 'Fully determined' : dof + ' degree' + (dof > 1 ? 's' : '') + ' of freedom left') + '</div>';
+            '<div class="gp-status ' + (conf ? 'bad' : dof === 0 ? 'good' : '') + '">' + statusText(conf, dof) + '</div>';
           el.innerHTML = html; return;
         }
         html += '<div class="gp-title">' + esc(names(s)) + '<button class="gp-x" title="Deselect">×</button></div>';
         const info = g.info();
-        if (info.length) html += '<table class="gp-info">' + info.map(([k, v]) => '<tr><td>' + esc(k) + '</td><td>' + esc(v) + '</td></tr>').join('') + '</table>';
+        if (info.length) html += '<table class="gp-info">' + info.map(([k, v]) => '<tr><td>' + esc(trLabel(k)) + '</td><td>' + esc(v) + '</td></tr>').join('') + '</table>';
         const opts = g.options();
         if (opts.length) {
           html += '<div class="gp-sub">Constrain / construct</div><div class="gp-opts">';
@@ -220,7 +223,7 @@
               if (o.val === 'length') { if (s.S[0]) cur = geoFmt(g.segLen(s.S[0])); else if (s.C[0]) cur = geoFmt(s.C[0].r / GEO_UNIT); else if (s.P.length === 2) cur = geoFmt(Math.hypot(s.P[0].x - s.P[1].x, s.P[0].y - s.P[1].y) / GEO_UNIT); }
               if (o.val === 'angle') { if (s.S.length === 2) { const [A, V, B] = g.angleTriple(s.S[0].id, s.S[1].id); cur = geoFmt(g.angleAt(A, V, B)); } else if (s.P.length === 3) cur = geoFmt(g.angleAt(s.P[0], s.P[1], s.P[2])); }
               if (o.val === 'vertex') cur = '';
-              html += '<div class="gp-val"><button data-i="' + i + '" class="gp-opt ' + o.kind + '">' + esc(o.label) + '</button><input data-i="' + i + '" value="' + esc(cur) + '" placeholder="' + (o.val === 'vertex' ? 'vertex, e.g. C' : o.val === 'angle' ? 'degrees' : 'units') + '"><span class="u">' + (o.val === 'angle' ? '°' : o.val === 'length' ? 'u' : '') + '</span></div>';
+              html += '<div class="gp-val"><button data-i="' + i + '" class="gp-opt ' + o.kind + '">' + esc(o.label) + '</button><input data-i="' + i + '" value="' + esc(cur) + '" placeholder="' + tr(o.val === 'vertex' ? 'vertex, e.g. C' : o.val === 'angle' ? 'degrees' : 'units') + '"><span class="u">' + (o.val === 'angle' ? '°' : o.val === 'length' ? 'u' : '') + '</span></div>';
             } else html += '<button data-i="' + i + '" class="gp-opt ' + o.kind + '">' + esc(o.label) + '</button>';
           });
           html += '</div>';
@@ -230,7 +233,7 @@
         const mine = g.cons.filter(c => c.refs.some(r => ids.has(r)));
         if (mine.length) html += '<div class="gp-sub">Constraints</div><ul class="gp-cons">' + mine.map(c => '<li>' + esc(consLabel(c)) + '<button data-c="' + c.id + '" title="Remove">×</button></li>').join('') + '</ul>';
         const conf = g.conflicts().length, dof = g.freedom();
-        html += '<div class="gp-status ' + (conf ? 'bad' : dof === 0 ? 'good' : '') + '">' + (conf ? '⚠ ' + conf + ' constraint' + (conf > 1 ? 's' : '') + ' cannot all hold' : dof === 0 ? '✓ Fully determined' : dof + ' degree' + (dof > 1 ? 's' : '') + ' of freedom left') + '</div>';
+        html += '<div class="gp-status ' + (conf ? 'bad' : dof === 0 ? 'good' : '') + '">' + statusText(conf, dof) + '</div>';
         if (s.P.length + s.S.length + s.C.length + s.G.length) html += '<div class="gp-foot"><button class="gp-del">Delete selection</button></div>';
         el.innerHTML = html;
         el.querySelector('.gp-x').onclick = () => { g.sel.clear(); board.geoChanged(); };
@@ -238,7 +241,7 @@
           const o = opts[+b.dataset.i]; const inp = el.querySelector('input[data-i="' + b.dataset.i + '"]');
           let v; if (o.val) { v = o.val === 'vertex' ? inp.value : parseFloat(String(inp.value).replace(',', '.')); if (o.val !== 'vertex' && !(v > 0 || (o.val === 'angle' && v >= 0))) { inp.focus(); board.onStatus('Type a value first'); return; } }
           board.pushHistory();
-          try { g.apply(o, v); board.onStatus(o.label + ' added'); } catch (e) { board.history.pop(); board.onStatus(e.message); }
+          try { g.apply(o, v); board.onStatus(tr('{name} added', { name: tr(o.label) })); } catch (e) { board.history.pop(); board.onStatus(e.message); }
           lastKey = ''; board.geoChanged();
         });
         el.querySelectorAll('.gp-val input').forEach(inp => inp.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') el.querySelector('.gp-opt[data-i="' + inp.dataset.i + '"]').click(); }));
@@ -254,7 +257,7 @@
     const render = () => {
       const c = L.counts(), entries = Object.entries(c).sort((a, b) => b[1] - a[1]);
       el.querySelectorAll('input[name="askmode"]').forEach(r => { r.checked = r.value === L.mode; });
-      el.querySelector('.as-stats').innerHTML = entries.length ? 'Learned from <b>' + L.samples.length + '</b> answers: ' + entries.map(([y, n]) => esc((INTENTS[y] || { label: y }).label) + ' ' + n).join(' · ') : 'Nothing learned yet — every answer you give in the “What is this?” menu teaches the board.';
+      el.querySelector('.as-stats').innerHTML = entries.length ? tr('Learned from {n} answers:', { n: '<b>' + L.samples.length + '</b>' }) + ' ' + entries.map(([y, n]) => esc(tr((INTENTS[y] || { label: y }).label)) + ' ' + n).join(' · ') : tr('Nothing learned yet — every answer you give in the “What is this?” menu teaches the board.');
     };
     el.querySelectorAll('input[name="askmode"]').forEach(r => r.onchange = () => { L.setMode(r.value); render(); });
     el.querySelector('.as-reset').onclick = () => { L.reset(); render(); board.onStatus('Forgot everything it had learned'); };
@@ -341,7 +344,7 @@
     const renderRecent = () => {
       const r = el.querySelector('.tb-recent'), list = eq.recent();
       r.innerHTML = list.length ? '' : '<p class="tb-empty">Equations you plot or place appear here.</p>';
-      list.forEach(v => { const b = document.createElement('button'); b.className = 'tb-chip'; b.title = 'Use again: ' + v; try { b.innerHTML = katex.renderToString(MathCore.analyze(v).latex, { throwOnError: false }); } catch (e) { b.textContent = v; } b.onclick = () => eq.set(v); r.appendChild(b); });
+      list.forEach(v => { const b = document.createElement('button'); b.className = 'tb-chip'; b.title = tr('Use again: {x}', { x: v }); try { b.innerHTML = katex.renderToString(MathCore.analyze(v).latex, { throwOnError: false }); } catch (e) { b.textContent = v; } b.onclick = () => eq.set(v); r.appendChild(b); });
     };
     eq.onRecent = renderRecent; renderRecent();
 
@@ -369,12 +372,12 @@
     };
     const apply = (o, v) => {
       board.pushHistory();
-      try { board.geo.apply(o, v); board.onStatus(o.label + ' ✓'); } catch (e) { board.history.pop(); board.onStatus(e.message); }
+      try { board.geo.apply(o, v); board.onStatus(tr(o.label) + ' ✓'); } catch (e) { board.history.pop(); board.onStatus(e.message); }
       board.geoChanged();
     };
     function run(types, label) {
       const opts = board.geo.options(); const o = types.map(t => opts.find(x => x.type === t)).find(Boolean);
-      if (!o) { board.onStatus(label + ': select ' + hintFor(types)); return; }
+      if (!o) { board.onStatus(tr('{name}: select {what}', { name: tr(label), what: tr(hintFor(types)) })); return; }
       if (!o.val) { prompt.hidden = true; apply(o); return; }
       pending = o; prompt.hidden = false;
       prompt.querySelector('.lbl').textContent = o.label;
@@ -403,7 +406,7 @@
       const opts = board.geo.options().map(o => o.type);
       [...consBtns, ...buildBtns].forEach(({ b, types }) => { const ok = types.some(t => opts.includes(t)); b.classList.toggle('avail', ok); b.setAttribute('aria-disabled', String(!ok)); });
       const s = board.geo.selection(), n = s.P.length + s.S.length + s.C.length + s.G.length;
-      el.querySelector('.tb-sel').textContent = n ? n + ' selected — lit buttons apply to it' : 'Select items to light up what you can do';
+      el.querySelector('.tb-sel').textContent = n ? tr('{n} selected — lit buttons apply to it', { n }) : tr('Select items to light up what you can do');
       if (pending && !opts.includes(pending.type)) { prompt.hidden = true; pending = null; }
     }
     return { sync, toggle() { el.classList.toggle('collapsed'); board.resize(); } };
@@ -424,8 +427,8 @@
         try { st = MathCore.calcSteps(src.replace(/=\s*$/, '')); } catch (e) { body.innerHTML = '<p class="err">' + esc(e.message) + '</p>'; el.hidden = false; return; }
         let head = ''; try { head = K(MathCore.analyze(src).latex.replace(/=\s*$/, ''), { displayMode: true }); } catch (e) { /* */ }
         $('.cs-title', el).textContent = st.title;
-        body.innerHTML = '<div class="cs-expr">' + head + '</div><ol class="sys-steps">' + st.steps.map(s => '<li><div class="t">' + esc(s.text) + '</div>' + (s.tex ? '<div class="m">' + K(s.tex, { displayMode: true }) + '</div>' : '') + '</li>').join('') + '</ol>' +
-          '<div class="sys-answer">' + K((st.title === 'Tangent line' ? '' : '= ') + st.resultTex) + '</div>';
+        body.innerHTML = '<div class="cs-expr">' + head + '</div><ol class="sys-steps">' + st.steps.map(s => '<li><div class="t">' + esc(s.text) + '</div>' + (s.tex ? '<div class="m">' + K(I18N.tex(s.tex), { displayMode: true }) + '</div>' : '') + '</li>').join('') + '</ol>' +
+          '<div class="sys-answer">' + K(I18N.tex((st.title === 'Tangent line' ? '' : '= ') + st.resultTex)) + '</div>';
         body.querySelectorAll('li').forEach((li, i) => { li.style.animationDelay = (i * 0.3) + 's'; });
         let plotable = false; try { const d = describe(src); plotable = d.plottable; } catch (e) { /* */ }
         $('.cs-plot', el).hidden = !plotable;

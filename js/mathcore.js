@@ -3,6 +3,7 @@
 (function (global) {
   'use strict';
 
+  const T = (s, v) => (global.tr ? global.tr(s, v) : (v ? s.replace(/\{(\w+)\}/g, (m, k) => (v[k] !== undefined ? v[k] : m)) : s));
   const FUNCS = ['asin', 'acos', 'atan', 'sqrt', 'sin', 'cos', 'tan', 'log', 'ln', 'abs', 'exp'];
   const CALC = ['derivative', 'tangent', 'integral', 'diff', 'int', 'lim'];
   const GREEK = { pi: '\\pi', 'π': '\\pi', theta: '\\theta', 'θ': '\\theta', alpha: '\\alpha', beta: '\\beta' };
@@ -43,7 +44,7 @@
       if (s.startsWith('<=', i) || s.startsWith('>=', i)) { out.push({ t: 'rel', v: s.substr(i, 2) }); i += 2; continue; }
       if ('=<>'.includes(c)) { out.push({ t: 'rel', v: c }); i++; continue; }
       if ('+-*/^()|°!,'.includes(c)) { out.push({ t: c }); i++; continue; }
-      throw new Error('Unexpected symbol "' + c + '"');
+      throw new Error(T('Unexpected symbol "{c}"', { c }));
     }
     return out;
   }
@@ -54,7 +55,7 @@
     peek() { return this.tk[this.p]; },
     next() { return this.tk[this.p++]; },
     eat(t) { const k = this.peek(); if (k && k.t === t) { this.p++; return k; } return null; },
-    expect(t) { const k = this.next(); if (!k || k.t !== t) throw new Error('Expected ' + t); return k; },
+    expect(t) { const k = this.next(); if (!k || k.t !== t) throw new Error(T('Expected {t}', { t })); return k; },
     expr() {
       let n = this.term();
       for (;;) {
@@ -89,7 +90,7 @@
         const rest = args.slice(1);
         if (rest.length === 3 && isVar(rest[0])) return { k: 'int', a: f, v: rest[0].v, lo: rest[1], hi: rest[2] };
         if (rest.length === 2) return { k: 'int', a: f, v: defVar, lo: rest[0], hi: rest[1] };
-        throw new Error('Integrals need limits, e.g. int(x^2, 0, 3)');
+        throw new Error(T('Integrals need limits, e.g. int(x^2, 0, 3)'));
       }
       if (k.v === 'lim') {
         const t = args[1]; if (!t) throw new Error('lim(f, x→a)');
@@ -132,7 +133,7 @@
     },
     primary() {
       const k = this.next();
-      if (!k) throw new Error('Incomplete expression');
+      if (!k) throw new Error(T('Incomplete expression'));
       if (k.t === 'num') return { k: 'num', v: k.v, raw: k.raw };
       if (k.t === 'id') return { k: 'var', v: k.v };
       if (k.t === 'calc') return this.calcCall(k);
@@ -148,14 +149,14 @@
         else arg = this.power();
         return { k: 'call', f: k.v, a: arg };
       }
-      throw new Error('Unexpected "' + (k.v || k.t) + '"');
+      throw new Error(T('Unexpected "{x}"', { x: k.v || k.t }));
     }
   };
 
   function parseExpr(tokens) {
     const P = new Parser(tokens);
     const e = P.expr();
-    if (P.p < tokens.length) throw new Error('Unexpected "' + (tokens[P.p].v || tokens[P.p].t) + '"');
+    if (P.p < tokens.length) throw new Error(T('Unexpected "{x}"', { x: tokens[P.p].v || tokens[P.p].t }));
     return e;
   }
 
@@ -738,19 +739,19 @@
       const lhs = DT(v, tex(m));
       const res = T(D(m, v));
       if (m.k === 'bin' && (m.op === '+' || m.op === '-')) {
-        steps.push({ text: 'Sum rule — differentiate term by term', tex: lhs + ' = ' + DT(v, tex(m.a)) + (m.op === '+' ? ' + ' : ' - ') + DT(v, tex(m.b)) });
+        steps.push({ text: T('Sum rule — differentiate term by term'), tex: lhs + ' = ' + DT(v, tex(m.a)) + (m.op === '+' ? ' + ' : ' - ') + DT(v, tex(m.b)) });
         visit(m.a, depth + 1); visit(m.b, depth + 1); return;
       }
       if (m.k === 'neg') { visit(m.a, depth); return; }
       if (m.k === 'bin' && m.op === '/') {
-        if (!dep(m.b, v)) { steps.push({ text: 'Constant denominator', tex: lhs + ' = \\frac{1}{' + tex(m.b) + '}' + DT(v, tex(m.a)) + ' = ' + res }); visit(m.a, depth + 1); return; }
-        steps.push({ text: 'Quotient rule: (u/v)′ = (u′v − uv′)/v²', tex: 'u = ' + tex(m.a) + ',\\quad v = ' + tex(m.b) + ',\\quad u\' = ' + T(D(m.a, v)) + ',\\quad v\' = ' + T(D(m.b, v)) });
-        steps.push({ text: 'So', tex: lhs + ' = ' + res }); visit(m.a, depth + 1); visit(m.b, depth + 1); return;
+        if (!dep(m.b, v)) { steps.push({ text: T('Constant denominator'), tex: lhs + ' = \\frac{1}{' + tex(m.b) + '}' + DT(v, tex(m.a)) + ' = ' + res }); visit(m.a, depth + 1); return; }
+        steps.push({ text: T('Quotient rule: (u/v)′ = (u′v − uv′)/v²'), tex: 'u = ' + tex(m.a) + ',\\quad v = ' + tex(m.b) + ',\\quad u\' = ' + T(D(m.a, v)) + ',\\quad v\' = ' + T(D(m.b, v)) });
+        steps.push({ text: T('So'), tex: lhs + ' = ' + res }); visit(m.a, depth + 1); visit(m.b, depth + 1); return;
       }
       if (m.k === 'bin') {
-        if (!dep(m.a, v) || !dep(m.b, v)) { const c = dep(m.a, v) ? m.b : m.a, u = dep(m.a, v) ? m.a : m.b; steps.push({ text: 'Constant multiple rule', tex: lhs + ' = ' + tex(c) + '\\cdot ' + DT(v, tex(u)) + ' = ' + res }); visit(u, depth + 1); return; }
-        steps.push({ text: 'Product rule: (uv)′ = u′v + uv′', tex: 'u = ' + tex(m.a) + ',\\quad v = ' + tex(m.b) + ',\\quad u\' = ' + T(D(m.a, v)) + ',\\quad v\' = ' + T(D(m.b, v)) });
-        steps.push({ text: 'So', tex: lhs + ' = ' + res }); visit(m.a, depth + 1); visit(m.b, depth + 1); return;
+        if (!dep(m.a, v) || !dep(m.b, v)) { const c = dep(m.a, v) ? m.b : m.a, u = dep(m.a, v) ? m.a : m.b; steps.push({ text: T('Constant multiple rule'), tex: lhs + ' = ' + tex(c) + '\\cdot ' + DT(v, tex(u)) + ' = ' + res }); visit(u, depth + 1); return; }
+        steps.push({ text: T('Product rule: (uv)′ = u′v + uv′'), tex: 'u = ' + tex(m.a) + ',\\quad v = ' + tex(m.b) + ',\\quad u\' = ' + T(D(m.a, v)) + ',\\quad v\' = ' + T(D(m.b, v)) });
+        steps.push({ text: T('So'), tex: lhs + ' = ' + res }); visit(m.a, depth + 1); visit(m.b, depth + 1); return;
       }
       if (m.k === 'pow') {
         const base = m.a.k === 'grp' ? m.a.a : m.a;
@@ -764,10 +765,10 @@
       if (m.k === 'call') {
         const NAMES = { sin: 'sin′ = cos', cos: 'cos′ = −sin', tan: 'tan′ = 1/cos²', ln: 'ln′(u) = 1/u', log: 'log′(u) = 1/(u ln 10)', exp: '(eᵘ)′ = eᵘ', sqrt: '(√u)′ = 1/(2√u)', abs: '|u|′ = u/|u|', asin: 'arcsin′ = 1/√(1−u²)', acos: 'arccos′ = −1/√(1−u²)', atan: 'arctan′ = 1/(1+u²)' };
         const inner = m.a.k === 'grp' ? m.a.a : m.a, chain = !(inner.k === 'var' && inner.v === v);
-        steps.push({ text: (NAMES[m.f] || m.f) + (chain ? ', times the inner derivative (chain rule)' : ''), tex: lhs + ' = ' + res });
+        steps.push({ text: (NAMES[m.f] || m.f) + (chain ? T(', times the inner derivative (chain rule)') : ''), tex: lhs + ' = ' + res });
         if (chain) visit(inner, depth + 1); return;
       }
-      steps.push({ text: 'Differentiate', tex: lhs + ' = ' + res });
+      steps.push({ text: T('Differentiate'), tex: lhs + ' = ' + res });
     };
     visit(n, 0);
     return steps;
@@ -784,15 +785,15 @@
     const num = v => fmtApprox(v);
     if (c.k === 'diff') {
       out.title = 'Derivative';
-      out.steps.push({ text: 'Differentiate with respect to ' + c.v, tex: tex(c) });
+      out.steps.push({ text: T('Differentiate with respect to {v}', { v: c.v }), tex: tex(c) });
       let cur = c.a;
       for (let o = 1; o <= c.order; o++) {
-        if (c.order > 1) out.steps.push({ text: (o === 1 ? 'First' : o === 2 ? 'Second' : o + 'th') + ' derivative', tex: '' });
+        if (c.order > 1) out.steps.push({ text: o === 1 ? T('First derivative') : o === 2 ? T('Second derivative') : T('Derivative of order {n}', { n: o }), tex: '' });
         out.steps.push(...derivSteps(cur, c.v));
         cur = simplify(D(cur, c.v));
-        out.steps.push({ text: 'Simplify', tex: (c.order > 1 ? "f^{(" + o + ")}" : "f'") + '(' + varTex(c.v) + ') = ' + tex(cur) });
+        out.steps.push({ text: T('Simplify'), tex: (c.order > 1 ? "f^{(" + o + ")}" : "f'") + '(' + varTex(c.v) + ') = ' + tex(cur) });
       }
-      if (c.at) { const a = evaluate(c.at); const e = {}; e[c.v] = a; const val = evaluate(cur, e); out.steps.push({ text: 'Evaluate at ' + c.v + ' = ' + toAscii(c.at), tex: (c.order > 1 ? "f^{(" + c.order + ")}" : "f'") + '(' + tex(c.at) + ') = ' + num(val) }); out.resultTex = num(val); }
+      if (c.at) { const a = evaluate(c.at); const e = {}; e[c.v] = a; const val = evaluate(cur, e); out.steps.push({ text: T('Evaluate at {v} = {a}', { v: c.v, a: toAscii(c.at) }), tex: (c.order > 1 ? "f^{(" + c.order + ")}" : "f'") + '(' + tex(c.at) + ') = ' + num(val) }); out.resultTex = num(val); }
       else out.resultTex = tex(cur);
       return out;
     }
@@ -800,12 +801,12 @@
       out.title = 'Tangent line';
       const a = evaluate(c.at), e = {}; e[c.v] = a;
       const d1 = derivative(c.a, c.v), fa = evaluate(c.a, e), m = evaluate(d1, e);
-      out.steps.push({ text: 'The point on the curve', tex: 'f(' + tex(c.at) + ') = ' + num(fa) + '\\quad\\Rightarrow\\quad P\\left(' + fmt(a) + ',\\ ' + fmt(fa) + '\\right)' });
-      out.steps.push({ text: 'The derivative gives the slope', tex: "f'(" + varTex(c.v) + ') = ' + tex(d1) });
-      out.steps.push({ text: 'Slope at the point', tex: "m = f'(" + tex(c.at) + ') = ' + num(m) });
-      out.steps.push({ text: 'Point–slope form y − f(a) = m(x − a)', tex: 'y - ' + wrapNum(fa) + ' = ' + wrapNum(m) + '\\left(x - ' + wrapNum(a) + '\\right)' });
+      out.steps.push({ text: T('The point on the curve'), tex: 'f(' + tex(c.at) + ') = ' + num(fa) + '\\quad\\Rightarrow\\quad P\\left(' + fmt(a) + ',\\ ' + fmt(fa) + '\\right)' });
+      out.steps.push({ text: T('The derivative gives the slope'), tex: "f'(" + varTex(c.v) + ') = ' + tex(d1) });
+      out.steps.push({ text: T('Slope at the point'), tex: "m = f'(" + tex(c.at) + ') = ' + num(m) });
+      out.steps.push({ text: T('Point–slope form y − f(a) = m(x − a)'), tex: 'y - ' + wrapNum(fa) + ' = ' + wrapNum(m) + '\\left(x - ' + wrapNum(a) + '\\right)' });
       const line = lineTex(m, fa - m * a);
-      out.steps.push({ text: 'Tangent line', tex: line });
+      out.steps.push({ text: T('Tangent line'), tex: line });
       out.resultTex = line; out.slope = m; out.point = { x: a, y: fa }; out.lineAscii = lineAscii(m, fa - m * a); out.fAscii = toAscii(c.a);
       return out;
     }
@@ -815,37 +816,37 @@
       const r = limit(f, to, c.side);
       let direct = NaN; try { direct = isFinite(to) ? f(to) : NaN; } catch (e) { /* */ }
       if (isFinite(to) && isFinite(direct) && isFinite(r.value) && Math.abs(direct - r.value) < 1e-6 * (1 + Math.abs(direct))) {
-        out.steps.push({ text: 'Direct substitution works (the function is continuous there)', tex: tex(c) + ' = ' + num(r.value) });
+        out.steps.push({ text: T('Direct substitution works (the function is continuous there)'), tex: tex(c) + ' = ' + num(r.value) });
       } else {
-        if (isFinite(to)) out.steps.push({ text: 'Direct substitution fails', tex: 'f(' + tex(c.to) + ') = ' + (isFinite(direct) ? num(direct) : isNaN(direct) ? '\\tfrac{0}{0}\\ \\text{(indeterminate)}' : '\\pm\\infty') });
+        if (isFinite(to)) out.steps.push({ text: T('Direct substitution fails'), tex: 'f(' + tex(c.to) + ') = ' + (isFinite(direct) ? num(direct) : isNaN(direct) ? '\\tfrac{0}{0}\\ \\text{(indeterminate)}' : '\\pm\\infty') });
         const rows = []; const show = y => (isFinite(y) ? (+y.toPrecision(7)).toString() : y > 0 ? '\\infty' : y < 0 ? '-\\infty' : '\\text{—}');
         if (isFinite(to)) {
           [0.1, 0.01, 0.001, 0.0001].forEach(h => rows.push([fmtX(to - h), show(f(to - h)), fmtX(to + h), show(f(to + h))]));
-          out.steps.push({ text: 'Approach from both sides', tex: '\\begin{array}{c|c||c|c}' + varTex(c.v) + '\\to ' + tex(c.to) + '^{-} & f & ' + varTex(c.v) + '\\to ' + tex(c.to) + '^{+} & f \\\\ \\hline ' + rows.map(r => r.join(' & ')).join(' \\\\ ') + '\\end{array}' });
+          out.steps.push({ text: T('Approach from both sides'), tex: '\\begin{array}{c|c||c|c}' + varTex(c.v) + '\\to ' + tex(c.to) + '^{-} & f & ' + varTex(c.v) + '\\to ' + tex(c.to) + '^{+} & f \\\\ \\hline ' + rows.map(r => r.join(' & ')).join(' \\\\ ') + '\\end{array}' });
         } else {
           [10, 100, 1000, 1e4, 1e6].forEach(X => rows.push([fmtX(to > 0 ? X : -X), show(f(to > 0 ? X : -X))]));
-          out.steps.push({ text: 'Let ' + c.v + ' grow without bound', tex: '\\begin{array}{c|c}' + varTex(c.v) + ' & f(' + varTex(c.v) + ')\\\\ \\hline ' + rows.map(r => r.join(' & ')).join(' \\\\ ') + '\\end{array}' });
+          out.steps.push({ text: T('Let {v} grow without bound', { v: c.v }), tex: '\\begin{array}{c|c}' + varTex(c.v) + ' & f(' + varTex(c.v) + ')\\\\ \\hline ' + rows.map(r => r.join(' & ')).join(' \\\\ ') + '\\end{array}' });
         }
       }
-      if (r.dne) { out.resultTex = '\\text{does not exist}'; out.steps.push({ text: 'The two one-sided limits differ', tex: '\\lim_{' + varTex(c.v) + '\\to ' + tex(c.to) + '^-} = ' + fmt(r.left) + ',\\qquad \\lim_{' + varTex(c.v) + '\\to ' + tex(c.to) + '^+} = ' + fmt(r.right) }); }
-      else if (isNaN(r.value)) { out.resultTex = '\\text{does not exist}'; out.steps.push({ text: 'The values keep oscillating — no single limit', tex: '' }); }
-      else { out.resultTex = fmt(r.value); out.steps.push({ text: 'The values approach', tex: tex(c) + ' = ' + num(r.value) }); }
+      if (r.dne) { out.resultTex = '\\text{does not exist}'; out.steps.push({ text: T('The two one-sided limits differ'), tex: '\\lim_{' + varTex(c.v) + '\\to ' + tex(c.to) + '^-} = ' + fmt(r.left) + ',\\qquad \\lim_{' + varTex(c.v) + '\\to ' + tex(c.to) + '^+} = ' + fmt(r.right) }); }
+      else if (isNaN(r.value)) { out.resultTex = '\\text{does not exist}'; out.steps.push({ text: T('The values keep oscillating — no single limit'), tex: '' }); }
+      else { out.resultTex = fmt(r.value); out.steps.push({ text: T('The values approach'), tex: tex(c) + ' = ' + num(r.value) }); }
       return out;
     }
     if (c.k === 'int') {
       out.title = 'Definite integral';
       const lo = evaluate(c.lo), hi = evaluate(c.hi), f = x => { const e = {}; e[c.v] = x; return evaluate(c.a, e); };
       const val = integrate(f, lo, hi);
-      out.steps.push({ text: 'The integral is the signed area between the curve and the axis', tex: tex(c) });
+      out.steps.push({ text: T('The integral is the signed area between the curve and the axis'), tex: tex(c) });
       if (isFinite(lo) && isFinite(hi)) {
         const rows = [4, 16, 64, 256].map(n => { const h = (hi - lo) / n; let m = 0; for (let i = 0; i < n; i++) m += f(lo + (i + 0.5) * h); return [n, (+(m * h).toPrecision(8)).toString()]; });
-        out.steps.push({ text: 'Midpoint Riemann sums with n rectangles get closer and closer', tex: '\\begin{array}{r|l} n & \\sum f(x_i)\\,\\Delta x \\\\ \\hline ' + rows.map(r => r.join(' & ')).join(' \\\\ ') + '\\end{array}' });
+        out.steps.push({ text: T('Midpoint Riemann sums with n rectangles get closer and closer'), tex: '\\begin{array}{r|l} n & \\sum f(x_i)\\,\\Delta x \\\\ \\hline ' + rows.map(r => r.join(' & ')).join(' \\\\ ') + '\\end{array}' });
       }
-      out.steps.push({ text: 'Adaptive Simpson’s rule (accurate to about 10 digits)', tex: tex(c) + ' = ' + num(snapValue(val)) });
+      out.steps.push({ text: T('Adaptive Simpson’s rule (accurate to about 10 digits)'), tex: tex(c) + ' = ' + num(snapValue(val)) });
       out.resultTex = num(snapValue(val));
       return out;
     }
-    out.title = 'Value'; out.resultTex = num(evaluate(node)); out.steps.push({ text: 'Evaluate', tex: tex(node) + ' = ' + out.resultTex });
+    out.title = 'Value'; out.resultTex = num(evaluate(node)); out.steps.push({ text: T('Evaluate'), tex: tex(node) + ' = ' + out.resultTex });
     return out;
   }
   function fmtX(x) { return (+x.toPrecision(6)).toString(); }
@@ -899,7 +900,7 @@
   function solveSystem(list) {
     const eqs = list.map(s => s.trim()).filter(Boolean);
     if (!eqs.length) throw new Error('No equations');
-    const stmts = eqs.map(e => { const st = parse(e); if (st.rels.length !== 1 || st.rels[0] !== '=' || !st.sides[0] || !st.sides[1]) throw new Error('“' + e + '” is not an equation of the form A = B'); return st; });
+    const stmts = eqs.map(e => { const st = parse(e); if (st.rels.length !== 1 || st.rels[0] !== '=' || !st.sides[0] || !st.sides[1]) throw new Error(T('“{e}” is not an equation of the form A = B', { e })); return st; });
     const Fs = stmts.map(st => residual(st));
     const set = new Set(); stmts.forEach(st => st.sides.forEach(sd => freeVars(sd, set)));
     const vars = sortVars([...set]);
@@ -935,7 +936,7 @@
     const n = vars.length, m = A.length;
     const M = A.map((r, i) => r.concat([b[i]]));
     const steps = res.steps;
-    steps.push({ text: 'Write the system as an augmented matrix', tex: matrixTex(M, n) });
+    steps.push({ text: T('Write the system as an augmented matrix'), tex: matrixTex(M, n) });
     let row = 0; const pivots = [];
     for (let col = 0; col < n && row < m; col++) {
       // readable pivoting: keep the current row if usable, prefer a ±1 pivot, avoid swaps otherwise
@@ -955,12 +956,12 @@
         ops.push('R_{' + (r + 1) + '} \\to R_{' + (r + 1) + '}' + (f > 0 ? ' - ' : ' + ') + (Math.abs(Math.abs(f) - 1) < 1e-12 ? '' : num(Math.abs(f))) + 'R_{' + (row + 1) + '}');
       }
       M.forEach(r => r.forEach((v, j) => { if (Math.abs(v) < 1e-11) r[j] = 0; }));
-      steps.push({ text: 'Eliminate ' + vars[col] + ' using row ' + (row + 1), ops, tex: matrixTex(M, n) });
+      steps.push({ text: T('Eliminate {v} using row {r}', { v: vars[col], r: row + 1 }), ops, tex: matrixTex(M, n) });
       pivots.push(col); row++;
     }
     // inconsistent row 0 = c
     const bad = M.find(r => r.slice(0, n).every(v => Math.abs(v) < 1e-10) && Math.abs(r[n]) > 1e-9);
-    if (bad) { res.status = 'none'; res.solutions = []; steps.push({ text: 'A row says 0 = ' + num(bad[n]) + ', which is impossible', tex: '\\text{No solution — the equations contradict each other.}' }); return res; }
+    if (bad) { res.status = 'none'; res.solutions = []; steps.push({ text: T('A row says 0 = {c}, which is impossible', { c: fmtPlain(bad[n]) }), tex: '\\text{No solution — the equations contradict each other.}' }); return res; }
     if (pivots.length < n) {
       res.status = 'infinite'; res.solutions = [];
       const free = vars.filter((_, j) => !pivots.includes(j));
@@ -969,12 +970,12 @@
         free.forEach(fv => { const j = vars.indexOf(fv), k = -M[i][j]; if (Math.abs(k) > 1e-12) t += (k > 0 ? ' + ' : ' - ') + (Math.abs(Math.abs(k) - 1) < 1e-12 ? '' : num(Math.abs(k))) + fv; });
         return t;
       });
-      steps.push({ text: 'Infinitely many solutions (' + free.join(', ') + ' free)', tex: lines.join(',\\quad ') });
+      steps.push({ text: T('Infinitely many solutions ({v} free)', { v: free.join(', ') }), tex: lines.join(',\\quad ') });
       return res;
     }
     const sol = {}; pivots.forEach((c, i) => { sol[vars[c]] = M[i][n]; });
     res.status = 'unique'; res.solutions = [sol];
-    steps.push({ text: 'Read off the solution', tex: vars.map(v => v + ' = ' + num(sol[v])).join(',\\quad ') });
+    steps.push({ text: T('Read off the solution'), tex: vars.map(v => v + ' = ' + num(sol[v])).join(',\\quad ') });
     // verification line
     return res;
   }
@@ -1012,9 +1013,9 @@
     found.sort((a, b) => a[0] - b[0] || (a[1] || 0) - (b[1] || 0));
     res.solutions = found.slice(0, 12).map(x => { const s = {}; vars.forEach((v, i) => { s[v] = x[i]; }); return s; });
     res.status = found.length ? 'numeric' : 'none';
-    res.steps.push({ text: 'The system is not linear, so it is solved numerically (Newton’s method from many starting points)', tex: '' });
-    if (found.length) res.steps.push({ text: found.length === 1 ? 'Solution' : found.length + ' solutions', tex: res.solutions.map(s => '(' + vars.map(v => fmt(s[v])).join(',\\ ') + ')').join(',\\quad ') });
-    else res.steps.push({ text: 'No real solution was found in the search range', tex: '' });
+    res.steps.push({ text: T('The system is not linear, so it is solved numerically (Newton’s method from many starting points)'), tex: '' });
+    if (found.length) res.steps.push({ text: found.length === 1 ? T('Solution') : T('{n} solutions', { n: found.length }), tex: res.solutions.map(s => '(' + vars.map(v => fmt(s[v])).join(',\\ ') + ')').join(',\\quad ') });
+    else res.steps.push({ text: T('No real solution was found in the search range'), tex: '' });
     return res;
   }
   function solveLin(A, b) {

@@ -9,6 +9,7 @@
 .pcard[data-cat="geometry"], .lchip[data-cat="geometry"] { --cat: #2f6f8f; --cat-bg: #e3eff5; }
 .pcard[data-cat="trigonometry"], .lchip[data-cat="trigonometry"] { --cat: #7b4fa0; --cat-bg: #efe6f6; }
 .pcard[data-cat="algebra"], .lchip[data-cat="algebra"] { --cat: #2e8a57; --cat-bg: #e3f3e8; }
+.pcard[data-cat="matrix"], .lchip[data-cat="matrix"] { --cat: #1d7f86; --cat-bg: #def2f3; }
 .pcard[data-cat="calculus"], .lchip[data-cat="calculus"] { --cat: #c4542f; --cat-bg: #fbe8e1; }
 .pcard[data-cat="probability"], .lchip[data-cat="probability"] { --cat: #b07f00; --cat-bg: #fbf1d6; }
 .pcard[data-cat="number"], .lchip[data-cat="number"] { --cat: #3d5a9e; --cat-bg: #e5eaf7; }
@@ -47,3 +48,8 @@
 .lempty[hidden] { display: none; }
 .sentinel { text-align: center; color: rgba(244,241,232,.5); font-size: 13px; padding: 20px 0 40px; min-height: 20px; }
 @media (max-width: 520px) { .grid { padding: 10px 12px; grid-template-columns: 1fr; } .lfilters { padding: 10px 12px 2px; flex-wrap: nowrap; overflow-x: auto; } .lchip { flex: none; } }
+
+/* masonry: cards keep their reading order (left to right) but pack under each other without row gaps.
+   Rows are 4px tall; list.js gives every card a row span that matches its height. */
+.grid.masonry { grid-auto-rows: 4px; row-gap: 0; align-items: start; }
+.grid.masonry .pcard { margin-bottom: 16px; }

@@ -28,16 +28,17 @@
   const W = [1.0, 1.3, 0.8, 1.2, 1.2, 0.7, 1.4, 0.9, 1.0];
   const SIGMA = 0.55;
 
-  function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
-  function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s.slice(-MAX))); } catch (e) { /* storage off */ } }
+  // stored only with the visitor's consent (see consent.js); otherwise kept for this visit only
+  function load() { return global.Store ? Store.getJSON(KEY, []) || [] : []; }
+  function save(s) { if (global.Store) Store.setJSON(KEY, s.slice(-MAX)); }
 
   class IntentLearner {
     constructor() {
       this.samples = load();
-      let m = 'learn'; try { m = localStorage.getItem(MODE_KEY) || 'learn'; } catch (e) { /* */ }
+      const m = (global.Store && Store.get('cp_askmode')) || 'learn';
       this.mode = m; // 'always' | 'learn' | 'never'
     }
-    setMode(m) { this.mode = m; try { localStorage.setItem(MODE_KEY, m); } catch (e) { /* */ } }
+    setMode(m) { this.mode = m; if (global.Store) Store.set('cp_askmode', m); }
     record(f, y, weight = 1) {
       const id = Math.random().toString(36).slice(2, 9);
       this.samples.push({ id, f: f.map(v => +v.toFixed(3)), y, w: weight, t: Date.now() });

@@ -385,7 +385,7 @@
       this.menu = { g, box, items };
       const head = document.createElement('div'); head.className = 'im-head';
       const learned = this.learner.samples.length;
-      head.innerHTML = '<b>What is this?</b><span>' + (learned ? 'learning from ' + learned + ' answers' : 'your answers teach the board') + '</span>';
+      head.innerHTML = '<b>' + global.tr('What is this?') + '</b><span>' + (learned ? global.tr('learning from {n} answers', { n: learned }) : global.tr('your answers teach the board')) + '</span>';
       box.appendChild(head);
       const grid = document.createElement('div'); grid.className = 'im-grid';
       items.forEach((it, i) => {
@@ -396,9 +396,9 @@
         if (it.y === 'number') preview = safeTex(g.numAscii);
         if (it.y === 'plot') preview = g.info ? safeTex(g.info.latex) : '';
         if (it.y === 'graph') { const fit = this.previewGraph(g); preview = fit ? safeTex('y=' + fit.tex) : ''; }
-        b.innerHTML = '<span class="k">' + (i < 10 ? (i + 1) % 10 : '') + '</span><span class="ic">' + def.icon + '</span><span class="lb">' + def.label + '</span>' +
+        b.innerHTML = '<span class="k">' + (i < 10 ? (i + 1) % 10 : '') + '</span><span class="ic">' + def.icon + '</span><span class="lb">' + global.tr(def.label) + '</span>' +
           (preview ? '<span class="pv">' + preview + '</span>' : '') + '<span class="bar" style="--p:' + Math.round(it.p * 100) + '%"></span>';
-        b.title = Math.round(it.p * 100) + '% likely' + (it.support > 0.5 ? ' (learned from similar drawings)' : '');
+        b.title = global.tr('{p}% likely', { p: Math.round(it.p * 100) }) + (it.support > 0.5 ? ' ' + global.tr('(learned from similar drawings)') : '');
         b.onclick = ev => { ev.stopPropagation(); this.chooseFromMenu(it.y); };
         b.onmouseenter = () => this.ghost(g, it.y);
         b.onmouseleave = () => this.ghost(null);
@@ -467,7 +467,7 @@
       this.pushHistory();
       const gid = uid++;
       let res;
-      try { res = this.build(g, y, false); } catch (e) { console.error(e); res = { objs: [], status: 'Could not convert: ' + e.message }; y = 'ink'; }
+      try { res = this.build(g, y, false); } catch (e) { console.error(e); res = { objs: [], status: global.tr('Could not convert: {msg}', { msg: global.tr(e.message) }) }; y = 'ink'; }
       if (y === 'ink') { g.inks.forEach(o => { o.pending = false; }); if (how === 'chosen') this.learner.record(g.f, 'ink'); this.render(); return; }
       const now = performance.now();
       g.inks.forEach(o => { o.gid = gid; o.fade = { start: now, dur: 360 }; });
@@ -482,8 +482,8 @@
       const first = res.objs[0]; if (first && sampleId) first.sampleId = sampleId;
       const label = global.INTENTS[y].label;
       if (how === 'auto' || how === 'guess') {
-        const why = how === 'auto' ? 'learned from ' + g.pred.ranked[0].similar + ' similar drawings' : 'guessed';
-        this.onStatus((res.status || label) + ' — ' + why, [['Change', () => this.changeIntent(res.merged || gid)], ['Always ask', () => { this.learner.setMode('always'); this.opts.onModeChange && this.opts.onModeChange('always'); }]]);
+        const why = how === 'auto' ? global.tr('learned from {n} similar drawings', { n: g.pred.ranked[0].similar }) : global.tr('guessed');
+        this.onStatus((res.status || global.tr(label)) + ' — ' + why, [['Change', () => this.changeIntent(res.merged || gid)], ['Always ask', () => { this.learner.setMode('always'); this.opts.onModeChange && this.opts.onModeChange('always'); }]]);
       } else if (res.status) this.onStatus(res.status);
       this.implicitCache.clear(); this.requestFrame();
     }
@@ -503,16 +503,16 @@
             if (prev) {
               const joined = prev.ascii + ascii; let ok = true; try { global.MathCore.analyze(joined); } catch (e) { ok = false; }
               if (ok || prev.error) {
-                return { objs: [], merged: prev.gid || (prev.gid = uid++), status: 'Read: ' + joined, after: () => { prev.ascii = joined; prev.error = !ok; prev.solved = false; prev.anim = { start: performance.now(), dur: 300 }; } };
+                return { objs: [], merged: prev.gid || (prev.gid = uid++), status: global.tr('Read: {x}', { x: joined }), after: () => { prev.ascii = joined; prev.error = !ok; prev.solved = false; prev.anim = { start: performance.now(), dur: 300 }; } };
               }
             }
           }
           const m = { type: 'math', id: uid++, x: g.bb.minX, y: g.bb.cy, size: clamp(H * 1.25, 16, 110), color, ascii };
           try { global.MathCore.analyze(ascii); } catch (e) { m.error = true; }
           if (y === 'plot') {
-            return { objs: [m], status: 'Plotted ' + ascii, after: () => { m.plotted = true; this.plotEquation(ascii, { color: color === COLORS.chalk ? null : color, near: m, noLabel: true, gid: m.gid }); } };
+            return { objs: [m], status: global.tr('Plotted {x}', { x: ascii }), after: () => { m.plotted = true; this.plotEquation(ascii, { color: color === COLORS.chalk ? null : color, near: m, noLabel: true, gid: m.gid }); } };
           }
-          return { objs: [m], status: m.error ? 'Not sure about “' + ascii + '” — double-click to fix' : 'Read: ' + ascii };
+          return { objs: [m], status: m.error ? global.tr('Not sure about “{x}” — double-click to fix', { x: ascii }) : global.tr('Read: {x}', { x: ascii }) };
         }
         case 'line': {
           const { c, ang } = pca(P); const u = { x: Math.cos(ang), y: Math.sin(ang) };
@@ -566,7 +566,7 @@
           const gr = { type: 'graph', id: uid++, axes: ax.id, eq: 'y=' + fit.ascii, mode: 'explicit', rhs: fit.ascii, color: color === COLORS.chalk ? this.nextPlotColor() : color };
           objs.push(gr);
           if (!dry) objs.push(this.makeLabel(ax, gr));
-          return { objs, status: 'Graph: y = ' + fit.ascii };
+          return { objs, status: global.tr('Graph: y = {x}', { x: fit.ascii }) };
         }
         case 'axes': {
           let x0 = g.bb.minX, x1 = g.bb.maxX, y0 = g.bb.minY, y1 = g.bb.maxY, ox = g.bb.cx, oy = g.bb.cy;
@@ -587,7 +587,7 @@
     }
     geoPoly(pts, color, w, dry, rect, name) {
       if (dry) return { objs: [{ type: 'poly', id: 0, pts, closed: true, color, w }] };
-      return { objs: [], geo: () => this.geo.fromShape('poly', { pts, rect }, color === COLORS.chalk ? null : color), status: name + ' — drag the corners, or select it (△ Select) for constraints and measurements' };
+      return { objs: [], geo: () => this.geo.fromShape('poly', { pts, rect }, color === COLORS.chalk ? null : color), status: global.tr('{name} — drag the corners, or select it (△ Select) for constraints and measurements', { name: global.tr(name) }) };
     }
     previewGraph(g) {
       const ax = this.axesAt(g.bb) || { ox: g.bb.cx, oy: g.bb.cy, unit: clamp(Math.round(Math.max(g.bb.w, g.bb.h) / 10), 18, 60) };
@@ -696,8 +696,8 @@
       if (!f) f = this.plotEquation('y=' + st.fAscii, { axes: ax, noHistory: true });
       const line = { type: 'graph', id: uid++, axes: ax.id, eq: st.lineAscii, mode: 'explicit', rhs: st.lineAscii.replace(/^y=/, ''), color: COLORS.chalk, dashed: true, anim: { start: performance.now() + 300, dur: 700 } };
       this.objects.push(line, this.makeLabel(ax, line));
-      this.objects.push({ type: 'point', id: uid++, axes: ax.id, x: st.point.x, y: st.point.y, color: COLORS.chalk, label: 'slope ' + niceNum(st.slope), anim: { start: performance.now() + 800, dur: 400 } });
-      this.onStatus('Tangent: ' + st.lineAscii.replace('*', ''));
+      this.objects.push({ type: 'point', id: uid++, axes: ax.id, x: st.point.x, y: st.point.y, color: COLORS.chalk, label: global.tr('slope {v}', { v: niceNum(st.slope) }), anim: { start: performance.now() + 800, dur: 400 } });
+      this.onStatus(global.tr('Tangent: {x}', { x: st.lineAscii.replace('*', '') }));
       this.requestFrame(); return line;
     }
     /** int(f, a, b) → curve + shaded area; lim(f, x→a) → curve + the limit point */
@@ -712,11 +712,11 @@
       if (n.k === 'int') {
         const a = global.MathCore.evaluate(n.lo), b = global.MathCore.evaluate(n.hi);
         g.shade = { a, b, value: global.MathCore.snapValue(global.MathCore.integrate(this.compile(fAscii), a, b)) };
-        this.onStatus('Area: ∫ = ' + niceNum(g.shade.value));
+        this.onStatus(global.tr('Area: ∫ = {v}', { v: niceNum(g.shade.value) }));
       } else {
         const r = global.MathCore.limit(this.compile(fAscii), global.MathCore.evaluate(n.to), n.side);
-        if (isFinite(r.value)) this.objects.push({ type: 'point', id: uid++, axes: ax.id, x: global.MathCore.evaluate(n.to), y: r.value, color: COLORS.chalk, hollow: true, label: 'limit ' + niceNum(r.value), anim: { start: performance.now() + 600, dur: 400 } });
-        this.onStatus(isFinite(r.value) ? 'Limit = ' + niceNum(r.value) : 'The limit does not exist (or is infinite)');
+        if (isFinite(r.value)) this.objects.push({ type: 'point', id: uid++, axes: ax.id, x: global.MathCore.evaluate(n.to), y: r.value, color: COLORS.chalk, hollow: true, label: global.tr('limit {v}', { v: niceNum(r.value) }), anim: { start: performance.now() + 600, dur: 400 } });
+        this.onStatus(isFinite(r.value) ? global.tr('Limit = {v}', { v: niceNum(r.value) }) : global.tr('The limit does not exist (or is infinite)'));
       }
       this.requestFrame(); return g;
     }
@@ -892,13 +892,13 @@
         alive.add(m.id);
         let el = this.mathEls.get(m.id);
         const canChange = m.gid && this.objects.some(o => o.type === 'ink' && o.hidden && o.gid === m.gid);
-        const key = [m.ascii, m.solved, m.plotted, m.size, m.color, m.error, canChange].join('|');
+        const key = [m.ascii, m.solved, m.plotted, m.size, m.color, m.error, canChange, global.I18N ? global.I18N.lang : ''].join('|');
         if (!el) { el = document.createElement('div'); el.className = 'ink-math'; this.overlay.appendChild(el); this.mathEls.set(m.id, el); }
         if (el._key !== key) {
           el._key = key;
           const { tex, actions } = this.mathContent(m);
           el.innerHTML = '<span class="ink-math-body"></span>';
-          try { global.katex.render(tex, el.firstChild, { throwOnError: false, displayMode: false, trust: true, strict: false }); } catch (e) { el.firstChild.textContent = m.ascii; }
+          try { global.katex.render(global.I18N ? global.I18N.tex(tex) : tex, el.firstChild, { throwOnError: false, displayMode: false, trust: true, strict: false }); } catch (e) { el.firstChild.textContent = m.ascii; }
           const bar = document.createElement('span'); bar.className = 'ink-math-actions';
           actions.forEach(([label, fn]) => { const b = document.createElement('button'); b.textContent = label; b.onclick = ev => { ev.stopPropagation(); fn(); }; bar.appendChild(b); });
           if (!m.isLabel) {
@@ -1164,7 +1164,7 @@
         if (e.shiftKey || e.ctrlKey || e.metaKey) { G.sel.has(h.id) ? G.sel.delete(h.id) : G.sel.add(h.id); this.geoChanged(); return; }
         if (!G.sel.has(h.id)) { G.sel.clear(); G.sel.add(h.id); }
         this.pushHistory();
-        if (h.x !== undefined) { if (G.isFixed(h)) { this.geoChanged(); this.onStatus(h.name + ' is fixed — unfix it in the panel to move it'); return; } G.tmp = { kind: 'drag', id: h.id }; }
+        if (h.x !== undefined) { if (G.isFixed(h)) { this.geoChanged(); this.onStatus(global.tr('{name} is fixed — unfix it in the panel to move it', { name: h.name })); return; } G.tmp = { kind: 'drag', id: h.id }; }
         else if (h.type === 'circle' && Math.abs(dist(p, G.P(h.c)) - h.r) < 9) G.tmp = { kind: 'radius', id: h.id };
         else { const ids = h.type === 'seg' ? [h.a, h.b] : h.type === 'circle' ? [h.c] : h.pts; G.tmp = { kind: 'move', ids: ids.filter(id => !G.isFixed(G.P(id))), last: p }; }
         this.geoChanged(); return;

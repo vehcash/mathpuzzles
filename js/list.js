@@ -10,22 +10,30 @@
   const mathText = (el, html) => { el.innerHTML = html.replace(/\$([^$]+)\$/g, (_, t) => katex.renderToString(t, { throwOnError: false })); return el; };
   const escH = t => String(t).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 
-  const index = PuzzleBank.puzzles.map((p, i) => {
-    const cat = cats.find(c => c.id === p.category);
-    return { p, cat, i, title: norm(p.title), catText: norm(cat.name + ' ' + cat.id), body: norm(plain(p.statement) + ' ' + (p.figureText || '') + ' ' + plain(p.hint) + ' ' + (p.steps || []).map(s => plain(s.title) + ' ' + plain(s.note)).join(' ')) };
-  });
+  // titles, statements and search words come from puzzles/search/<lang>.js; search works in English and in the current language.
+  // The full puzzle file (figure, options, solution) is only loaded when its card scrolls into view.
+  let index = [];
+  function buildIndex() {
+    return Promise.all([PuzzleBank.loadSearch('en'), PuzzleBank.loadSearch(I18N.lang)]).then(([en, cur]) => {
+      index = PuzzleBank.index.map((e, i) => {
+        const cat = cats.find(c => c.id === e.cat), a = en[e.id] || { t: e.id, s: '', k: '' }, b = cur[e.id] || a;
+        return { e, cat, i, t: b.t, s: b.s, title: norm(a.t + ' ' + b.t), catText: norm(cat.name + ' ' + cat.id + ' ' + tr(cat.name)), body: norm(a.k + ' ' + (b !== a ? b.k : '')) };
+      });
+    });
+  }
 
   // ---- category filter chips
   let catFilter = new URLSearchParams(location.search).get('cat') || '';
   const chips = $('#lfilters');
-  const mkChip = (id, label, icon) => {
+  const mkChip = (id, label, icon, short) => {
     const b = document.createElement('button'); b.className = 'lchip'; b.dataset.cat = id;
-    b.innerHTML = (icon ? '<span class="ico">' + icon + '</span>' : '') + '<span>' + label + '</span><span class="n"></span>';
+    if (short) b.title = label;
+    b.innerHTML = (icon ? '<span class="ico">' + icon + '</span>' : '') + '<span' + (short ? ' class="nm"' : '') + '>' + label + '</span>' + (short ? '<span class="sh">' + short + '</span>' : '') + '<span class="n"></span>';
     b.onclick = () => { catFilter = catFilter === id ? '' : id; apply(); };
     chips.appendChild(b);
   };
   mkChip('', 'All');
-  cats.forEach(c => mkChip(c.id, c.name, c.icon));
+  cats.forEach(c => mkChip(c.id, c.name, c.icon, c.short));
 
   // ---- search
   let words = [];
@@ -51,21 +59,28 @@
 
   // ---- cards
   const grid = $('#grid');
+  // masonry packing: each card spans as many 4px rows as it is tall (+16px gap); updated whenever a card changes size
+  const ROW = 4, GAP = 16;
+  grid.classList.add('masonry');
+  const fit = el => { el.style.gridRowEnd = 'span ' + Math.ceil((el.getBoundingClientRect().height + GAP) / ROW); };
+  const sizer = new ResizeObserver(list => list.forEach(en => fit(en.target)));
   function card(e) {
-    const p = e.p, a = document.createElement('a');
-    a.className = 'pcard'; a.href = 'index.html?p=' + encodeURIComponent(p.id); a.dataset.cat = p.category; a.dataset.idx = e.i;
-    a.innerHTML = '<div class="meta"><span class="cat-badge"><span class="ico">' + e.cat.icon + '</span>' + e.cat.name + '</span><span class="diff" title="Difficulty">' + '●'.repeat(p.difficulty) + '<i>' + '●'.repeat(3 - p.difficulty) + '</i></span></div>' +
+    const p = e.e, a = document.createElement('a');
+    a.className = 'pcard'; a.href = 'index.html?p=' + encodeURIComponent(p.id); a.dataset.cat = p.cat; a.dataset.idx = e.i;
+    a.innerHTML = '<div class="meta"><span class="cat-badge"><span class="ico">' + e.cat.icon + '</span>' + tr(e.cat.name) + '</span><span class="diff" title="Difficulty">' + '●'.repeat(p.diff) + '<i>' + '●'.repeat(3 - p.diff) + '</i></span></div>' +
       '<h3></h3><p class="statement"></p><figure class="figure"><svg role="img" aria-label="Figure"></svg></figure>' +
-      '<div class="pc-foot"><span>' + p.options.length + ' options · ' + (p.steps || []).length + ' solution steps</span><span class="go">Solve →</span></div>';
-    a.querySelector('h3').innerHTML = mark(escH(p.title), words);
-    const st = a.querySelector('.statement'); mathText(st, p.statement); st.innerHTML = mark(st.innerHTML, words);
+      '<div class="pc-foot"><span>' + tr('{n} options · {m} solution steps', { n: p.options, m: p.steps }) + '</span><span class="go">' + tr('Solve →') + '</span></div>';
+    a.querySelector('h3').innerHTML = mark(escH(e.t), words);
+    const st = a.querySelector('.statement'); mathText(st, e.s); st.innerHTML = mark(st.innerHTML, words);
     figObserver.observe(a);           // figure drawn only when the card scrolls into view
+    sizer.observe(a);
     return a;
   }
   const figObserver = new IntersectionObserver(entries => entries.forEach(en => {
     if (!en.isIntersecting) return;
     const a = en.target; figObserver.unobserve(a);
-    try { index[+a.dataset.idx].p.figure(a.querySelector('svg')); } catch (err) { const f = a.querySelector('.figure'); if (f) f.remove(); }
+    const drop = () => { const f = a.querySelector('.figure'); if (f) f.remove(); };
+    PuzzleBank.load(index[+a.dataset.idx].e.id).then(p => { try { p.figure(a.querySelector('.figure svg')); } catch (err) { drop(); } }, drop);
     a.classList.add('in');
   }), { rootMargin: '250px' });
 
@@ -75,7 +90,7 @@
     next.forEach(e => grid.appendChild(card(e)));
     shown += next.length;
     const more = shown < items.length;
-    $('#sentinel').textContent = more ? 'Loading more…' : items.length ? '' : '';
+    $('#sentinel').textContent = more ? tr('Loading more…') : '';
     return more;
   }
   const sentinelNear = () => $('#sentinel').getBoundingClientRect().top < innerHeight + 700;
@@ -84,7 +99,7 @@
 
   // mix categories when browsing everything (round-robin), best matches first when searching
   function roundRobin(list) {
-    const by = cats.map(c => list.filter(e => e.p.category === c.id));
+    const by = cats.map(c => list.filter(e => e.e.cat === c.id));
     const out = []; for (let i = 0; out.length < list.length; i++) by.forEach(l => { if (l[i]) out.push(l[i]); });
     return out;
   }
@@ -93,23 +108,28 @@
     const matching = index.map(e => ({ e, s: words.length ? score(e) : 0 })).filter(h => h.s >= 0);
     // counts per category (for the chips) ignore the category filter itself
     chips.querySelectorAll('.lchip').forEach(b => {
-      const n = b.dataset.cat ? matching.filter(h => h.e.p.category === b.dataset.cat).length : matching.length;
+      const n = b.dataset.cat ? matching.filter(h => h.e.e.cat === b.dataset.cat).length : matching.length;
       b.querySelector('.n').textContent = n; b.classList.toggle('on', b.dataset.cat === catFilter); b.classList.toggle('zero', !n);
     });
-    let list = matching.filter(h => !catFilter || h.e.p.category === catFilter);
+    let list = matching.filter(h => !catFilter || h.e.e.cat === catFilter);
     items = words.length ? list.sort((a, b) => b.s - a.s || a.e.i - b.e.i).map(h => h.e) : roundRobin(list.map(h => h.e));
     grid.innerHTML = ''; shown = 0;
     const cat = cats.find(c => c.id === catFilter);
-    $('#lcount').textContent = (words.length ? items.length + ' match' + (items.length === 1 ? '' : 'es') : items.length + ' puzzle' + (items.length === 1 ? '' : 's')) + (cat ? ' in ' + cat.name : '');
+    const cnt = words.length ? tr(items.length === 1 ? '1 match' : '{n} matches', { n: items.length }) : tr(items.length === 1 ? '1 puzzle' : '{n} puzzles', { n: items.length });
+    $('#lcount').textContent = cat ? tr('{count} in {cat}', { count: cnt, cat: tr(cat.name) }) : cnt;
     $('#lempty').hidden = items.length > 0;
     const url = new URL(location.href); catFilter ? url.searchParams.set('cat', catFilter) : url.searchParams.delete('cat'); history.replaceState(null, '', url);
     window.scrollTo(0, 0); requestAnimationFrame(topUp);
   }
 
   const inp = $('#lsearch');
-  let t; inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(apply, 90); });
-  inp.addEventListener('keydown', e => { if (e.key === 'Escape') { inp.value = ''; apply(); } });
+  // the grid is rebuilt only on Enter, or after 5 s without typing (not on every key)
+  let t, last = inp.value;
+  const run = () => { clearTimeout(t); if (inp.value === last) return; last = inp.value; apply(); };
+  inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(run, 5000); if (!inp.value) run(); });
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); run(); } if (e.key === 'Escape') { inp.value = ''; run(); } });
   document.addEventListener('keydown', e => { if (e.key === '/' && e.target !== inp) { e.preventDefault(); inp.focus(); } });
-  const q = new URLSearchParams(location.search).get('q'); if (q) inp.value = q;
-  apply();
+  const q = new URLSearchParams(location.search).get('q'); if (q) inp.value = q; last = inp.value;
+  I18N.onChange(() => buildIndex().then(apply));
+  buildIndex().then(apply);
 })();

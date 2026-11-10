@@ -3,40 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chalk & Proof — Math Puzzles</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Kalam:wght@300;400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Mathpuzzles — math puzzles on a smart blackboard</title>
+<link rel="stylesheet" href="lib/fonts.css">
 <link rel="stylesheet" href="lib/katex/katex.min.css">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%E2%88%B4%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="mark">∴</span><div><b>Chalk &amp; Proof</b><small>math puzzles on a smart blackboard</small></div></div>
+  <div class="brand"><span class="mark">∴</span><div><b>Mathpuzzles</b><small>math puzzles on a smart blackboard</small></div></div>
   <nav id="cats" class="cats" aria-label="Categories"></nav>
   <div class="search" role="search">
     <span class="s-ico" aria-hidden="true">⌕</span>
     <input id="search" type="search" autocomplete="off" spellcheck="false" placeholder="Search puzzles — e.g. triangle, dice, maximum area…" aria-label="Search puzzles by description or category">
     <kbd class="s-key">/</kbd>
-    <div id="search-results" class="search-results" role="listbox" hidden></div>
+    <div id="search-results" data-no-i18n class="search-results" role="listbox" hidden></div>
   </div>
   <a href="list.html" class="btn ghost list-link" title="Browse all puzzles">☷ All puzzles</a>
   <button id="btn-random" class="btn ghost" title="Another random puzzle from this group">⟳ Random puzzle</button>
+  <div class="hdr-right"><span id="lang-host"></span><button type="button" class="cookie-link tool svg" data-cookie-settings title="Cookie settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 1 0 9.4 10.9 3 3 0 0 1-3.6-3.3 3 3 0 0 1-3.7-3.7A3 3 0 0 1 12 2.5Z"/><circle cx="8.5" cy="10" r="1" class="dot"/><circle cx="9.5" cy="15.5" r="1" class="dot"/><circle cx="14.5" cy="14.5" r="1" class="dot"/></svg><span>Cookies</span></button></div>
 </header>
 
 <main class="layout">
   <!-- ============ puzzle column ============ -->
   <section class="paper" id="card">
     <div class="meta"><span id="p-cat" class="chip"></span><span id="p-diff" class="diff" title="Difficulty"></span></div>
-    <h1 id="p-title"></h1>
-    <p id="p-statement" class="statement"></p>
+    <h1 id="p-title" data-no-i18n></h1>
+    <p id="p-statement" data-no-i18n class="statement"></p>
     <figure class="figure"><svg id="p-figure" role="img" aria-label="Puzzle figure"></svg></figure>
-    <div id="p-hint" class="hint"><button id="btn-hint" class="link">Need a hint?</button><p id="p-hint-text"></p></div>
+    <div id="p-hint" class="hint"><button id="btn-hint" class="link">Need a hint?</button><p id="p-hint-text" data-no-i18n></p></div>
 
     <div id="answer-zone">
       <div class="opts-head"><h2>Choose the true statements</h2><span class="sub">0, 1 or 2 can be correct</span></div>
-      <div id="options" class="options"></div>
+      <div id="options" data-no-i18n class="options"></div>
       <button id="opt-none" class="opt none"><span class="letter">∅</span><span class="tex">None of these is correct</span><span class="mark"></span></button>
       <p id="sel-summary" class="sel-summary"></p>
       <div class="actions">
@@ -68,7 +67,7 @@
           <button id="btn-replay" class="btn small ghost">↺ Replay</button>
         </div>
       </div>
-      <div id="steps" class="steps"></div>
+      <div id="steps" data-no-i18n class="steps"></div>
       <div class="sol-foot"><button id="btn-again" class="btn ghost">Try this puzzle again</button></div>
     </section>
   </section>
@@ -77,10 +76,10 @@
   <section class="board-wrap">
     <div class="toolbar" role="toolbar" aria-label="Blackboard tools">
       <div class="grp">
-        <button class="tool on" data-tool="smart" title="Smart chalk (S): asks — or knows — whether you drew an equation, a number or a shape">✦ Smart</button>
-        <button class="tool" data-tool="pen" title="Plain chalk (P): draws exactly what you write">✎ Chalk</button>
-        <button class="tool" data-tool="eraser" title="Eraser (E)">⌫ Erase</button>
-        <button class="tool" data-tool="move" title="Move (M): drag equations, figures, axes and graphs">✥ Move</button>
+        <button class="tool svg on" data-tool="smart" title="Smart chalk (S): asks — or knows — whether you drew an equation, a number or a shape"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 14.5 9.5"/><path d="m13 8 3 3"/><path d="M17.5 3v4M15.5 5h4" class="accent"/><path d="M20.5 9v2M19.5 10h2"/><path d="M11 3.5v1.6M10.2 4.3h1.6"/></svg>Smart</button>
+        <button class="tool svg" data-tool="pen" title="Plain chalk (P): draws exactly what you write"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 17.5 15.8 7.2a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8.5 20.5"/><path d="M5.5 17.5 4 21l3.5-1.5"/><path d="m13.5 9.5 3 3"/><path d="M14 21h6" class="accent"/></svg>Chalk</button>
+        <button class="tool svg" data-tool="eraser" title="Eraser (E)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 20H20"/><path d="M4.6 15.4a2 2 0 0 1 0-2.8l8-8a2 2 0 0 1 2.8 0l4 4a2 2 0 0 1 0 2.8L11 20H8.2a2 2 0 0 1-1.4-.6Z"/><path d="m9 8 7 7" class="accent"/></svg>Erase</button>
+        <button class="tool svg" data-tool="move" title="Move (M): drag equations, figures, axes and graphs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18"/><path d="m9 6 3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg>Move</button>
       </div>
       <div class="grp colors">
         <button class="sw on" data-color="chalk" title="White chalk"></button>
@@ -106,7 +105,7 @@
     <div class="subbar eqbar" id="eqbar" data-pane="eq">
       <div class="eq-field">
         <input id="eq-input" spellcheck="false" autocomplete="off" placeholder="y = x^2 - 3  ·  x^2 + y^2 = 25  ·  2x + 3 = 7  ·  d/dx(x^2 sin(x))  ·  lim(sin(x)/x, x→0)  ·  int(x^2, 0, 3)  ·  tangent(x^2, 1)">
-        <div id="eq-preview" class="eq-preview"></div>
+        <div id="eq-preview" data-no-i18n class="eq-preview"></div>
       </div>
       <button id="eq-plot" class="act plot" title="Plot on the board (Enter)">📈 Plot</button>
       <button id="eq-place" class="act" title="Write it on the board — then click where it goes (Shift+Enter)">＋ Place</button>
@@ -142,7 +141,7 @@
       <canvas class="board-live"></canvas>
       <div id="board-empty" class="board-empty">
         <p>Your scratch board.</p>
-        <p class="small">Write or draw, then pause — the board asks what it is (and learns your answers).<br>Type <b>y = x</b> in the bar above and press <b>Plot</b>, or open <b>{ System</b> for several equations.<br>Switch to <b>△ Geometry</b> for figures with constraints. Drag anything to move it.</p>
+        <p class="small" data-i18n-html>Write or draw, then pause — the board asks what it is (and learns your answers).<br>Type <b>y = x</b> in the bar above and press <b>Plot</b>, or open <b>{ System</b> for several equations.<br>Switch to <b>△ Geometry</b> for figures with constraints. Drag anything to move it.</p>
       </div>
 
       <section id="sys-panel" class="float-panel sys-panel" hidden>
@@ -171,9 +170,9 @@
 
       <section id="ask-panel" class="float-panel ask-panel" hidden>
         <header><b>When should the board ask?</b><button class="as-close" title="Close">×</button></header>
-        <label><input type="radio" name="askmode" value="always"> <b>Always ask</b> what I drew</label>
-        <label><input type="radio" name="askmode" value="learn"> <b>Ask until it has learned</b> — stops asking for drawings it has seen you classify several times</label>
-        <label><input type="radio" name="askmode" value="never"> <b>Never ask</b> — just guess (you can still change it)</label>
+        <label><input type="radio" name="askmode" value="always"> <span data-i18n-html><b>Always ask</b> what I drew</span></label>
+        <label><input type="radio" name="askmode" value="learn"> <span data-i18n-html><b>Ask until it has learned</b> — stops asking for drawings it has seen you classify several times</span></label>
+        <label><input type="radio" name="askmode" value="never"> <span data-i18n-html><b>Never ask</b> — just guess (you can still change it)</span></label>
         <p class="as-stats"></p>
         <button class="as-reset link">Forget what it learned</button>
       </section>
@@ -190,20 +189,28 @@
   <div class="help-card">
     <button class="close" aria-label="Close">×</button>
     <h3>The smart blackboard</h3>
-    <ul>
-      <li><b>Draw, then pause.</b> A small menu asks what it is — equation, number, equation + plot, line, circle, triangle, rectangle, polygon, curve, graph, axes, or keep as chalk. Hover an option to preview it; press <kbd>Enter</kbd> for the best guess, <kbd>1</kbd>–<kbd>9</kbd> to pick, <kbd>Esc</kbd> to keep the chalk.</li>
-      <li><b>It learns.</b> After a few similar answers it stops asking and does it for you (with a <i>Change</i> button). Choose <i>Always ask</i> / <i>Never ask</i> with ⚙. Right-click or ⇄ on a converted item to change what it is.</li>
-      <li><b>Type equations</b> in the ƒ(x) bar with live preview and keypad: <kbd>Enter</kbd> plots, <kbd>Shift</kbd>+<kbd>Enter</kbd> places it (click where). Works for <i>y = x</i>, <i>y = sin(x)</i>, <i>x² + y² = 25</i>, <i>2x + 3 = 7</i>, <i>sqrt(6^2+8^2) =</i>.</li>
-      <li><b>{ System</b>: several equations → solved step by step (row operations for linear systems), plotted with intersection points, or placed on the board.</li>
-      <li><b>Graphs</b>: scroll over axes to zoom, hover a curve to trace coordinates; roots, intercepts and extrema are marked. The Graphs list hides, recolours or removes curves.</li>
-      <li><b>△ Geometry</b>: points, segments, polygons, rectangles, circles, regular polygons. Select items to read lengths, angles, area; add constraints (length, horizontal, perpendicular, parallel, equal, angle, radius, tangent, on line/circle, midpoint, fixed) and constructions (incircle, circumcircle, altitudes, medians, perpendicular foot). Drag points — the figure keeps its constraints.</li>
-      <li><b>Move anything</b>: drag an equation, an axes origin or a point directly, or use ✥ Move. Double-click an equation to edit it.</li>
-      <li><b>Keys:</b> S smart · P chalk · E eraser · M move · V geometry select · Delete removes selected figures · Ctrl+Z / Ctrl+Y.</li>
+    <ul class="help-list">
+      <li data-i18n-html><b>Draw, then pause.</b> A small menu asks what it is — equation, number, equation + plot, line, circle, triangle, rectangle, polygon, curve, graph, axes, or keep as chalk. Hover an option to preview it; press <kbd>Enter</kbd> for the best guess, <kbd>1</kbd>–<kbd>9</kbd> to pick, <kbd>Esc</kbd> to keep the chalk.</li>
+      <li data-i18n-html><b>It learns.</b> After a few similar answers it stops asking and does it for you (with a <i>Change</i> button). Choose <i>Always ask</i> / <i>Never ask</i> with ⚙. Right-click or ⇄ on a converted item to change what it is.</li>
+      <li data-i18n-html><b>Type equations</b> in the ƒ(x) bar with live preview and keypad: <kbd>Enter</kbd> plots, <kbd>Shift</kbd>+<kbd>Enter</kbd> places it (click where). Works for <i>y = x</i>, <i>y = sin(x)</i>, <i>x² + y² = 25</i>, <i>2x + 3 = 7</i>, <i>sqrt(6^2+8^2) =</i>.</li>
+      <li data-i18n-html><b>{ System</b>: several equations → solved step by step (row operations for linear systems), plotted with intersection points, or placed on the board.</li>
+      <li data-i18n-html><b>Graphs</b>: scroll over axes to zoom, hover a curve to trace coordinates; roots, intercepts and extrema are marked. The Graphs list hides, recolours or removes curves.</li>
+      <li data-i18n-html><b>△ Geometry</b>: points, segments, polygons, rectangles, circles, regular polygons. Select items to read lengths, angles, area; add constraints (length, horizontal, perpendicular, parallel, equal, angle, radius, tangent, on line/circle, midpoint, fixed) and constructions (incircle, circumcircle, altitudes, medians, perpendicular foot). Drag points — the figure keeps its constraints.</li>
+      <li data-i18n-html><b>Move anything</b>: drag an equation, an axes origin or a point directly, or use ✥ Move. Double-click an equation to edit it.</li>
+      <li data-i18n-html><b>Keys:</b> S smart · P chalk · E eraser · M move · V geometry select · Delete removes selected figures · Ctrl+Z / Ctrl+Y.</li>
     </ul>
   </div>
 </div>
 
 <script src="lib/katex/katex.min.js"></script>
+<script src="js/consent.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/lang/fr.js"></script>
+<script src="js/lang/es.js"></script>
+<script src="js/lang/ja.js"></script>
+<script src="js/lang/zh.js"></script>
+<script>I18N.start();</script>
+<script src="js/consent-ui.js"></script>
 <script src="js/mathcore.js"></script>
 <script src="js/recognizer.js"></script>
 <script src="js/intent.js"></script>
@@ -211,6 +218,8 @@
 <script src="js/board.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/puzzles.js"></script>
+<script src="puzzles/index.js"></script>
 <script src="js/app.js"></script>
+<script>I18N.flags(document.getElementById('lang-host')); CookieUI.init();</script>
 </body>
 </html>

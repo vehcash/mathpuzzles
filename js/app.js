@@ -40,6 +40,7 @@
   ui.eq.onSteps = src => ui.steps.open(src);
   ui.tools = BoardUI.Toolbox(board, $('#toolbox'), ui.eq, ui.sys);
   ui.graphs.sync(); ui.geo.sync(); ui.tools.sync();
+  I18N.onChange(() => { board.render(); ui.graphs.sync(); ui.geo.sync(); ui.tools.sync(); if (!$('#ask-panel').hidden) ui.ask.render(); ui.eq.set && ui.eq.refresh && ui.eq.refresh(); });
   $('#eq-keys').onclick = () => { ui.tools.toggle(); $('#eq-keys').classList.toggle('on', !$('#toolbox').classList.contains('collapsed')); };
 
   const selectTool = t => { board.setTool(t); $$('button[data-tool]').forEach(x => x.classList.toggle('on', x.dataset.tool === t)); ui.tools && ui.tools.sync(); };
@@ -84,28 +85,43 @@
     const n = PuzzleBank.count(c.id);
     const b = document.createElement('button');
     b.className = 'cat'; b.dataset.cat = c.id; b.disabled = !n;
-    b.innerHTML = `<span class="ico">${c.icon}</span><span>${c.name}</span><span class="n">${n ? n : 'soon'}</span>`;
-    b.onclick = () => { state.cat = c.id; load(PuzzleBank.random(c.id)); };
+    b.title = c.name;
+    b.innerHTML = `<span class="ico">${c.icon}</span><span class="nm">${c.name}</span><span class="sh">${c.short}</span><span class="n">${n ? n : tr('soon')}</span>`;
+    b.onclick = () => { state.cat = c.id; show(PuzzleBank.random(c.id)); };
     tabs.appendChild(b);
   });
-  $('#btn-random').onclick = () => load(PuzzleBank.random(state.cat, state.puzzle && state.puzzle.id));
+  $('#btn-random').onclick = () => show(PuzzleBank.random(state.cat, state.base && state.base.id));
+  // puzzle files load on demand; only the latest request is shown
+  let showSeq = 0;
+  function show(promise) { const my = ++showSeq; return Promise.resolve(promise).then(p => { if (my === showSeq && p) load(p); }).catch(err => console.error(err)); }
 
   // ---------- puzzle ----------
   function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
-  function load(p) {
-    if (!p) return;
-    clearTimeout(state.solTimer);
-    Object.assign(state, { puzzle: p, options: shuffle(p.options), selected: new Set(), none: false, confirmed: false, stepIdx: -1 });
-    $$('.cat').forEach(b => b.classList.toggle('on', b.dataset.cat === p.category));
+  // the puzzle in the current language (options keep their shuffled order)
+  function localize() {
+    state.puzzle = PuzzleBank.localize(state.base);
+    state.options = state.order.map(i => state.puzzle.options[i]);
+  }
+  function renderTexts() {
+    const p = state.puzzle;
     const cat = PuzzleBank.categories.find(c => c.id === p.category);
-    $('#p-cat').textContent = cat.name;
+    $('#p-cat').textContent = tr(cat.name);
     $('#p-diff').innerHTML = '●'.repeat(p.difficulty) + '<i>' + '●'.repeat(3 - p.difficulty) + '</i>';
     $('#p-title').textContent = p.title;
     mathText($('#p-statement'), p.statement);
     mathText($('#p-hint-text'), p.hint || '');
-    $('#p-hint').hidden = !p.hint; $('#p-hint').classList.remove('open');
-    state.fig = p.figure($('#p-figure'));
+    $('#p-hint').hidden = !p.hint;
+  }
+  function load(p) {
+    if (!p) return;
+    clearTimeout(state.solTimer);
+    Object.assign(state, { base: p, order: shuffle(p.options.map((_, i) => i)), selected: new Set(), none: false, confirmed: false, answered: false, stepIdx: -1 });
+    localize();
+    $$('.cat').forEach(b => b.classList.toggle('on', b.dataset.cat === p.category));
+    renderTexts();
+    $('#p-hint').classList.remove('open');
+    state.fig = state.puzzle.figure($('#p-figure'));
     renderOptions();
     $('#result').hidden = true; $('#solution').hidden = true; $('#steps').innerHTML = '';
     $('#answer-zone').classList.remove('locked'); $('#card').classList.remove('solving');
@@ -113,7 +129,7 @@
     board.reset();
     // fresh left panel for the new problem
     const card = $('#card'); card.scrollTop = 0; card.classList.remove('solving');
-    $('#steps').innerHTML = ''; $('#step-count').textContent = ''; $('#btn-next').disabled = false; state.auto = true; $('#btn-auto').textContent = '❚❚ Pause';
+    $('#steps').innerHTML = ''; $('#step-count').textContent = ''; $('#btn-next').disabled = false; state.auto = true; $('#btn-auto').textContent = tr('❚❚ Pause');
     const aiPop = $('#ai-pop'); if (aiPop) { aiPop.hidden = true; $('#btn-ai').setAttribute('aria-expanded', 'false'); const mine = $('#ai-mine'); if (mine) mine.checked = false; }
     $$('.opt').forEach(b => b.classList.remove('is-correct', 'is-wrong', 'bad', 'missed'));
     $('#opt-none').classList.remove('is-correct', 'is-wrong', 'bad', 'sel'); $('#opt-none').querySelector('.mark').textContent = '';
@@ -142,7 +158,7 @@
     const has = state.selected.size || state.none;
     $('#btn-confirm').disabled = !has || state.confirmed;
     const list = [...state.selected].sort().map(i => LETTERS[i]);
-    $('#sel-summary').textContent = state.confirmed ? '' : state.none ? 'Your answer: none of them is correct' : list.length ? 'Your answer: ' + list.join(' and ') : 'Pick every option you think is correct — one, two, or none.';
+    $('#sel-summary').textContent = state.confirmed ? '' : state.none ? tr('Your answer: none of them is correct') : list.length ? tr('Your answer: {list}', { list: list.join((' ' + tr('and') + ' ')) }) : tr('Pick every option you think is correct — one, two, or none.');
   }
 
   $('#btn-hint').onclick = () => $('#p-hint').classList.toggle('open');
@@ -152,7 +168,12 @@
 
   function finish(answered) {
     if (state.confirmed) return;
-    state.confirmed = true;
+    state.confirmed = true; state.answered = answered;
+    markAnswers();
+    startSolution();
+  }
+  function markAnswers() {
+    const answered = state.answered;
     $('#answer-zone').classList.add('locked');
     const correct = new Set(state.options.map((o, i) => (o.correct ? i : -1)).filter(i => i >= 0));
     $$('.opt').forEach(b => {
@@ -169,14 +190,14 @@
     let msg, kind;
     const hits = [...state.selected].filter(i => correct.has(i)).length, falses = state.selected.size - hits;
     const exact = state.none ? correct.size === 0 : falses === 0 && hits === correct.size;
-    if (!answered) { kind = 'neutral'; msg = '<b>Solution revealed.</b> The correct option' + (correct.size > 1 ? 's are ' : ' is ') + [...correct].sort().map(i => LETTERS[i]).join(' and ') + '.'; }
-    else if (exact) { kind = 'good'; msg = '<b>Correct!</b> ' + (correct.size === 2 ? 'You found both true options.' : correct.size ? 'Spot on.' : 'Indeed, none of them is correct.'); }
-    else if (hits && !falses) { kind = 'partial'; msg = `<b>Almost.</b> You found ${hits} of ${correct.size} correct options.`; }
-    else if (hits) { kind = 'partial'; msg = `<b>Partly right.</b> ${hits} correct, but also ${falses} wrong pick${falses > 1 ? 's' : ''}.`; }
-    else { kind = 'bad'; msg = '<b>Not this time.</b> Watch the solution below.'; }
+    const letters = [...correct].sort().map(i => LETTERS[i]).join((' ' + tr('and') + ' '));
+    if (!answered) { kind = 'neutral'; msg = '<b>' + tr('Solution revealed.') + '</b> ' + (correct.size > 1 ? tr('The correct options are {list}.', { list: letters }) : correct.size ? tr('The correct option is {list}.', { list: letters }) : tr('None of the options is correct.')); }
+    else if (exact) { kind = 'good'; msg = '<b>' + tr('Correct!') + '</b> ' + (correct.size === 2 ? tr('You found both true options.') : correct.size ? tr('Spot on.') : tr('Indeed, none of them is correct.')); }
+    else if (hits && !falses) { kind = 'partial'; msg = '<b>' + tr('Almost.') + '</b> ' + tr('You found {hits} of {total} correct options.', { hits, total: correct.size }); }
+    else if (hits) { kind = 'partial'; msg = '<b>' + tr('Partly right.') + '</b> ' + (falses > 1 ? tr('{hits} correct, but also {falses} wrong picks.', { hits, falses }) : tr('{hits} correct, but also 1 wrong pick.', { hits })); }
+    else { kind = 'bad'; msg = '<b>' + tr('Not this time.') + '</b> ' + tr('Watch the solution below.'); }
     r.classList.add(kind); r.innerHTML = `<span class="r-ico">${{ good: '✓', partial: '◐', bad: '✗', neutral: '◇' }[kind]}</span><span>${msg}</span>`;
     updateActions();
-    startSolution();
   }
 
   // ---------- step-by-step solution ----------
@@ -184,7 +205,7 @@
     // rebuild a clean figure, then annotate it step by step
     state.fig = state.puzzle.figure($('#p-figure'));
     $('#solution').hidden = false; $('#steps').innerHTML = ''; $('#card').classList.add('solving');
-    state.stepIdx = -1; state.auto = true; $('#btn-auto').textContent = '❚❚ Pause';
+    state.stepIdx = -1; state.auto = true; $('#btn-auto').textContent = tr('❚❚ Pause');
     setTimeout(() => { const c = $('#card'); c.scrollTo({ top: $('#result').offsetTop - $('.figure').offsetHeight - 40, behavior: 'smooth' }); }, 300);
     nextStep();
   }
@@ -194,6 +215,16 @@
     if (state.stepIdx >= steps.length - 1) { $('#btn-next').disabled = true; return; }
     state.stepIdx++;
     const st = steps[state.stepIdx], n = state.stepIdx + 1;
+    const { card, delay } = buildStep(st, n, true);
+    $$('.step').forEach(s => s.classList.remove('current')); card.classList.add('current');
+    if (st.fig) setTimeout(() => st.fig(state.fig), 200);
+    $('#btn-next').disabled = state.stepIdx >= steps.length - 1;
+    $('#step-count').textContent = tr('Step {n} / {total}', { n, total: steps.length });
+    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
+    if (state.auto && state.stepIdx < steps.length - 1) state.solTimer = setTimeout(nextStep, delay + 1900);
+    if (state.stepIdx >= steps.length - 1) { state.auto = false; $('#btn-auto').textContent = tr('▶ Auto'); }
+  }
+  function buildStep(st, n, animate) {
     const card = document.createElement('div'); card.className = 'step';
     card.innerHTML = `<div class="step-n">${n}</div><div class="step-body"><h4></h4><div class="lines"></div><p class="note"></p></div>`;
     mathText(card.querySelector('h4'), st.title);
@@ -202,7 +233,7 @@
     if (st.lines) st.lines.forEach(l => {
       const d = document.createElement('div'); d.className = 'line'; d.innerHTML = tex(l, true);
       const dur = Math.min(1500, 450 + l.length * 14);
-      d.style.animation = `write ${dur}ms cubic-bezier(.4,.1,.4,1) ${delay}ms both`;
+      if (animate) d.style.animation = `write ${dur}ms cubic-bezier(.4,.1,.4,1) ${delay}ms both`;
       delay += dur + 120; lines.appendChild(d);
     });
     if (st.options) {
@@ -210,11 +241,12 @@
         const d = document.createElement('div'); d.className = 'chk ' + (o.correct ? 'ok' : 'no');
         d.innerHTML = `<span class="letter">${LETTERS[i]}</span><span class="t">${tex(o.tex)}</span><span class="v">${o.correct ? '✓' : '✗'}</span><span class="why"></span>`;
         mathText(d.querySelector('.why'), o.why);
-        d.style.animation = `rise 420ms ease ${delay}ms both`; delay += 170; lines.appendChild(d);
+        if (animate) d.style.animation = `rise 420ms ease ${delay}ms both`; delay += 170; lines.appendChild(d);
       });
     }
     mathText(card.querySelector('.note'), st.note || '');
-    card.querySelector('.note').style.animationDelay = delay + 'ms';
+    card.querySelector('.note').style.animationDelay = animate ? delay + 'ms' : '0ms';
+    if (!animate) card.style.animation = 'none';
     $('#steps').appendChild(card);
     // long formulas shrink to fit the card instead of showing scrollbars
     const fit = () => card.querySelectorAll('.line').forEach(d => {
@@ -223,33 +255,48 @@
       if (w > avail && avail > 0) disp.style.fontSize = Math.max(0.55, avail / w).toFixed(3) + 'em';
     });
     fit(); requestAnimationFrame(fit);
-    $$('.step').forEach(s => s.classList.remove('current')); card.classList.add('current');
-    if (st.fig) setTimeout(() => st.fig(state.fig), 200);
-    $('#btn-next').disabled = state.stepIdx >= steps.length - 1;
-    $('#step-count').textContent = `Step ${n} / ${steps.length}`;
-    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60);
-    if (state.auto && state.stepIdx < steps.length - 1) state.solTimer = setTimeout(nextStep, delay + 1900);
-    if (state.stepIdx >= steps.length - 1) { state.auto = false; $('#btn-auto').textContent = '▶ Auto'; }
+    return { card, delay };
   }
-  $('#btn-next').onclick = () => { state.auto = false; $('#btn-auto').textContent = '▶ Auto'; nextStep(); };
+  // ---------- switching language keeps the puzzle, the answers and the solution ----------
+  I18N.onChange(() => {
+    $$('.cat').forEach(b => { const c = PuzzleBank.categories.find(x => x.id === b.dataset.cat); b.querySelector('.n').textContent = PuzzleBank.count(c.id) || tr('soon'); });
+    if (!state.base) return;
+    clearTimeout(state.solTimer);
+    localize(); renderTexts();
+    state.fig = state.puzzle.figure($('#p-figure'));
+    renderOptions(); updateActions();
+    if (state.confirmed) {
+      markAnswers();
+      $('#steps').innerHTML = '';
+      for (let k = 0; k <= state.stepIdx; k++) { const st = state.puzzle.steps[k]; const { card } = buildStep(st, k + 1, false); if (k === state.stepIdx) card.classList.add('current'); if (st.fig) st.fig(state.fig); }
+      $('#step-count').textContent = state.stepIdx >= 0 ? tr('Step {n} / {total}', { n: state.stepIdx + 1, total: state.puzzle.steps.length }) : '';
+      state.auto = false; $('#btn-auto').textContent = tr('▶ Auto');
+    }
+  });
+  $('#btn-next').onclick = () => { state.auto = false; $('#btn-auto').textContent = tr('▶ Auto'); nextStep(); };
   $('#btn-auto').onclick = () => {
     if (state.stepIdx >= state.puzzle.steps.length - 1) { startSolution(); return; }
-    state.auto = !state.auto; $('#btn-auto').textContent = state.auto ? '❚❚ Pause' : '▶ Auto';
+    state.auto = !state.auto; $('#btn-auto').textContent = state.auto ? tr('❚❚ Pause') : tr('▶ Auto');
     if (state.auto) nextStep(); else clearTimeout(state.solTimer);
   };
   $('#btn-replay').onclick = () => startSolution();
-  $('#btn-again').onclick = () => load(state.puzzle);
+  $('#btn-again').onclick = () => load(state.base);
 
   // ---------- quick search ----------
   (function search() {
     const inp = $('#search'), box = $('#search-results');
     const norm = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
     const plain = t => String(t || '').replace(/<[^>]+>/g, ' ').replace(/\$([^$]+)\$/g, (_, m) => ' ' + m.replace(/\^\\circ/g, '°').replace(/\\cdot/g, '·').replace(/\\(sin|cos|tan|log|ln|sqrt)\b/g, ' $1 ').replace(/\\[a-zA-Z]+/g, ' ').replace(/[{}^_]/g, ' ') + ' ').replace(/\s+/g, ' ').trim();
-    const index = PuzzleBank.puzzles.map(p => {
-      const cat = PuzzleBank.categories.find(c => c.id === p.category);
-      const fields = { title: norm(p.title), cat: norm(cat.name + ' ' + cat.id), body: norm(plain(p.statement) + ' ' + (p.figureText || '') + ' ' + plain(p.hint) + ' ' + p.steps.map(s => plain(s.title) + ' ' + plain(s.note)).join(' ')) };
-      return { p, cat, fields, statement: plain(p.statement) };
-    });
+    // titles, statements and search words come from puzzles/search/<lang>.js (English + current language), loaded on first use
+    let index = [], ready = null;
+    const buildIndex = () => (ready = Promise.all([PuzzleBank.loadSearch('en'), PuzzleBank.loadSearch(I18N.lang)]).then(([en, cur]) => {
+      index = PuzzleBank.index.map(e => {
+        const cat = PuzzleBank.categories.find(c => c.id === e.cat), a = en[e.id] || {}, b = cur[e.id] || a;
+        const fields = { title: norm(a.t + ' ' + b.t), cat: norm(cat.name + ' ' + cat.id + ' ' + tr(cat.name)), body: norm(a.k + ' ' + (b !== a ? b.k : '')) };
+        return { e, cat, title: b.t || e.id, fields, statement: plain(b.s) };
+      });
+    }));
+    I18N.onChange(() => { if (ready) buildIndex().then(() => { if (!box.hidden) render(); }); });
     let hits = [], active = 0;
     const score = (e, words) => {
       let sc = 0;
@@ -272,15 +319,16 @@
       active = Math.min(active, Math.max(0, hits.length - 1));
       box.innerHTML = hits.length ? hits.map((h, i) => {
         let snip = h.statement; if (snip.length > 120) snip = snip.slice(0, 117) + '…';
-        return '<button class="sr' + (i === active ? ' on' : '') + '" data-i="' + i + '" role="option"><span class="sr-cat">' + h.cat.icon + ' ' + h.cat.name + '</span><span class="sr-title">' + mark(h.p.title, words) + '</span><span class="sr-diff">' + '●'.repeat(h.p.difficulty) + '</span><span class="sr-snip">' + mark(snip, words) + '</span></button>';
-      }).join('') : '<p class="sr-empty">No puzzle matches “' + inp.value.replace(/[<>&]/g, '') + '”. Try a category (geometry, algebra…) or a word like triangle, dice, area.</p>';
+        return '<button class="sr' + (i === active ? ' on' : '') + '" data-i="' + i + '" role="option"><span class="sr-cat">' + h.cat.icon + ' ' + tr(h.cat.name) + '</span><span class="sr-title">' + mark(h.title, words) + '</span><span class="sr-diff">' + '●'.repeat(h.e.diff) + '</span><span class="sr-snip">' + mark(snip, words) + '</span></button>';
+      }).join('') : '<p class="sr-empty">' + tr('No puzzle matches “{q}”. Try a category (geometry, algebra…) or a word like triangle, dice, area.', { q: inp.value.replace(/[<>&]/g, '') }) + '</p>';
       box.hidden = false;
       box.querySelectorAll('.sr').forEach(b => { b.onmousedown = e => e.preventDefault(); b.onclick = () => open(+b.dataset.i); });
     };
-    const open = i => { const h = hits[i]; if (!h) return; state.cat = h.p.category; load(h.p); inp.value = ''; box.hidden = true; inp.blur(); };
+    const open = i => { const h = hits[i]; if (!h) return; state.cat = h.e.cat; show(PuzzleBank.load(h.e.id)); inp.value = ''; box.hidden = true; inp.blur(); };
     let hideT;
-    inp.addEventListener('input', () => { clearTimeout(hideT); active = 0; render(); });
-    inp.addEventListener('focus', () => { clearTimeout(hideT); render(); });
+    const later = () => (ready || buildIndex()).then(render);
+    inp.addEventListener('input', () => { clearTimeout(hideT); active = 0; later(); });
+    inp.addEventListener('focus', () => { clearTimeout(hideT); later(); });
     inp.addEventListener('blur', () => { clearTimeout(hideT); hideT = setTimeout(() => { box.hidden = true; }, 150); });
     inp.addEventListener('keydown', e => {
       e.stopPropagation();
@@ -295,11 +343,11 @@
   window.addEventListener('resize', () => $$('.step').forEach(card => card.querySelectorAll('.line').forEach(d => { const disp = d.querySelector('.katex-display'), k = d.querySelector('.katex'); if (!disp || !k) return; disp.style.fontSize = ''; const avail = d.clientWidth - 6, w = k.scrollWidth; if (w > avail && avail > 0) disp.style.fontSize = Math.max(0.55, avail / w).toFixed(3) + 'em'; })));
   // open a specific puzzle from the list page: index.html?p=<id>  (or a category: ?cat=algebra)
   const qs = new URLSearchParams(location.search);
-  const want = PuzzleBank.puzzles.find(p => p.id === qs.get('p'));
+  const want = PuzzleBank.entry(qs.get('p'));
   const wantCat = PuzzleBank.categories.find(c => c.id === qs.get('cat'));
-  if (want) { state.cat = want.category; load(want); }
-  else if (wantCat && PuzzleBank.count(wantCat.id)) { state.cat = wantCat.id; load(PuzzleBank.random(wantCat.id)); }
-  else load(PuzzleBank.random('geometry'));
+  if (want) { state.cat = want.cat; show(PuzzleBank.load(want.id)); }
+  else if (wantCat && PuzzleBank.count(wantCat.id)) { state.cat = wantCat.id; show(PuzzleBank.random(wantCat.id)); }
+  else show(PuzzleBank.random('geometry'));
   window.__app = { board, state };
 })();
 
@@ -347,7 +395,8 @@
     PROVIDERS.forEach(p => {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'ai-btn';
       b.innerHTML = p.name + (p.paste ? ' <small>paste</small>' : '') + ' ↗';
-      b.title = p.paste ? 'Opens ' + p.name + ' — the prompt is copied, paste it with Ctrl+V' : 'Opens ' + p.name + ' in a new tab with the prompt';
+      const setTitle = () => { b.title = p.paste ? tr('Opens {name} — the prompt is copied, paste it with Ctrl+V', { name: p.name }) : tr('Opens {name} in a new tab with the prompt', { name: p.name }); };
+      setTitle(); I18N.onChange(setTitle);
       b.onclick = () => open(p, getText());
       box.appendChild(b);
     });
@@ -358,19 +407,20 @@
   function puzzlePrompt() {
     const st = window.__app.state, p = st.puzzle; if (!p) return '';
     const lines = [];
-    lines.push('Please solve this math puzzle step by step, explaining the reasoning clearly.');
+    lines.push(tr('Please solve this math puzzle step by step, explaining the reasoning clearly.'));
     lines.push('');
-    lines.push('Problem: ' + plain(p.statement));
-    if (p.figureText) lines.push('Figure: ' + p.figureText);
+    lines.push(tr('Problem:') + ' ' + plain(p.statement));
+    if (p.figureText) lines.push(tr('Figure:') + ' ' + p.figureText);
     lines.push('');
-    lines.push('Options (zero, one or two of them can be correct):');
+    lines.push(tr('Options (zero, one or two of them can be correct):'));
     st.options.forEach((o, i) => lines.push(LET[i] + ') ' + plainTex(o.tex)));
     lines.push('');
     if ($('#ai-mine') && $('#ai-mine').checked) {
       const sel = [...st.selected].sort().map(i => LET[i]);
-      lines.push('My answer: ' + (st.none ? 'none of them' : sel.length ? sel.join(' and ') : '(not chosen yet)') + '. Tell me whether it is right and why.');
+      lines.push(tr('My answer: {answer}. Tell me whether it is right and why.', { answer: st.none ? tr('none of them') : sel.length ? sel.join((' ' + tr('and') + ' ')) : tr('(not chosen yet)') }));
     }
-    lines.push(p.aiHint || 'Please solve it in your own way, show every step, then check each option and say which ones are correct.');
+    lines.push(p.aiHint || tr('Please solve it in your own way, show every step, then check each option and say which ones are correct.'));
+    if (I18N.lang !== 'en') lines.push(tr('Please answer in English.'));
     return lines.join('\n');
   }
   const pop = $('#ai-pop'), ta = $('#ai-prompt');
@@ -383,11 +433,12 @@
   // new puzzle → close and refresh
   const card = $('#card');
   new MutationObserver(() => { if (!pop.hidden) refresh(); }).observe($('#p-title'), { childList: true });
+  I18N.onChange(() => { if (!pop.hidden) refresh(); });
 
   // ---- system-of-equations prompt (inside the System panel)
   const sysBox = document.querySelector('.sys-ai');
   if (sysBox) renderButtons(sysBox, () => {
     const eqs = [...document.querySelectorAll('.sys-row input')].map(i => i.value.trim()).filter(Boolean);
-    return 'Solve this system of equations step by step, and if possible show a second method too (substitution, elimination, matrices or a graph):\n' + eqs.map(e => '  ' + e).join('\n') + '\nExplain each step and check the solution by substituting back.';
+    return tr('Solve this system of equations step by step, and if possible show a second method too (substitution, elimination, matrices or a graph):') + '\n' + eqs.map(e => '  ' + e).join('\n') + '\n' + tr('Explain each step and check the solution by substituting back.') + (I18N.lang !== 'en' ? '\n' + tr('Please answer in English.') : '');
   });
 })();
