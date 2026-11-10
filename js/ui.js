@@ -315,8 +315,6 @@
           <button class="tb-act" data-act="axes" title="New coordinate axes">⊹ Axes</button>
           <button class="tb-act" data-act="steps" title="Step-by-step for calculus">📝 Steps</button>
         </div>
-        <div class="tb-sub">Recent</div>
-        <div class="tb-recent"></div>
       </div>
       <div class="tb-pane" data-pane="geo" hidden>
         <div class="tb-title">Draw</div>
@@ -342,12 +340,6 @@
       b.onmousedown = e => e.preventDefault();
       b.onclick = () => { const a = b.dataset.act; if (a === 'system') sys.toggle(); else if (a === 'axes') board.insertAxes(); else eq[a](); };
     });
-    const renderRecent = () => {
-      const r = el.querySelector('.tb-recent'), list = eq.recent();
-      r.innerHTML = list.length ? '' : '<p class="tb-empty">Equations you plot or place appear here.</p>';
-      list.forEach(v => { const b = document.createElement('button'); b.className = 'tb-chip'; b.title = tr('Use again: {x}', { x: v }); try { b.innerHTML = katex.renderToString(MathCore.analyze(v).latex, { throwOnError: false }); } catch (e) { b.textContent = v; } b.onclick = () => eq.set(v); r.appendChild(b); });
-    };
-    eq.onRecent = renderRecent; renderRecent();
 
     // geometry palette
     const toolsEl = el.querySelector('.tb-tools');

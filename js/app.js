@@ -150,7 +150,18 @@
       };
       g.appendChild(b);
     });
+    fitOptions();
   }
+  // two columns when every option fits, one column as soon as any option would be cut off
+  function fitOptions() {
+    const g = $('#options'); if (!g.children.length) return;
+    g.classList.remove('one');
+    const cut = [...g.querySelectorAll('.opt .tex')].some(t => t.scrollWidth > t.clientWidth + 1);
+    g.classList.toggle('one', cut);
+  }
+  let fitW = 0;
+  new ResizeObserver(en => { const w = Math.round(en[0].contentRect.width); if (w !== fitW) { fitW = w; fitOptions(); } }).observe($('#options'));
+  if (document.fonts) document.fonts.ready.then(fitOptions);
   $('#opt-none').onclick = () => { if (state.confirmed) return; state.none = !state.none; if (state.none) state.selected.clear(); updateActions(); };
 
   function updateActions() {

@@ -87,15 +87,21 @@
   let items = [], shown = 0;
   function fill() {
     const next = items.slice(shown, shown + BATCH);
-    next.forEach(e => grid.appendChild(card(e)));
+    // size each card right away: an unsized masonry card is only 4px tall and would keep the sentinel in view
+    next.forEach(e => { const a = card(e); grid.appendChild(a); fit(a); });
     shown += next.length;
     const more = shown < items.length;
     $('#sentinel').textContent = more ? tr('Loading more…') : '';
     return more;
   }
-  const sentinelNear = () => $('#sentinel').getBoundingClientRect().top < innerHeight + 700;
-  const topUp = () => { if (fill() && sentinelNear()) requestAnimationFrame(topUp); };
-  new IntersectionObserver(entries => { if (entries.some(e => e.isIntersecting)) topUp(); }, { rootMargin: '700px' }).observe($('#sentinel'));
+  // one batch at a time: another is added only while the sentinel is still within ~1 screen of the bottom
+  const sentinelNear = () => $('#sentinel').getBoundingClientRect().top < innerHeight + 400;
+  let busy = false;
+  const topUp = () => {
+    if (busy) return; busy = true;
+    requestAnimationFrame(() => { busy = false; if (fill() && sentinelNear()) setTimeout(topUp, 60); });
+  };
+  new IntersectionObserver(entries => { if (entries.some(e => e.isIntersecting)) topUp(); }, { rootMargin: '400px' }).observe($('#sentinel'));
 
   // mix categories when browsing everything (round-robin), best matches first when searching
   function roundRobin(list) {
@@ -119,7 +125,7 @@
     $('#lcount').textContent = cat ? tr('{count} in {cat}', { count: cnt, cat: tr(cat.name) }) : cnt;
     $('#lempty').hidden = items.length > 0;
     const url = new URL(location.href); catFilter ? url.searchParams.set('cat', catFilter) : url.searchParams.delete('cat'); history.replaceState(null, '', url);
-    window.scrollTo(0, 0); requestAnimationFrame(topUp);
+    window.scrollTo(0, 0); topUp();
   }
 
   const inp = $('#lsearch');

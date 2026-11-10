@@ -401,5 +401,7 @@ I18N.add('es', {
 "Numbers": "Números",
 "Matrices": "Matrices",
 "Complex numbers": "Números complejos",
-"Complex": "Complejos"
+"Complex": "Complejos",
+"Combinatorics": "Combinatoria",
+"Counting": "Conteo"
 });

@@ -14,6 +14,7 @@
     { id: 'matrix', name: 'Matrices', short: 'Matrices', icon: '▦' },
     { id: 'complex', name: 'Complex numbers', short: 'Complex', icon: 'ℂ' },
     { id: 'calculus', name: 'Calculus', short: 'Calculus', icon: '∫' },
+    { id: 'combinatorics', name: 'Combinatorics', short: 'Counting', icon: '⁂' },
     { id: 'probability', name: 'Probability', short: 'Prob.', icon: '⚄' },
     { id: 'number', name: 'Number theory', short: 'Numbers', icon: 'ℕ' }
   ];

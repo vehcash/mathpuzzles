@@ -100,7 +100,8 @@ h1 { font-family: var(--serif); font-weight: 800; font-size: 26px; line-height: 
 .opts-head { display: flex; align-items: baseline; justify-content: space-between; margin: 12px 0 8px; border-top: 1px dashed var(--line); padding-top: 14px; }
 h2 { font-family: var(--serif); font-size: 18px; margin: 0; }
 .sub { font-size: 13px; color: var(--ink-soft); }
-.options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.options.one { grid-template-columns: minmax(0, 1fr); }
 .opt {
   display: flex; align-items: center; gap: 10px; text-align: left; padding: 9px 12px; min-height: 52px;
   border-radius: 11px; border: 1.5px solid var(--line); background: #fffdf8; color: var(--ink); position: relative;
@@ -581,3 +582,6 @@ html[data-lang="ja"] h1, html[data-lang="zh"] h1, html[data-lang="ja"] .pcard h3
 .chk .letter { flex: none; } .chk .v { flex: none; }
 .chk .t { max-width: calc(100% - 64px); overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
 .chk .why { flex: 1 1 100%; padding-left: 34px; font-size: 14px; line-height: 1.45; }
+
+/* the hidden attribute must win over display rules (result box, solution, popovers) */
+[hidden] { display: none !important; }

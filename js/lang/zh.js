@@ -401,5 +401,7 @@ I18N.add('zh', {
 "Numbers": "数论",
 "Matrices": "矩阵",
 "Complex numbers": "复数",
-"Complex": "复数"
+"Complex": "复数",
+"Combinatorics": "组合计数",
+"Counting": "计数"
 });

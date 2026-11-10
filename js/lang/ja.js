@@ -401,5 +401,7 @@ I18N.add('ja', {
 "Numbers": "整数",
 "Matrices": "行列",
 "Complex numbers": "複素数",
-"Complex": "複素数"
+"Complex": "複素数",
+"Combinatorics": "組合せ",
+"Counting": "場合の数"
 });
