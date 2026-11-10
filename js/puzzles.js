@@ -12,6 +12,7 @@
     { id: 'trigonometry', name: 'Trigonometry', short: 'Trig', icon: '∿' },
     { id: 'algebra', name: 'Algebra', short: 'Algebra', icon: 'x²' },
     { id: 'matrix', name: 'Matrices', short: 'Matrices', icon: '▦' },
+    { id: 'complex', name: 'Complex numbers', short: 'Complex', icon: 'ℂ' },
     { id: 'calculus', name: 'Calculus', short: 'Calculus', icon: '∫' },
     { id: 'probability', name: 'Probability', short: 'Prob.', icon: '⚄' },
     { id: 'number', name: 'Number theory', short: 'Numbers', icon: 'ℕ' }
@@ -91,7 +92,15 @@
   function grid(F, x0, y0, x1, y1) { for (let x = x0; x <= x1; x++) F.seg([x, y0], [x, y1], 'gridl'); for (let y = y0; y <= y1; y++) F.seg([x0, y], [x1, y], 'gridl'); }
   /** arrow from a to b */
   function arrow(F, a, b, cls = 'vec', layer = 'base') { F.arrowDefs(); const e = F.seg(a, b, cls, layer); e.setAttribute('marker-end', 'url(#arrowhead)'); return e; }
-  const kit = { Figure, unit, mid, lerp, matrix, grid, arrow, S2: Math.SQRT2, S3: Math.sqrt(3) };
+  /** complex plane: grid, axes and Re/Im labels over [x0, x1] × [y0, y1]; returns T(z) mapping a point [re, im] to figure units */
+  function argand(F, x0, x1, y0, y1, opts = {}) {
+    const T = ([x, y]) => [x - x0, y - y0];
+    if (opts.grid !== false) grid(F, 0, 0, x1 - x0, y1 - y0);
+    F.seg(T([x0, 0]), T([x1, 0]), 'axis'); F.seg(T([0, y0]), T([0, y1]), 'axis');
+    F.text(T([x1, 0]), 'Re', 'tick', -10, 12); F.text(T([0, y1]), 'Im', 'tick', 14, 8);
+    return T;
+  }
+  const kit = { Figure, unit, mid, lerp, matrix, grid, arrow, argand, S2: Math.SQRT2, S3: Math.sqrt(3) };
 
   // ------- registry and loading -------
   const BASE = (() => { const s = document.currentScript && document.currentScript.src; return s ? s.replace(/js\/puzzles\.js(\?.*)?$/, 'puzzles/') : 'puzzles/'; })();

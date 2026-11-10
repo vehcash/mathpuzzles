@@ -10,6 +10,7 @@
 .pcard[data-cat="trigonometry"], .lchip[data-cat="trigonometry"] { --cat: #7b4fa0; --cat-bg: #efe6f6; }
 .pcard[data-cat="algebra"], .lchip[data-cat="algebra"] { --cat: #2e8a57; --cat-bg: #e3f3e8; }
 .pcard[data-cat="matrix"], .lchip[data-cat="matrix"] { --cat: #1d7f86; --cat-bg: #def2f3; }
+.pcard[data-cat="complex"], .lchip[data-cat="complex"] { --cat: #a0436b; --cat-bg: #f7e4ec; }
 .pcard[data-cat="calculus"], .lchip[data-cat="calculus"] { --cat: #c4542f; --cat-bg: #fbe8e1; }
 .pcard[data-cat="probability"], .lchip[data-cat="probability"] { --cat: #b07f00; --cat-bg: #fbf1d6; }
 .pcard[data-cat="number"], .lchip[data-cat="number"] { --cat: #3d5a9e; --cat-bg: #e5eaf7; }

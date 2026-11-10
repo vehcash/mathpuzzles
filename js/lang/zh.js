@@ -318,6 +318,7 @@ I18N.add('zh', {
 "on": "在",
 "or": "或",
 "paste": "粘贴",
+"plane": "平面",
 "point {name}": "点 {name}",
 "segment": "线段",
 "sides": "边",
@@ -398,5 +399,7 @@ I18N.add('zh', {
 "Trig": "三角",
 "Prob.": "概率",
 "Numbers": "数论",
-"Matrices": "矩阵"
+"Matrices": "矩阵",
+"Complex numbers": "复数",
+"Complex": "复数"
 });

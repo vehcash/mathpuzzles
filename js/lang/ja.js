@@ -318,6 +318,7 @@ I18N.add('ja', {
 "on": "上",
 "or": "または",
 "paste": "貼り付け",
+"plane": "平面",
 "point {name}": "点 {name}",
 "segment": "線分",
 "sides": "辺",
@@ -398,5 +399,7 @@ I18N.add('ja', {
 "Trig": "三角比",
 "Prob.": "確率",
 "Numbers": "整数",
-"Matrices": "行列"
+"Matrices": "行列",
+"Complex numbers": "複素数",
+"Complex": "複素数"
 });

@@ -318,6 +318,7 @@ I18N.add('fr', {
 "on": "sur",
 "or": "ou",
 "paste": "coller",
+"plane": "plan",
 "point {name}": "point {name}",
 "segment": "segment",
 "sides": "côtés",
@@ -398,5 +399,7 @@ I18N.add('fr', {
 "Trig": "Trigo",
 "Prob.": "Proba",
 "Numbers": "Arithm.",
-"Matrices": "Matrices"
+"Matrices": "Matrices",
+"Complex numbers": "Nombres complexes",
+"Complex": "Complexes"
 });

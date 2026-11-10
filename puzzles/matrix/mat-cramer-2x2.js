@@ -47,9 +47,9 @@
       F.line1 = F.seg(T([-2, L1(-2)]), T([5, L1(5)]), 'graph');
       F.line2 = F.seg(T([-2, L2(-2)]), T([3, L2(3)]), 'graph');
       F.line2.style.stroke = '#3b8fbb';
-      F.text(T([4.2, L1(4.2)]), '2x + 3y = 8', 'len it small', 0, -14);
+      F.text(T([3.6, L1(3.6)]), '2x + 3y = 8', 'len it small', 22, -16);
       F.text(T([2.6, L2(2.6)]), 'x − y = −1', 'len it small', -52, -4);
-      matrix(F, [X1 - X0 + 0.55, 3.2], [['2', '3'], ['1', '−1']], { cw: 0.85, ch: 0.62, cls: 'small' });
+      matrix(F, [X1 - X0 + 0.45, 3.4], [['2', '3'], ['1', '−1']], { cw: 0.95, ch: 0.72 });
       return F;
     },
     options: [

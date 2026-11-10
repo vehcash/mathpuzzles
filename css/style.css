@@ -574,3 +574,5 @@ html[data-lang="ja"] h1, html[data-lang="zh"] h1, html[data-lang="ja"] .pcard h3
 .gridl { stroke: rgba(30,40,35,.12); stroke-width: 1; }
 .shear { fill: rgba(59,143,187,.07); stroke: var(--ink-soft); stroke-width: 1.4; stroke-dasharray: 5 4; stroke-linejoin: round; }
 .shear-2 { stroke: var(--ink); stroke-dasharray: none; stroke-width: 1.8; }
+/* labels in figures get a paper-coloured halo so they stay readable over lines and grids */
+.lbl.len, .lbl.pt { paint-order: stroke fill; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
