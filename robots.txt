@@ -1,0 +1,9 @@
+# dailymathpuzzle.com
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /data/
+Disallow: /daily-admin.html
+Disallow: /tools/
+
+Sitemap: https://dailymathpuzzle.com/sitemap.xml

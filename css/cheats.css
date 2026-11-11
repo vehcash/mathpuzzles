@@ -131,3 +131,22 @@ html[data-lang="ja"] .cs-name, html[data-lang="zh"] .cs-name { letter-spacing: .
 .cs-tbl.tight { font-size: 13.5px; }
 .cs-tbl.tight th, .cs-tbl.tight td { padding: 5px 3px; }
 .cs-tbl .cs-cell { white-space: nowrap; }
+
+/* small figure under a single formula, and the worked-example box */
+.cf.mini { margin: 6px 0 2px; padding: 5px 4px 2px; }
+.cf.mini svg { max-height: 150px; }
+.cf .tall { max-height: 320px; }
+.cs-ex { font-size: 13px; line-height: 1.45; color: var(--ink); background: var(--cbg); border-radius: 8px; padding: 5px 9px; margin-top: 5px; }
+.cs-ex b { font: 700 10.5px var(--sans); letter-spacing: 1px; text-transform: uppercase; color: var(--c); margin-right: 3px; }
+html[data-lang="ja"] .cs-ex b, html[data-lang="zh"] .cs-ex b { letter-spacing: .3px; font-size: 11.5px; }
+.cs-ex .katex { font-size: 1em; }
+.cf tspan.a { fill: var(--c); }
+.cf tspan.b { fill: #c4542f; }
+.cf .bx { fill: #fffdf6; stroke: var(--ink-soft); stroke-width: 1.2; }
+.cf .pill { fill: var(--c); fill-opacity: .13; stroke: var(--c); stroke-width: 1.4; }
+.cf .bar { fill: var(--c); fill-opacity: .16; stroke: var(--c); stroke-width: 1; stroke-opacity: .7; }
+.cf .bar2 { fill: #c4542f; fill-opacity: .1; stroke: #c4542f; stroke-width: 1.2; }
+.cf .grid { stroke: var(--line); stroke-width: 1; fill: none; }
+.cf .seg { stroke: var(--ink-soft); stroke-width: 1.3; stroke-linecap: round; }
+.cf .arw { stroke: var(--c); stroke-width: 1.4; fill: none; }
+.cf .arw2 { stroke: #c4542f; stroke-width: 1.4; fill: none; }

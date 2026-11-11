@@ -1,0 +1,4 @@
+# only daily.php is meant to be called from the web
+<Files "config.php">
+  Require all denied
+</Files>

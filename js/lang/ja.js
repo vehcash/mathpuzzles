@@ -1,5 +1,13 @@
 /* ja — interface text. Keys are the English text. Puzzle text lives inside each puzzle file (puzzles/<category>/<id>.js). */
 I18N.add('ja', {
+"Math cheat sheets": "数学の公式集",
+"★ Puzzle of the day": "★ 今日の問題",
+"Past daily puzzles": "これまでの今日の問題",
+"★ Puzzle of the day · {date}": "★ 今日の問題 · {date}",
+"★ Daily puzzle · {date}": "★ その日の問題 · {date}",
+"Today’s puzzle: {cat}": "今日の問題：{cat}",
+"Today": "今日",
+"No daily puzzles yet.": "まだ今日の問題はありません。",
 "and": "と",
 "(learned from similar drawings)": "（似た描画から学習）",
 "(not chosen yet)": "（未選択）",

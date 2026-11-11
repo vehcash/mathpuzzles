@@ -1,10 +1,28 @@
-# Mathpuzzles — math puzzles on a smart blackboard
+# Daily Math Puzzle (dailymathpuzzle.com) — math puzzles on a smart blackboard
 
 Open `index.html` in Chrome or Edge (double-click works; no server or internet needed — KaTeX is bundled in `lib/`).
 
 ## Pages
-- `index.html` — the puzzle + smart blackboard. `index.html?p=<puzzle id>` opens a specific puzzle; `?cat=algebra` a random one from a category.
+- `index.html` — the puzzle + smart blackboard. Opens today's puzzle (or a random one when there is no server); `index.html?p=<puzzle id>` opens a specific puzzle; `?cat=algebra` a random one from a category; `?daily` / `?daily=<date>` a daily puzzle.
+- `daily-admin.html` — choose and schedule the puzzle of the day (see below; needs the admin key).
 - `list.html` — all puzzles as cards (category badge on each), quick search, category filters, loads more as you scroll. Linked from the board's **☷ All puzzles** button.
+
+## Search engines
+- **`node tools/build-index.js`** also runs `tools/build-pages.js`, which writes:
+  - `puzzle/<id>.html` — a real page per puzzle (the address used online, also by the list page): `index.html` with that puzzle's title, description, statement, canonical link, `hreflang` links for the five languages, Open Graph/Twitter card and schema.org data (Quiz + breadcrumbs) already in the HTML. The scripts then load the puzzle as usual. **Re-run after editing `index.html`**, which is the template (its `<!-- seo:start -->…<!-- seo:end -->` block is replaced per puzzle).
+  - `sitemap.xml` — home, list, cheat sheets (and each topic) and every puzzle page, each language (`?lang=fr` …) with its alternates.
+- `robots.txt` points to the sitemap and keeps `api/`, `data/`, `tools/` and the admin page out of search results.
+- While you browse, the page title, description and canonical link follow the puzzle and language shown; today's puzzle stays on the clean address `/`.
+- `og-image.png` (1200×630) is the picture shown when a link is shared.
+- After going live: add the site to Google Search Console and Bing Webmaster Tools and submit `https://dailymathpuzzle.com/sitemap.xml`.
+
+## Puzzle of the day (dailymathpuzzle.com)
+Needs PHP 7.4+ on the server (any Apache shared host). Opened from disk, the site works as before without it (a random puzzle on the home page).
+- `api/daily.php` picks **one puzzle per day** (days start at midnight Europe/Madrid, `DAILY_TZ`), the same for every visitor, and saves it in `data/daily-history.json`. The first request of the day makes the choice.
+- **A puzzle is never the daily puzzle twice.** Categories take turns (`CATEGORY_ORDER`); a category with no unused puzzles left is skipped. When every puzzle has been used, the site stops showing a daily puzzle until you add more.
+- The home page opens today's puzzle; `/?daily` links to it and `index.html?daily=2026-11-11` to a past day. The **★ Puzzle of the day** button opens it, and its **▾** menu lists all past daily puzzles. The card shows a ★ badge with the date.
+- **Choose the daily puzzle:** `daily-admin.html`. Set a key first: edit `api/config.php` **on the server** (`ADMIN_KEY`, e.g. `php -r "echo bin2hex(random_bytes(16));"`; empty = admin off). There you can replace today's puzzle, schedule puzzles for future dates (a scheduled day wins over the automatic choice) and see how many puzzles each category has left.
+- Deploying: upload everything **except `data/`** (it holds the history, so overwriting it would allow repeats). `data/` is created on the first request and protected by its own `.htaccess`; PHP must be able to write to the site folder (or create `data/` yourself, writable by PHP).
 
 ## Puzzles — one file each
 ```

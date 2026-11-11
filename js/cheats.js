@@ -2,7 +2,8 @@
    Data: cheats/<topic>.js call Cheats.topic({ id, icon, color, bg, cat, name, blurb, sections: [...] }).
    Translatable text is one string 'English|Français|Español|日本語|中文' (missing parts fall back to English).
    A section is { t: title, fig?: figure name (js/cheat-figs.js), items: [...] };
-   an item is [name, tex, note?] or { tbl: [[tex, …], …] } for a small table (first row is the header). */
+   an item is [name, tex, note?, { fig?, ex? }?] or { tbl: [[tex, …], …] } for a small table (first row is the header);
+   the optional last object adds a small figure under the formula (fig) and a worked example box (ex, translated text with $tex$). */
 (function () {
   'use strict';
   const $ = (s, r = document) => r.querySelector(s);
@@ -20,6 +21,8 @@
     .replace(/\\pi/g, ' pi ').replace(/\\infty/g, ' infinity ').replace(/\\[a-zA-Z]+/g, ' ').replace(/[{}^_\\]/g, ' ');
 
   // a table cell is a formula, or translated text when it starts with '~' ('~en|fr|es|ja|zh')
+  const EX = 'Example|Exemple|Ejemplo|例|例';
+  const fig = (name, cls) => name && CheatFigs[name] ? `<figure class="cf${cls ? ' ' + cls : ''}">${CheatFigs[name](I18N.lang)}</figure>` : '';
   const cell = c => String(c).startsWith('~') ? '<span class="cs-cell">' + inline(pick(String(c).slice(1))) + '</span>' : K(c, true);
   const topics = Cheats.topics;
   const main = $('#cs-main'), side = $('#cs-topics');
@@ -36,7 +39,7 @@
     tp.sections.forEach(s => {
       const card = document.createElement('article'); card.className = 'cs-card' + (s.wide ? ' wide' : '');
       const title = pick(s.t);
-      card.innerHTML = `<h2>${esc(title)}</h2>` + (s.fig && CheatFigs[s.fig] ? `<figure class="cf">${CheatFigs[s.fig](I18N.lang)}</figure>` : '');
+      card.innerHTML = `<h2>${esc(title)}</h2>` + [].concat(s.fig || []).map(f => fig(f)).join('');
       card._head = norm(en(s.t) + ' ' + title + ' ' + en(tp.name) + ' ' + pick(tp.name));
       s.items.forEach(it => {
         const el = document.createElement('div');
@@ -47,12 +50,14 @@
           el.dataset.tex = it.tbl.map(r => r.map(c => String(c).startsWith('~') ? '\\text{' + pick(String(c).slice(1)) + '}' : c).join(' & ')).join(' \\\\ ');
           text = norm((it.k || '') + ' ' + it.tbl.flat().join(' ').replace(/[~|]/g, ' ') + ' ' + texWords(el.dataset.tex));
         } else {
-          const [name, texs, note] = it;
+          const [name, texs, note, opt] = it;
+          const o = opt && typeof opt === 'object' && !Array.isArray(opt) ? opt : {};
           const tex = Array.isArray(texs) ? (texs[LANGS.indexOf(I18N.lang)] || texs[0]) : texs;   // a formula with words may come in five versions
           el.className = 'cs-item';
-          el.innerHTML = (name ? `<div class="cs-name">${esc(pick(name))}</div>` : '') + `<div class="cs-tex" title="${esc(tr('Click a formula to copy its LaTeX'))}">${tex.split(/\\qquad/).map(part => '<span class="cs-part">' + K(part.trim().replace(/,$/, ''), true) + '</span>').join('')}</div>` + (note ? `<div class="cs-note">${inline(pick(note))}</div>` : '');
+          el.innerHTML = (name ? `<div class="cs-name">${esc(pick(name))}</div>` : '') + `<div class="cs-tex" title="${esc(tr('Click a formula to copy its LaTeX'))}">${tex.split(/\\qquad/).map(part => '<span class="cs-part">' + K(part.trim().replace(/,$/, ''), true) + '</span>').join('')}</div>` + (note ? `<div class="cs-note">${inline(pick(note))}</div>` : '') +
+            fig(o.fig, 'mini') + (o.ex ? `<div class="cs-ex"><b>${esc(pick(EX))}</b> ${inline(pick(o.ex))}</div>` : '');
           el.dataset.tex = tex;
-          text = norm(String(name || '').replace(/\|/g, ' ') + ' ' + String(note || '').replace(/\|/g, ' ') + ' ' + texWords(Array.isArray(texs) ? texs.join(' ') : tex));
+          text = norm(String(name || '').replace(/\|/g, ' ') + ' ' + String(note || '').replace(/\|/g, ' ') + ' ' + String(o.ex || '').replace(/\|/g, ' ') + ' ' + texWords(Array.isArray(texs) ? texs.join(' ') : tex));
         }
         card.appendChild(el);
         items.push({ el, card, topic: tp.id, text });
@@ -111,6 +116,11 @@
     const empty = $('#cs-empty'); empty.hidden = shown > 0;
     if (!shown) empty.textContent = tr('No formula matches “{q}”.', { q: q.value.trim() });
     side.querySelectorAll('.cs-tp').forEach(b => b.classList.toggle('on', !words.length && b.dataset.topic === current));
+    // a title and description per topic, for search engines and browser tabs
+    const tp = topics.find(t => t.id === current);
+    document.title = (tp ? pick(tp.name) + ' — ' : '') + tr('Math cheat sheets') + ' | Daily Math Puzzle';
+    const md = document.head.querySelector('meta[name="description"]'); if (md && tp) md.setAttribute('content', esc(pick(tp.blurb)).replace(/\$[^$]*\$/g, '').slice(0, 158));
+    const cl = document.head.querySelector('link[rel="canonical"]'); if (cl) { const lang = new URLSearchParams(location.search).get('lang'); cl.setAttribute('href', 'https://dailymathpuzzle.com/cheatsheets.html' + (tp ? '?t=' + tp.id : '') + (lang && lang !== 'en' ? (tp ? '&' : '?') + 'lang=' + lang : '')); }
     document.body.classList.toggle('searching', !!words.length);
     try { const url = new URL(location.href); current !== 'all' ? url.searchParams.set('t', current) : url.searchParams.delete('t'); q.value.trim() ? url.searchParams.set('q', q.value.trim()) : url.searchParams.delete('q'); history.replaceState(null, '', url); } catch (e) { /* file:// */ }
   }

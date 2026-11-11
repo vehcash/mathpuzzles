@@ -1,5 +1,13 @@
 /* fr — interface text. Keys are the English text. Puzzle text lives inside each puzzle file (puzzles/<category>/<id>.js). */
 I18N.add('fr', {
+"Math cheat sheets": "Fiches de maths",
+"★ Puzzle of the day": "★ Problème du jour",
+"Past daily puzzles": "Problèmes du jour précédents",
+"★ Puzzle of the day · {date}": "★ Problème du jour · {date}",
+"★ Daily puzzle · {date}": "★ Problème du jour · {date}",
+"Today’s puzzle: {cat}": "Problème du jour : {cat}",
+"Today": "Aujourd’hui",
+"No daily puzzles yet.": "Pas encore de problème du jour.",
 "and": "et",
 "(learned from similar drawings)": "(appris à partir de dessins similaires)",
 "(not chosen yet)": "(pas encore choisi)",

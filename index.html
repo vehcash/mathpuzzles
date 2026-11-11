@@ -3,7 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mathpuzzles — math puzzles on a smart blackboard</title>
+<!-- seo:start -->
+<title>Daily Math Puzzle — a new math puzzle every day, solved step by step</title>
+<meta name="description" content="A free math puzzle every day: geometry, algebra, trigonometry, calculus, probability and more. Pick the true statements, sketch on a smart blackboard and follow the step-by-step solution.">
+<link rel="canonical" href="https://dailymathpuzzle.com/">
+<link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/">
+<link rel="alternate" hreflang="fr" href="https://dailymathpuzzle.com/?lang=fr">
+<link rel="alternate" hreflang="es" href="https://dailymathpuzzle.com/?lang=es">
+<link rel="alternate" hreflang="ja" href="https://dailymathpuzzle.com/?lang=ja">
+<link rel="alternate" hreflang="zh-Hans" href="https://dailymathpuzzle.com/?lang=zh">
+<link rel="alternate" hreflang="x-default" href="https://dailymathpuzzle.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Daily Math Puzzle">
+<meta property="og:title" content="Daily Math Puzzle — a new math puzzle every day, solved step by step">
+<meta property="og:description" content="A free math puzzle every day: geometry, algebra, trigonometry, calculus, probability and more. Pick the true statements, sketch on a smart blackboard and follow the step-by-step solution.">
+<meta property="og:url" content="https://dailymathpuzzle.com/">
+<meta property="og:image" content="https://dailymathpuzzle.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://dailymathpuzzle.com/#site", "name": "Daily Math Puzzle", "alternateName": "dailymathpuzzle.com", "url": "https://dailymathpuzzle.com/", "inLanguage": ["en", "fr", "es", "ja", "zh"], "description": "A new free math puzzle every day, with a smart blackboard and step-by-step solutions."}, {"@type": "WebApplication", "name": "Daily Math Puzzle", "url": "https://dailymathpuzzle.com/", "applicationCategory": "EducationalApplication", "operatingSystem": "Any (web browser)", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "inLanguage": ["en", "fr", "es", "ja", "zh"]}]}</script>
+<!-- seo:end -->
+<meta name="theme-color" content="#17201c">
 <link rel="stylesheet" href="lib/fonts.css">
 <link rel="stylesheet" href="lib/katex/katex.min.css">
 <link rel="stylesheet" href="css/style.css">
@@ -11,7 +30,7 @@
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="mark">∴</span><div><b>Mathpuzzles</b><small>math puzzles on a smart blackboard</small></div></div>
+  <a class="brand" href="index.html" title="Daily Math Puzzle — today’s puzzle"><span class="mark">∴</span><div><b>Daily Math Puzzle</b><small>math puzzles on a smart blackboard</small></div></a>
   <nav id="cats" class="cats" aria-label="Categories"></nav>
   <div class="search" role="search">
     <span class="s-ico" aria-hidden="true">⌕</span>
@@ -21,14 +40,16 @@
   </div>
   <a href="list.html" class="btn ghost list-link" title="Browse all puzzles">☷ All puzzles</a>
   <a href="cheatsheets.html" target="_blank" rel="noopener" class="btn ghost list-link" title="Formula cheat sheets (opens in a new tab)">∑ Cheat sheets</a>
+  <div id="daily" class="daily" hidden><button id="btn-daily" class="btn daily-btn">★ Puzzle of the day</button><button id="btn-daily-more" class="btn daily-btn more" title="Past daily puzzles" aria-label="Past daily puzzles" aria-haspopup="true" aria-expanded="false">▾</button><div id="daily-pop" class="daily-pop" data-no-i18n hidden></div></div>
   <button id="btn-random" class="btn ghost" title="Another random puzzle from this group">⟳ Random puzzle</button>
   <div class="hdr-right"><span id="lang-host"></span><button type="button" class="cookie-link tool svg" data-cookie-settings title="Cookie settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 1 0 9.4 10.9 3 3 0 0 1-3.6-3.3 3 3 0 0 1-3.7-3.7A3 3 0 0 1 12 2.5Z"/><circle cx="8.5" cy="10" r="1" class="dot"/><circle cx="9.5" cy="15.5" r="1" class="dot"/><circle cx="14.5" cy="14.5" r="1" class="dot"/></svg><span>Cookies</span></button></div>
 </header>
 
+<noscript><div class="noscript"><h1>Daily Math Puzzle</h1><p>A new math puzzle every day — geometry, trigonometry, algebra, matrices, complex numbers, calculus, combinatorics, probability and number theory — with a smart blackboard and step-by-step solutions. Please turn on JavaScript to solve the puzzles. You can also <a href="list.html">browse all puzzles</a> or read the <a href="cheatsheets.html">math cheat sheets</a>.</p></div></noscript>
 <main class="layout">
   <!-- ============ puzzle column ============ -->
   <section class="paper" id="card">
-    <div class="meta"><span id="p-cat" class="chip"></span><span id="p-diff" class="diff" title="Difficulty"></span></div>
+    <div class="meta"><span id="p-cat" class="chip"></span><span id="p-daily" class="daily-badge" data-no-i18n hidden></span><span id="p-diff" class="diff" title="Difficulty"></span></div>
     <h1 id="p-title" data-no-i18n></h1>
     <p id="p-statement" data-no-i18n class="statement"></p>
     <figure class="figure"><svg id="p-figure" role="img" aria-label="Puzzle figure"></svg></figure>

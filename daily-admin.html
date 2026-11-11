@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Puzzle of the day — admin · dailymathpuzzle.com</title>
+<link rel="stylesheet" href="lib/fonts.css">
+<style>
+  :root { --ink: #1f2a26; --soft: #5b6a64; --paper: #f7f3e8; --line: #ddd5c0; --acc: #2f6f8f; --red: #c4542f; --y: #f3d36b; --sans: 'Source Sans 3', system-ui, sans-serif; --serif: 'Fraunces', Georgia, serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #17201c; color: var(--ink); font: 15px/1.45 var(--sans); }
+  header { display: flex; align-items: center; gap: 14px; padding: 14px 22px; color: #f4f1e8; }
+  header b { font: 800 20px var(--serif); } header small { opacity: .6; } header a { color: var(--y); margin-left: auto; font-weight: 700; text-decoration: none; }
+  main { max-width: 1080px; margin: 0 auto; padding: 0 18px 60px; display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 18px; align-items: start; }
+  section { background: var(--paper); border-radius: 14px; padding: 16px 18px; box-shadow: 0 12px 30px rgba(0,0,0,.3); }
+  section.wide { grid-column: 1 / -1; }
+  h2 { font: 800 18px var(--serif); margin: 0 0 10px; }
+  label { display: block; font: 700 11px var(--sans); letter-spacing: 1.2px; text-transform: uppercase; color: var(--soft); margin: 10px 0 4px; }
+  input, select, button { font: inherit; }
+  input, select { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: #fffdf6; }
+  button { border: 0; border-radius: 9px; padding: 8px 14px; font-weight: 700; cursor: pointer; background: var(--ink); color: #fff; }
+  button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  button.small { padding: 4px 10px; font-size: 13px; }
+  button:disabled { opacity: .45; cursor: default; }
+  .row { display: flex; gap: 8px; align-items: end; } .row > * { flex: 1; } .row > button { flex: none; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 6px 6px; border-bottom: 1px dashed var(--line); vertical-align: top; }
+  th { font: 700 11px var(--sans); letter-spacing: 1px; text-transform: uppercase; color: var(--soft); }
+  td.id { font-family: ui-monospace, monospace; font-size: 12.5px; color: var(--soft); }
+  .today { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 15px; }
+  .today b { color: var(--soft); font-weight: 600; }
+  .msg { min-height: 1.4em; margin-top: 8px; font-weight: 600; } .msg.err { color: var(--red); } .msg.ok { color: #2e7d4f; }
+  .cats { display: flex; flex-wrap: wrap; gap: 6px; } .cats span { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: 13px; } .cats span.low { border-color: var(--red); color: var(--red); }
+  .scroll { max-height: 360px; overflow: auto; }
+  a.pv { color: var(--acc); font-weight: 700; text-decoration: none; }
+  #login { max-width: 420px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header><b>Puzzle of the day</b><small>admin · dailymathpuzzle.com</small><a href="index.html">Open the site →</a></header>
+<main>
+  <section id="login">
+    <h2>Sign in</h2>
+    <p>Enter the admin key from <code>api/config.php</code>. It is kept only in this browser tab.</p>
+    <div class="row"><input id="key" type="password" autocomplete="current-password" placeholder="Admin key"><button id="go">Open</button></div>
+    <div id="login-msg" class="msg err"></div>
+  </section>
+
+  <section id="today-box" hidden>
+    <h2>Today</h2>
+    <div id="today" class="today"></div>
+    <label for="today-pick">Change today’s puzzle</label>
+    <div class="row"><select id="today-pick"></select><button id="today-set">Set</button></div>
+    <div id="today-msg" class="msg"></div>
+  </section>
+
+  <section id="plan-box" hidden>
+    <h2>Schedule a day</h2>
+    <div class="row">
+      <div><label for="plan-date">Date</label><input id="plan-date" type="date"></div>
+      <div><label for="plan-cat">Category</label><select id="plan-cat"></select></div>
+    </div>
+    <label for="plan-pick">Puzzle (never shown, not scheduled yet)</label>
+    <div class="row"><select id="plan-pick"></select><button id="plan-set">Schedule</button></div>
+    <div id="plan-msg" class="msg"></div>
+    <label>Scheduled</label>
+    <table><thead><tr><th>Date</th><th>Puzzle</th><th></th></tr></thead><tbody id="plan-list"></tbody></table>
+  </section>
+
+  <section id="stock-box" hidden>
+    <h2>Puzzles left</h2>
+    <p id="stock-total"></p>
+    <div id="stock" class="cats"></div>
+    <p style="color:var(--soft);font-size:13.5px">Each puzzle is the daily puzzle at most once. When a category runs out it is skipped; when all run out the site stops showing a daily puzzle until you add more (then run <code>node tools/build-index.js</code> and upload).</p>
+  </section>
+
+  <section id="hist-box" class="wide" hidden>
+    <h2>History</h2>
+    <div class="scroll"><table><thead><tr><th>#</th><th>Date</th><th>Category</th><th>Puzzle</th><th></th></tr></thead><tbody id="hist"></tbody></table></div>
+  </section>
+</main>
+
+<script>window.PuzzleBank = { setSearch(lang, map) { window.TITLES = map; } };</script>
+<script src="puzzles/search/en.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const NAMES = { geometry: 'Geometry', trigonometry: 'Trigonometry', algebra: 'Algebra', matrix: 'Matrices', complex: 'Complex numbers', calculus: 'Calculus', combinatorics: 'Combinatorics', probability: 'Probability', number: 'Number theory' };
+  const catName = c => NAMES[c] || c;
+  const title = id => (window.TITLES && TITLES[id] && TITLES[id].t) || id;
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const ERR = { 'bad-key': 'Wrong key.', 'admin-disabled': 'The admin page is off: set ADMIN_KEY in api/config.php.', 'already-shown': 'That puzzle was already the daily puzzle on {date}.', 'already-planned': 'That puzzle is already scheduled for {date}.', 'past-day': 'Past days cannot be changed.', 'bad-date': 'Pick a valid date.', 'unknown-puzzle': 'Unknown puzzle.' };
+  const errText = r => (ERR[r && r.error] || ('Error: ' + ((r && r.error) || 'no answer from the server'))).replace('{date}', r && r.date || '');
+  let key = sessionStorage.getItem('daily-admin-key') || '', data = null;
+
+  const api = (method, body) => fetch('api/daily.php' + (method === 'GET' ? '?admin=1' : ''), {
+    method, cache: 'no-store', headers: Object.assign({ 'X-Admin-Key': key }, body ? { 'Content-Type': 'application/json' } : {}), body: body ? JSON.stringify(body) : undefined
+  }).then(r => r.json().catch(() => ({ error: 'http-' + r.status })).then(j => (r.ok ? j : Promise.reject(j))));
+
+  const opts = list => list.length ? list.map(p => `<option value="${esc(p.id)}">${esc(catName(p.cat))} · ${esc(title(p.id))}${p.diff ? ' · ' + '●'.repeat(p.diff) : ''}</option>`).join('') : '<option value="">— none left —</option>';
+  const free = () => data.puzzles.filter(p => !p.shown && !p.planned);
+
+  function render() {
+    ['#login'].forEach(s => $(s).hidden = true);
+    ['#today-box', '#plan-box', '#stock-box', '#hist-box'].forEach(s => $(s).hidden = false);
+    const t = data.days.find(d => d.date === data.today);
+    $('#today').innerHTML = `<b>Date</b><span>${data.today} (${esc(data.tz)})</span>` + (t
+      ? `<b>Category</b><span>${esc(catName(t.cat))}</span><b>Puzzle</b><span>${esc(title(t.id))} <a class="pv" target="_blank" href="index.html?p=${encodeURIComponent(t.id)}">preview</a></span>`
+      : `<b>Puzzle</b><span>not chosen yet — the first visitor today gets ${data.plan.some(p => p.date === data.today) ? 'the scheduled one' : 'an automatic pick'}</span>`);
+    $('#today-pick').innerHTML = opts(free());
+    const cats = [...new Set(data.order.concat(data.puzzles.map(p => p.cat)))];
+    const keep = $('#plan-cat').value;
+    $('#plan-cat').innerHTML = '<option value="">All categories</option>' + cats.map(c => `<option value="${c}">${esc(catName(c))}</option>`).join('');
+    $('#plan-cat').value = keep;
+    fillPlanPick();
+    $('#plan-date').min = data.today;
+    if (!$('#plan-date').value) { const d = new Date(data.today + 'T12:00:00'); d.setDate(d.getDate() + 1); $('#plan-date').value = d.toISOString().slice(0, 10); }
+    $('#plan-list').innerHTML = data.plan.length ? data.plan.map(p => {
+      const e = data.puzzles.find(x => x.id === p.id);
+      return `<tr><td>${p.date}</td><td>${esc(catName(e ? e.cat : '?'))} · ${esc(title(p.id))} <a class="pv" target="_blank" href="index.html?p=${encodeURIComponent(p.id)}">preview</a></td><td><button class="small ghost" data-unplan="${p.date}">Remove</button></td></tr>`;
+    }).join('') : '<tr><td colspan="3" style="color:var(--soft)">Nothing scheduled: days are picked automatically (categories take turns).</td></tr>';
+    const left = {}; free().forEach(p => left[p.cat] = (left[p.cat] || 0) + 1);
+    $('#stock-total').textContent = `${free().length} of ${data.puzzles.length} puzzles have never been shown or scheduled.`;
+    $('#stock').innerHTML = cats.map(c => `<span class="${(left[c] || 0) < 3 ? 'low' : ''}">${esc(catName(c))}: ${left[c] || 0}</span>`).join('');
+    $('#hist').innerHTML = data.days.length ? data.days.map(d => `<tr><td>${d.n}</td><td>${d.date}</td><td>${esc(catName(d.cat))}</td><td>${esc(title(d.id))}</td><td><a class="pv" target="_blank" href="index.html?daily=${d.date}">open</a></td></tr>`).join('') : '<tr><td colspan="5" style="color:var(--soft)">No days yet.</td></tr>';
+  }
+  function fillPlanPick() { const c = $('#plan-cat').value; $('#plan-pick').innerHTML = opts(free().filter(p => !c || p.cat === c)); }
+
+  function refresh() { return api('GET').then(j => { data = j; render(); }); }
+  function signIn() {
+    key = $('#key').value.trim() || key;
+    $('#login-msg').textContent = '';
+    refresh().then(() => sessionStorage.setItem('daily-admin-key', key), r => { sessionStorage.removeItem('daily-admin-key'); $('#login').hidden = false; $('#login-msg').textContent = errText(r); });
+  }
+  function act(body, msgEl, okText) {
+    msgEl.className = 'msg'; msgEl.textContent = '…';
+    return api('POST', body).then(() => refresh()).then(() => { msgEl.className = 'msg ok'; msgEl.textContent = okText; }, r => { msgEl.className = 'msg err'; msgEl.textContent = errText(r); });
+  }
+
+  $('#go').onclick = signIn;
+  $('#key').addEventListener('keydown', e => { if (e.key === 'Enter') signIn(); });
+  $('#plan-cat').onchange = fillPlanPick;
+  $('#today-set').onclick = () => { const id = $('#today-pick').value; if (!id) return; if (!confirm('Replace today’s puzzle for everyone? The current one goes back into the pool.')) return; act({ action: 'plan', date: data.today, id }, $('#today-msg'), 'Today’s puzzle changed.'); };
+  $('#plan-set').onclick = () => { const id = $('#plan-pick').value, date = $('#plan-date').value; if (!id || !date) return; act({ action: 'plan', date, id }, $('#plan-msg'), `Scheduled for ${date}.`); };
+  $('#plan-list').onclick = e => { const b = e.target.closest('[data-unplan]'); if (b) act({ action: 'unplan', date: b.dataset.unplan }, $('#plan-msg'), 'Removed.'); };
+  if (key) signIn();
+})();
+</script>
+</body>
+</html>

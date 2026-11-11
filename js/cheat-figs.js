@@ -6,7 +6,7 @@
   const LANGS = ['en', 'fr', 'es', 'ja', 'zh'];
   const w = (lang, s) => { const p = s.split('|'); return p[Math.max(0, LANGS.indexOf(lang))] || p[0]; };
   let uid = 0;
-  const svg = (W, H, body) => { const id = 'ah' + (++uid); return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg"><defs><marker id="${id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" class="mk"/></marker></defs>${body.replace(/ARROW/g, `url(#${id})`)}</svg>`; };
+  const svg = (W, H, body, cls) => { const id = 'ah' + (++uid); return `<svg viewBox="0 0 ${W} ${H}"${cls ? ` class="${cls}"` : ''} xmlns="http://www.w3.org/2000/svg"><defs><marker id="${id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" class="mk"/></marker></defs>${body.replace(/ARROW/g, `url(#${id})`)}</svg>`; };
   const L = (x1, y1, x2, y2, c = 'ln', extra = '') => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${c}" ${extra}/>`;
   const Pth = (d, c = 'ln') => `<path d="${d}" class="${c}"/>`;
   const T = (x, y, s, c = '') => `<text x="${x}" y="${y}"${c ? ` class="${c}"` : ''}>${s}</text>`;
@@ -15,6 +15,10 @@
   const poly = pts => pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('');
   const curve = (f, a, b, n = 80) => { const q = []; for (let k = 0; k <= n; k++) { const x = a + (b - a) * k / n; q.push([x, f(x)]); } return q; };
   const arc = (cx, cy, r, a0, a1) => { const q = []; for (let k = 0; k <= 24; k++) { const t = (a0 + (a1 - a0) * k / 24) * Math.PI / 180; q.push([cx + r * Math.cos(t), cy - r * Math.sin(t)]); } return poly(q); };
+  // maps maths coordinates in xr × yr onto a W × H box whose top-left corner is (x0, y0)
+  const frame = (x0, y0, W, H, xr, yr) => (x, y) => [x0 + (x - xr[0]) * W / (xr[1] - xr[0]), y0 + (yr[1] - y) * H / (yr[1] - yr[0])];
+  // y = fn(x) through P, lifting the pen where it is undefined or leaves [lo, hi]
+  const plot = (fn, a, b, P, lo = -1e9, hi = 1e9, n = 160) => { let d = '', pen = false; for (let k = 0; k <= n; k++) { const x = a + (b - a) * k / n, y = fn(x); if (!isFinite(y) || y < lo || y > hi) { pen = false; continue; } const [X, Y] = P(x, y); d += (pen ? 'L' : 'M') + X.toFixed(1) + ',' + Y.toFixed(1); pen = true; } return d; };
   const right = (x, y, dx, dy, s = 11) => Pth(`M${x + dx * s},${y}L${x + dx * s},${y + dy * s}L${x},${y + dy * s}`, 'ln');
 
   window.CheatFigs = {
@@ -234,6 +238,224 @@
       let body = '', n = 7;
       for (let r = 0; r < n; r++) { let c = 1; for (let k = 0; k <= r; k++) { body += T(150 + (k - r / 2) * 36, 16 + r * 21, String(c), r === 5 && k === 2 ? 'up hi' : (r === 4 && (k === 1 || k === 2)) ? 'up lo' : 'up'); c = c * (r - k) / (k + 1); } }
       return svg(300, 160, body + T(150, 154, 'C(5, 2) = C(4, 1) + C(4, 2) = 4 + 6', 'tl'));
+    }    ,
+    // ---------- integrals ----------
+    // four functions f (accent) with an antiderivative F (red)
+    antiders(lang) {
+      const panel = (x0, y0, xr, yr, f, F, fs, Fs, extra = () => '') => {
+        const P = frame(x0, y0, 146, 84, xr, yr), [ox, oy] = P(0, 0);
+        return `<rect x="${x0}" y="${y0}" width="146" height="84" rx="6" class="grid"/>` + L(x0, oy, x0 + 146, oy, 'ax') + L(ox, y0, ox, y0 + 84, 'ax') + extra(P) +
+          Pth(plot(f, xr[0], xr[1], P, yr[0], yr[1]), 'ac') + Pth(plot(F, xr[0], xr[1], P, yr[0], yr[1]), 'ac2') +
+          `<text x="${x0 + 73}" y="${y0 + 98}" class="lab"><tspan class="a">${fs}</tspan>  →  <tspan class="b">${Fs}</tspan></text>`;
+      };
+      return svg(310, 256,
+        panel(6, 6, [-2.2, 2.2], [-1.6, 2.4], x => x, x => x * x / 2, 'x', 'x²/2') +
+        panel(158, 6, [-3.2, 3.2], [-2.6, 2.6], x => 1 / x, x => Math.log(Math.abs(x)), '1/x', 'ln|x|') +
+        panel(6, 124, [-3.6, 3.6], [-1.5, 1.5], Math.cos, Math.sin, 'cos x', 'sin x') +
+        panel(158, 124, [-4.5, 4.5], [-2, 2], x => 1 / (1 + x * x), Math.atan, '1/(1+x²)', 'arctan x',
+          P => L(...P(-4.5, Math.PI / 2), ...P(4.5, Math.PI / 2), 'th') + L(...P(-4.5, -Math.PI / 2), ...P(4.5, -Math.PI / 2), 'th')) +
+        `<text x="70" y="248" class="tl"><tspan class="a">━ f</tspan></text><text x="155" y="248" class="tl"><tspan class="b">━ F = ∫ f dx</tspan></text><text x="250" y="248" class="tl">F′ = f</text>`, 'tall');
+    },
+    // A(x) = ∫ₐˣ f grows by the strip f(x)·dx
+    accum(lang) {
+      const f = X => 66 - 24 * Math.sin((X - 20) / 40), a = 46, x = 168, dx = 18;
+      return svg(270, 134, Pth(poly([[a, 112], ...curve(f, a, x), [x, 112]]) + 'Z', 'fl') +
+        Pth(poly([[x, 112], ...curve(f, x, x + dx, 10), [x + dx, 112]]) + 'Z', 'fl2') + Pth(poly([[x, 112], ...curve(f, x, x + dx, 10), [x + dx, 112]]), 'ac2') +
+        L(14, 112, 262, 112, 'ax') + Pth(poly(curve(f, 20, 255)), 'ac') + L(a, 112, a, f(a), 'th') +
+        T(a, 124, 'a', 'sm') + T(x, 124, 'x', 'sm') + T(x + dx + 12, 124, 'x+dx', 'sm') + T(108, 92, 'A(x)', 'sm') + T(x + dx / 2 + 26, f(x) + 26, 'f(x)', 'sm') +
+        `<text x="94" y="16" class="lab">dA = f(x) dx  ⇒  A′(x) = f(x)</text>`);
+    },
+    // odd: the two halves cancel; even: the two halves are equal
+    oddeven(lang) {
+      const half = (x0, f, odd) => {
+        const P = frame(x0, 6, 140, 80, [-3.7, 3.7], [-1.25, 1.25]), [ox, oy] = P(0, 0), q = (u, v) => curve(f, u, v, 40).map(p => P(...p));
+        return Pth(poly([P(-3, 0), ...q(-3, 0), P(0, 0)]) + 'Z', odd ? 'fl2' : 'fl') + Pth(poly([P(0, 0), ...q(0, 3), P(3, 0)]) + 'Z', 'fl') +
+          L(x0, oy, x0 + 140, oy, 'ax') + L(ox, 6, ox, 86, 'ax') + Pth(plot(f, -3.7, 3.7, P), 'ac') + L(...P(-3, -1.2), ...P(-3, 1.2), 'th') + L(...P(3, -1.2), ...P(3, 1.2), 'th') +
+          T(...P(-3, -1.35), '−a', 'sm') + T(...P(3, -1.35), 'a', 'sm') +
+          T(...P(1.5, odd ? 0.4 : 0.17), '+', 'up') + T(...P(-1.5, odd ? -0.4 : 0.17), odd ? '−' : '+', 'up');
+      };
+      return svg(300, 122, half(6, x => Math.sin(x) * 0.95, true) + half(156, x => Math.exp(-x * x / 2.2) * 1.1 - 0.05, false) +
+        `<text x="76" y="114" class="lab">${w(lang, 'odd|impaire|impar|奇関数|奇函数')}: ∫ = 0</text>` + `<text x="226" y="114" class="lab">${w(lang, 'even|paire|par|偶関数|偶函数')}: ∫ = 2∫₀ᵃ</text>`);
+    },
+    // substitution: the same area seen in x and in u = g(x)
+    subst(lang) {
+      const A = frame(6, 8, 116, 80, [0, 2.1], [0, 1]), B = frame(196, 8, 116, 80, [0, 2.6], [0, 1]);
+      const f1 = x => 2 * x * Math.exp(-x * x), f2 = u => Math.exp(-u), a = 0.4, b = 1.4;
+      const sh = (P, f, u, v) => Pth(poly([P(u, 0), ...curve(f, u, v, 40).map(p => P(...p)), P(v, 0)]) + 'Z', 'fl');
+      return svg(318, 128, sh(A, f1, a, b) + sh(B, f2, a * a, b * b) +
+        L(...A(0, 0), ...A(2.1, 0), 'ax') + L(...A(0, 0), ...A(0, 1), 'ax') + L(...B(0, 0), ...B(2.6, 0), 'ax') + L(...B(0, 0), ...B(0, 1), 'ax') +
+        Pth(plot(f1, 0, 2.1, A), 'ac') + Pth(plot(f2, 0, 2.6, B), 'ac') +
+        T(A(a, 0)[0], 98, 'a', 'sm') + T(A(b, 0)[0], 98, 'b', 'sm') + T(B(a * a, 0)[0], 98, 'g(a)', 'sm') + T(B(b * b, 0)[0], 98, 'g(b)', 'sm') +
+        `<line x1="132" y1="52" x2="186" y2="52" class="arw" marker-end="ARROW"/>` + T(159, 38, 'u = g(x)', 'sm') +
+        `<text x="64" y="118" class="lab">f(g(x)) g′(x) dx</text>` + `<text x="254" y="118" class="lab">f(u) du</text>` + `<text x="159" y="72" class="lab">=</text>`);
+    },
+    // integration by parts: ∫v du + ∫u dv fill the L-shape u₂v₂ − u₁v₁
+    parts(lang) {
+      const O = [34, 146], U = t => 84 + 140 * t, V = t => 112 - 82 * Math.sqrt(t), q = []; for (let k = 0; k <= 40; k++) q.push([U(k / 40), V(k / 40)]);
+      const P1 = q[0], P2 = q[40];
+      return svg(260, 166, Pth(poly([[P1[0], O[1]], ...q, [P2[0], O[1]]]) + 'Z', 'fl') + Pth(poly([[O[0], P1[1]], ...q, [O[0], P2[1]]]) + 'Z', 'fl2') +
+        L(O[0], O[1], 252, O[1], 'ax') + L(O[0], O[1], O[0], 8, 'ax') + L(P1[0], P1[1], P1[0], O[1], 'th') + L(P2[0], P2[1], P2[0], O[1], 'th') + L(O[0], P1[1], P1[0], P1[1], 'th') + L(O[0], P2[1], P2[0], P2[1], 'th') +
+        Pth(poly(q), 'ac') + D(...P1) + D(...P2) + T(P1[0], 157, 'u₁', 'sm') + T(P2[0], 157, 'u₂', 'sm') + T(22, P1[1], 'v₁', 'sm') + T(22, P2[1], 'v₂', 'sm') + T(248, 136, 'u', 'sm') + T(46, 12, 'v', 'sm') +
+        `<text x="168" y="118" class="lab">∫ v du</text>` + `<text x="76" y="78" class="lab">∫ u dv</text>` + `<text x="160" y="16" class="lab">u₂v₂ − u₁v₁</text>`);
+    },
+    // sin² x oscillates around ½, so its integral grows like x/2
+    sin2(lang) {
+      const P = frame(22, 26, 244, 64, [0, 2 * Math.PI], [0, 1]);
+      return svg(280, 116, Pth(poly([P(0, 0), ...curve(x => Math.sin(x) ** 2, 0, 2 * Math.PI).map(p => P(...p)), P(2 * Math.PI, 0)]) + 'Z', 'fl') +
+        L(...P(0, 0), ...P(2 * Math.PI, 0), 'ax') + L(...P(0, 0), ...P(0, 1), 'ax') + L(...P(0, 0.5), ...P(2 * Math.PI, 0.5), 'ac2') + Pth(plot(x => Math.sin(x) ** 2, 0, 2 * Math.PI, P), 'ac') +
+        T(12, P(0, 0.5)[1], '½', 'up') + T(12, P(0, 1)[1], '1', 'sm') + T(P(Math.PI, 0)[0], 104, 'π', 'sm') + T(P(2 * Math.PI, 0)[0] - 4, 104, '2π', 'sm') +
+        `<text x="${P(Math.PI, 0)[0]}" y="11" class="lab">sin² x = ½ − ½ cos 2x</text>`);
+    },
+    // the three right triangles behind the trigonometric substitutions
+    trisub(lang) {
+      const tri = (x0, cap, hyp, opp, adj) => {
+        const A = [x0, 104], B = [x0 + 74, 104], C = [x0 + 74, 40];
+        return Pth(`M${A}L${B}L${C}Z`, 'fl') + Pth(`M${A}L${B}L${C}Z`) + right(B[0], B[1], -1, -1, 9) + Pth(arc(...A, 20, 0, 40.9), 'ac') + T(x0 + 28, 97, 't', 'sm') +
+          `<text x="${x0 + 37}" y="117" class="lab">${adj}</text>` + `<text x="${x0 + 80}" y="70" class="lab" text-anchor="start">${opp}</text>` + `<text x="${x0 + 30}" y="62" class="lab" text-anchor="end">${hyp}</text>` +
+          `<text x="${x0 + 50}" y="16" class="lab">${cap}</text>`;
+      };
+      return svg(400, 124, tri(34, 'x = a sin t', 'a', 'x', '√(a² − x²)') + tri(166, 'x = a tan t', '√(a² + x²)', 'x', 'a') + tri(272, 'x = a / cos t', 'x', '√(x² − a²)', 'a'));
+    },
+    // a quarter of a disc
+    quarter(lang) {
+      const O = [34, 112], r = 92;
+      return svg(250, 124, `<path d="M${O}L${O[0] + r},${O[1]}A${r},${r} 0 0 0 ${O[0]},${O[1] - r}Z" class="fl"/>` + L(20, O[1], 160, O[1], 'ax') + L(O[0], 8, O[0], 120, 'ax') +
+        `<path d="M${O[0] + r},${O[1]}A${r},${r} 0 0 0 ${O[0]},${O[1] - r}" class="ac"/>` + T(O[0] + r, 120, 'a', 'sm') + T(24, O[1] - r, 'a', 'sm') + T(72, 82, 'πa²/4', 'sm') +
+        `<text x="196" y="40" class="lab">y = √(a² − x²)</text>`);
+    },
+    // signed area: S₊ above the axis, S₋ below
+    signed(lang) {
+      const f = X => 74 - 46 * Math.sin((X - 46) / 40), a = 46, z = 46 + 40 * Math.PI, b = 244;
+      return svg(280, 150, Pth(poly([[a, 74], ...curve(f, a, z), [z, 74]]) + 'Z', 'fl') + Pth(poly([[z, 74], ...curve(f, z, b), [b, 74]]) + 'Z', 'fl2') +
+        L(14, 74, 266, 74, 'ax') + L(26, 8, 26, 124, 'ax') + Pth(poly(curve(f, 30, 262)), 'ac') + L(b, 74, b, f(b), 'th') +
+        T(a - 6, 86, 'a', 'sm') + T(b + 8, 64, 'b', 'sm') + T(108, 56, 'S₊', 'up') + T(206, 92, 'S₋', 'up') +
+        `<text x="80" y="140" class="lab">∫ₐᵇ f = S₊ − S₋</text><text x="206" y="140" class="lab">${w(lang, 'area|aire|área|面積|面积')} = S₊ + S₋</text>`);
+    },
+    // area between a parabola and a line, between the crossing points
+    between(lang) {
+      const P = frame(14, 8, 240, 104, [-0.5, 3.1], [-0.4, 3.5]), f = x => 3 * x - x * x + 1, g = x => 0.5 * x + 1.2;
+      const al = (2.5 - Math.sqrt(5.45)) / 2, be = (2.5 + Math.sqrt(5.45)) / 2;
+      return svg(270, 132, Pth(poly([...curve(f, al, be, 50).map(p => P(...p)), ...curve(g, be, al, 2).map(p => P(...p))]) + 'Z', 'fl') +
+        L(...P(-0.5, 0), ...P(3.1, 0), 'ax') + L(...P(0, -0.4), ...P(0, 3.5), 'ax') + Pth(plot(f, -0.35, 3.1, P, -0.4, 3.5), 'ac') + Pth(plot(g, -0.5, 3.1, P), 'ac2') +
+        L(...P(be, 0), ...P(be, g(be)), 'th') + D(...P(al, g(al))) + D(...P(be, g(be))) + T(P(al, 0)[0] + 6, P(0, 0)[1] + 11, 'α', 'sm') + T(P(be, 0)[0], P(0, 0)[1] + 11, 'β', 'sm') +
+        T(...P(1.25, 2.25), 'S', 'up') + `<text x="${P(0.35, 0)[0]}" y="${P(0, 3.1)[1]}" class="lab">y = f(x)</text>` + `<text x="${P(2.75, 0)[0]}" y="${P(0, 3.2)[1]}" class="lab">y = g(x)</text>`);
+    },
+    // volume by discs: slice of radius f(x) and thickness dx
+    revolve(lang) {
+      const r = X => 12 + 34 * Math.sqrt((X - 40) / 200), y0 = 76, s = 176, e = (cx, rx, ry, c) => `<ellipse cx="${cx}" cy="${y0}" rx="${rx}" ry="${ry}" class="${c}"/>`;
+      return svg(280, 150, L(14, y0, 266, y0, 'ax') + Pth(poly(curve(X => y0 - r(X), 40, 240)), 'ac') + Pth(poly(curve(X => y0 + r(X), 40, 240)), 'th') +
+        e(40, 4, r(40), 'th') + e(240, 9, r(240), 'th') + e(s, 6, r(s), 'fl') + e(s, 6, r(s), 'ac2') + e(s + 10, 6, r(s + 10), 'ac2') +
+        L(s, y0, s, y0 - r(s), 'ln') + T(s - 26, y0 - r(s) / 2, 'f(x)', 'sm') + T(s + 5, y0 + r(s) + 12, 'dx', 'sm') + T(40, y0 + 34, 'a', 'sm') + T(240, y0 + 58, 'b', 'sm') +
+        `<text x="122" y="140" class="lab">dV = π f(x)² dx</text>`);
+    },
+    // Riemann sum with n = 8 rectangles
+    riemann(lang) {
+      const P = frame(30, 12, 200, 92, [0, 1], [0, 1]), f = x => 0.2 + 0.8 * x * x, n = 8;
+      let body = '';
+      for (let k = 1; k <= n; k++) { const [x1, y1] = P((k - 1) / n, f(k / n)), [x2] = P(k / n, 0); body += `<rect x="${x1.toFixed(1)}" y="${y1.toFixed(1)}" width="${(x2 - x1).toFixed(1)}" height="${(P(0, 0)[1] - y1).toFixed(1)}" class="bar"/>`; }
+      return svg(260, 126, body + L(...P(0, 0), ...P(1.12, 0), 'ax') + L(...P(0, 0), ...P(0, 1.08), 'ax') + Pth(plot(f, 0, 1.06, P), 'ac') +
+        T(...P(0, -0.12), '0', 'sm') + T(...P(1, -0.12), '1', 'sm') + T(...P(5.5 / 8, -0.12), '1/n', 'sm') + T(...P(0.74, f(1) - 0.02), 'f(k/n)', 'sm') +
+        `<text x="${P(0.3, 0)[0]}" y="${P(0, 0.9)[1]}" class="lab">Σ f(k/n) · 1/n</text>`);
+    },
+    // average value: the rectangle of height f̄ has the same area
+    average(lang) {
+      const P = frame(28, 10, 210, 84, [0, 1], [0, 1]), f = x => 0.35 + 0.5 * Math.sin(3.4 * x + 0.3) * 0.9 + 0.15 * x;
+      let m = 0; for (let k = 0; k < 200; k++) m += f((k + 0.5) / 200); m /= 200;
+      return svg(260, 116, Pth(poly([P(0, 0), ...curve(f, 0, 1).map(p => P(...p)), P(1, 0)]) + 'Z', 'fl') + Pth(poly([P(0, 0), P(0, m), P(1, m), P(1, 0)]), 'ac2') +
+        L(...P(0, 0), ...P(1.08, 0), 'ax') + L(...P(0, 0), ...P(0, 1.08), 'ax') + Pth(plot(f, 0, 1, P), 'ac') +
+        T(...P(0, -0.14), 'a', 'sm') + T(...P(1, -0.14), 'b', 'sm') + T(P(0, 0)[0] - 10, P(0, m)[1], 'f̄', 'up') + T(...P(1.06, f(1) + 0.02), 'f', 'sm'));
+    },
+    // ∫₁^∞ dx/x² is finite, ∫₁^∞ dx/x is not
+    tail(lang) {
+      const P = frame(26, 10, 236, 86, [0, 6.4], [0, 1.3]);
+      return svg(270, 120, Pth(poly([P(1, 0), ...curve(x => 1 / (x * x), 1, 6.4).map(p => P(...p)), P(6.4, 0)]) + 'Z', 'fl') +
+        L(...P(0, 0), ...P(6.4, 0), 'ax') + L(...P(0, 0), ...P(0, 1.3), 'ax') + L(...P(1, 0), ...P(1, 1), 'th') +
+        Pth(plot(x => 1 / x, 0.77, 6.4, P), 'ac2') + Pth(plot(x => 1 / (x * x), 0.88, 6.4, P), 'ac') +
+        T(...P(1, -0.14), '1', 'sm') + `<text x="${P(5.6, 0)[0]}" y="${P(0, 0.06)[1] + 14}" class="lab">→ ∞</text>` +
+        `<text x="${P(3.6, 0)[0]}" y="${P(0, 0.62)[1]}" class="lab"><tspan class="b">∫₁^∞ dx/x = ∞</tspan></text>` + `<text x="${P(3.6, 0)[0]}" y="${P(0, 0.4)[1]}" class="lab"><tspan class="a">∫₁^∞ dx/x² = 1</tspan></text>`);
+    },
+    // the Gaussian bell
+    gauss(lang) {
+      const P = frame(16, 10, 228, 72, [-3.2, 3.2], [0, 1.1]), f = x => Math.exp(-x * x);
+      return svg(260, 104, Pth(poly([P(-3.2, 0), ...curve(f, -3.2, 3.2).map(p => P(...p)), P(3.2, 0)]) + 'Z', 'fl') + L(...P(-3.2, 0), ...P(3.2, 0), 'ax') + L(...P(0, 0), ...P(0, 1.1), 'ax') +
+        Pth(plot(f, -3.2, 3.2, P), 'ac') + T(...P(0, 0.4), '√π', 'up') + T(...P(0.25, 1.06), '1', 'sm') + `<text x="${P(2.2, 0)[0]}" y="${P(0, 0.7)[1]}" class="lab">y = e<tspan dy="-6" font-size="9">−x²</tspan></text>`);
+    },
+    // slope field of y′ = ky with solutions y = Ce^(kx)
+    slopes(lang) {
+      const k = 0.55, P = frame(14, 8, 252, 124, [-3, 3], [-3, 3]), sx = 252 / 6, sy = 124 / 6;
+      let body = '';
+      for (let i = -3; i <= 3; i += 0.6) for (let j = -2.7; j <= 2.75; j += 0.6) {
+        const [X, Y] = P(i, j), m = k * j, dx = 1, dy = m, len = Math.hypot(dx * sx, dy * sy), h = 7 / len;
+        body += L((X - dx * sx * h).toFixed(1), (Y + dy * sy * h).toFixed(1), (X + dx * sx * h).toFixed(1), (Y - dy * sy * h).toFixed(1), 'seg');
+      }
+      [-1.6, -0.5, 0.5, 1.6].forEach(C => { body += Pth(plot(x => C * Math.exp(k * x), -3, 3, P, -3, 3), 'ac'); });
+      return svg(280, 160, L(...P(-3, 0), ...P(3, 0), 'ax') + L(...P(0, -3), ...P(0, 3), 'ax') + body +
+        `<text x="70" y="20" class="lab">y′ = ky</text>` + `<text x="212" y="150" class="lab">y = Ce<tspan dy="-6" font-size="9">kx</tspan></text>`);
+    },
+    // which technique? a short decision chart
+    choose(lang) {
+      const rows = [
+        ['In the basic table?|Primitive usuelle ?|¿Primitiva inmediata?|基本公式にある？|在基本公式中？', 'Use it|L’appliquer|Aplicarla|そのまま使う|直接套用'],
+        ['f(g(x)) · g′(x) inside?|Forme f(g(x)) · g′(x) ?|¿Aparece f(g(x)) · g′(x)?|f(g(x)) · g′(x) の形？|含 f(g(x)) · g′(x)？', 'Substitution|Changement de variable|Sustitución|置換積分|换元法'],
+        ['Like x eˣ, x sin x, ln x?|Comme x eˣ, x sin x, ln x ?|¿Como x eˣ, x sen x, ln x?|x eˣ, x sin x, ln x の型？|形如 x eˣ, x sin x, ln x？', 'By parts|Par parties|Por partes|部分積分|分部积分'],
+        ['A fraction P(x)/Q(x)?|Une fraction P(x)/Q(x) ?|¿Una fracción P(x)/Q(x)?|分数式 P(x)/Q(x)？|有理分式 P(x)/Q(x)？', 'Partial fractions|Éléments simples|Fracciones simples|部分分数分解|部分分式'],
+        ['A root √(a² ± x²)?|Une racine √(a² ± x²) ?|¿Una raíz √(a² ± x²)?|√(a² ± x²) を含む？|含根式 √(a² ± x²)？', 'Trig substitution|Subst. trigonométrique|Sust. trigonométrica|三角関数で置換|三角换元'],
+        ['Powers of sin, cos?|Puissances de sin, cos ?|¿Potencias de sen, cos?|sin, cos の累乗？|sin、cos 的幂？', 'Double angle|Linéariser|Ángulo doble|倍角の公式|倍角公式']
+      ];
+      const yes = w(lang, 'yes|oui|sí|はい|是'), no = w(lang, 'no|non|no|いいえ|否');
+      let body = '';
+      rows.forEach(([q, a], i) => {
+        const y = 6 + i * 42;
+        body += `<rect x="4" y="${y}" width="200" height="28" rx="8" class="bx"/>` + `<text x="104" y="${y + 14}" class="lab">${w(lang, q)}</text>` +
+          `<line x1="206" y1="${y + 19}" x2="225" y2="${y + 19}" class="arw" marker-end="ARROW"/>` + T(215, y + 8, yes, 'tl') +
+          `<rect x="228" y="${y}" width="138" height="28" rx="14" class="pill"/>` + `<text x="297" y="${y + 14}" class="tl">${w(lang, a)}</text>`;
+        body += `<line x1="104" y1="${y + 28}" x2="104" y2="${y + 40}" class="arw" marker-end="ARROW"/>` + T(120, y + 34, no, 'tl');
+      });
+      body += `<text x="104" y="${6 + 6 * 42 + 6}" class="lab">${w(lang, 'Otherwise: rewrite and try again|Sinon : réécrire et recommencer|Si no: reescribir y volver a probar|だめなら式を変形して再挑戦|否则：先变形再试')}</text>`;
+      return svg(370, 272, body, 'tall');
+    },
+    // ---------- statistics / probability ----------
+    // the normal curve with the 68–95–99.7 bands
+    normal(lang) {
+      const P = frame(14, 12, 272, 104, [-3.6, 3.6], [0, 0.44]), f = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
+      const band = (u, cls) => Pth(poly([P(-u, 0), ...curve(f, -u, u, 50).map(p => P(...p)), P(u, 0)]) + 'Z', cls);
+      let body = band(3, 'fl') + band(2, 'fl') + band(1, 'fl');
+      [-3, -2, -1, 1, 2, 3].forEach(u => { body += L(...P(u, 0), ...P(u, f(u)), 'th'); });
+      body += L(...P(-3.6, 0), ...P(3.6, 0), 'ax') + L(...P(0, 0), ...P(0, 0.42), 'th') + Pth(plot(f, -3.6, 3.6, P), 'ac');
+      ['μ−3σ', 'μ−2σ', 'μ−σ', 'μ', 'μ+σ', 'μ+2σ', 'μ+3σ'].forEach((s, i) => { body += T(P(i - 3, 0)[0], 128, s, 'sm'); });
+      const arrow = (u, y, s) => `<line x1="${P(-u, 0)[0]}" y1="${y}" x2="${P(u, 0)[0]}" y2="${y}" class="arw" marker-start="ARROW" marker-end="ARROW"/>` + `<text x="${P(0, 0)[0]}" y="${y - 1}" class="lab">${s}</text>`;
+      body += arrow(1, 92, '68%') + arrow(2, 146, '95%') + arrow(3, 166, '99.7%');
+      return svg(300, 176, body + `<text x="${P(2.75, 0)[0]}" y="${P(0, 0.3)[1]}" class="lab">N(μ, σ²)</text>`);
+    },
+    // Φ(z) = P(Z ≤ z), the area to the left of z
+    phi(lang) {
+      const P = frame(14, 10, 240, 76, [-3.4, 3.4], [0, 0.43]), f = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI), z = 1.1;
+      return svg(268, 108, Pth(poly([P(-3.4, 0), ...curve(f, -3.4, z, 60).map(p => P(...p)), P(z, 0)]) + 'Z', 'fl') + Pth(poly([P(z, 0), ...curve(f, z, 3.4, 30).map(p => P(...p)), P(3.4, 0)]) + 'Z', 'fl2') +
+        L(...P(-3.4, 0), ...P(3.4, 0), 'ax') + L(...P(z, 0), ...P(z, f(z)), 'ln') + Pth(plot(f, -3.4, 3.4, P), 'ac') +
+        T(P(z, 0)[0], 98, 'z', 'sm') + T(P(0, 0)[0], 98, '0', 'sm') + `<text x="${P(-0.6, 0)[0]}" y="${P(0, 0.14)[1]}" class="lab">Φ(z)</text>` + `<text x="${P(2.3, 0)[0]}" y="${P(0, 0.2)[1]}" class="lab">1 − Φ(z)</text>`);
+    },
+    // ---------- combinatorics ----------
+    // stars and bars: 10 sweets for 4 children = 3 + 2 + 4 + 1
+    stars(lang) {
+      const seq = '***|**|****|*'; let body = '', x = 22, groups = [], start = 22, cnt = 0;
+      for (const ch of seq) {
+        if (ch === '*') { body += D(x, 30, 'dtc', 7); cnt++; }
+        else { body += L(x, 14, x, 46, 'ac2'); groups.push([start, x - 20, cnt]); start = x + 20; cnt = 0; }
+        x += 20;
+      }
+      groups.push([start, x - 20, cnt]);
+      groups.forEach(([a, b, n]) => { body += `<text x="${(a + b) / 2}" y="62" class="lab">${n}</text>`; });
+      return svg(300, 72, body + `<text x="${x + 6}" y="30" class="lab" text-anchor="start">= 10</text>`);
+    },
+    // a monotone lattice path from (0, 0) to (4, 3)
+    lattice(lang) {
+      const O = [56, 118], s = 34, P = (i, j) => [O[0] + i * s, O[1] - j * s];
+      let body = '';
+      for (let i = 0; i <= 4; i++) body += L(...P(i, 0), ...P(i, 3), 'grid');
+      for (let j = 0; j <= 3; j++) body += L(...P(0, j), ...P(4, j), 'grid');
+      const path = [[0, 0], [1, 0], [1, 1], [3, 1], [3, 2], [4, 2], [4, 3]];
+      body += Pth(poly(path.map(p => P(...p))), 'ac') + D(...P(0, 0)) + D(...P(4, 3));
+      return svg(250, 132, body + T(P(0, 0)[0] - 22, 124, '(0, 0)', 'sm') + T(P(4, 3)[0] + 24, 12, '(4, 3)', 'sm'));
     }
   };
 })();

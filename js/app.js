@@ -112,11 +112,46 @@
     mathText($('#p-statement'), p.statement);
     mathText($('#p-hint-text'), p.hint || '');
     $('#p-hint').hidden = !p.hint;
+    seo(p, cat);
+  }
+  // ---------- addresses and search-engine tags ----------
+  // online: puzzle/<id>.html (real pages made by tools/build-pages.js) and ./?daily; from disk: index.html?p=<id>
+  const SITE = 'https://dailymathpuzzle.com/';
+  const online = /^https?:$/.test(location.protocol);
+  function pageURL(p, daily, canonical) {
+    const lang = new URLSearchParams(location.search).get('lang');
+    let u;
+    if (daily) { u = new URL(online ? './' : 'index.html', document.baseURI); if (!daily.today) u.searchParams.set('daily', daily.date); else if (!online) u.searchParams.set('daily', ''); }
+    else if (online) u = new URL('puzzle/' + encodeURIComponent(p.id) + '.html', document.baseURI);
+    else { u = new URL('index.html', document.baseURI); u.searchParams.set('p', p.id); }
+    if (lang && lang !== 'en') u.searchParams.set('lang', lang);
+    return u.toString().replace(/([?&]daily)=(?=&|$)/, '$1');
+  }
+  // "$x^2$" → readable text for the page description (same rules as tools/build-pages.js)
+  const SYM = { theta: 'θ', alpha: 'α', beta: 'β', gamma: 'γ', lambda: 'λ', mu: 'μ', sigma: 'σ', omega: 'ω', pi: 'π', angle: '∠', triangle: '△', le: '≤', leq: '≤', ge: '≥', geq: '≥', ne: '≠', neq: '≠', infty: '∞', cdot: '·', times: '×', pm: '±', to: '→', in: '∈', perp: '⊥', parallel: '∥', circ: '°', sqrt: '√', ldots: '…', cdots: '…' };
+  const SUB = '₀₁₂₃₄₅₆₇₈₉', SUP = { 2: '²', 3: '³', n: 'ⁿ' };
+  const texText = m => m.replace(/\\begin\{cases\}([\s\S]*?)\\end\{cases\}/g, (_, b) => b.split('\\\\').map(x => x.replace(/&/g, ' ').trim()).join(', '))
+    .replace(/\\begin\{[pbv]?matrix\}([\s\S]*?)\\end\{[pbv]?matrix\}/g, (_, b) => '[' + b.replace(/\\\\/g, ';').replace(/&/g, ' ') + ']')
+    .replace(/\^\{-1\}/g, '⁻¹').replace(/\\[dt]frac/g, '\\frac').replace(/\\int_\{?([^{}\s^]*)\}?\^\{?([^{}\s]*)\}?/g, '∫ $1→$2 ').replace(/\\int/g, '∫').replace(/\^\\circ/g, '°')
+    .replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, (_, a, b) => (/^[\w^.]+$/.test(a) ? a : '(' + a + ')') + '/' + (/^[\w^.]+$/.test(b) ? b : '(' + b + ')')).replace(/\\sqrt\{([^{}]*)\}/g, '√($1)')
+    .replace(/\\text\{([^{}]*)\}/g, '$1').replace(/\\(?:left|right|displaystyle|,|;|!|quad|qquad)/g, ' ')
+    .replace(/\\([a-zA-Z]+)/g, (w, n) => SYM[n] !== undefined ? SYM[n] : /^(sin|cos|tan|log|ln|lim|max|min|det|arg)$/.test(n) ? n + ' ' : ' ')
+    .replace(/_\{?(\d+)\}?/g, (_, d) => [...d].map(c => SUB[c]).join('')).replace(/\^\{?([23n])\}?(?![\d{])/g, (_, d) => SUP[d]).replace(/[{}]/g, '').replace(/_/g, '');
+  const plainText = t => String(t || '').replace(/<[^>]+>/g, ' ').replace(/\$([^$]+)\$/g, (_, m) => texText(m)).replace(/\s+([.,;:?!。？])/g, '$1').replace(/\s+/g, ' ').trim();
+  function seo(p, cat) {
+    const name = 'Daily Math Puzzle', what = state.daily ? tr('★ Puzzle of the day').replace(/^★\s*/, '') : tr(cat.name);
+    document.title = p.title + ' — ' + what + ' | ' + name;
+    const desc = plainText(p.statement), d = desc.length > 156 ? desc.slice(0, 155).replace(/\s+\S*$/, '') + '…' : desc;
+    const set = (sel, attr, v) => { const el = document.head.querySelector(sel); if (el) el.setAttribute(attr, v); };
+    set('meta[name="description"]', 'content', d); set('meta[property="og:description"]', 'content', d); set('meta[property="og:title"]', 'content', p.title);
+    if (online) { const c = pageURL(p, state.daily, true).replace(location.origin + '/', SITE); set('link[rel="canonical"]', 'href', c); set('meta[property="og:url"]', 'content', c); }
   }
   function load(p) {
     if (!p) return;
     clearTimeout(state.solTimer);
-    try { const url = new URL(location.href); url.searchParams.set('p', p.id); url.searchParams.delete('cat'); history.replaceState(null, '', url); } catch (e) { /* file:// in some browsers */ }
+    if (state.daily && state.daily.id !== p.id) state.daily = null;   // another puzzle: no longer the daily one
+    try { history.replaceState(null, '', pageURL(p, state.daily)); } catch (e) { /* file:// in some browsers */ }
+    Daily.badge();
     Object.assign(state, { base: p, order: shuffle(p.options.map((_, i) => i)), selected: new Set(), none: false, confirmed: false, answered: false, stepIdx: -1 });
     localize();
     $$('.cat').forEach(b => b.classList.toggle('on', b.dataset.cat === p.category));
@@ -353,13 +388,88 @@
   })();
 
   window.addEventListener('resize', () => $$('.step').forEach(card => card.querySelectorAll('.line').forEach(d => { const disp = d.querySelector('.katex-display'), k = d.querySelector('.katex'); if (!disp || !k) return; disp.style.fontSize = ''; const avail = d.clientWidth - 6, w = k.scrollWidth; if (w > avail && avail > 0) disp.style.fontSize = Math.max(0.55, avail / w).toFixed(3) + 'em'; })));
+  // ---------- puzzle of the day: api/daily.php picks one per day on the server and never repeats it ----------
+  const Daily = (() => {
+    const online = /^https?:$/.test(location.protocol);
+    let today = null, past = null;
+    const call = q => !online ? Promise.resolve(null) : Promise.race([
+      fetch('api/daily.php' + q, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null),
+      new Promise(ok => setTimeout(() => ok(null), 2500))              // a slow server must not hold the board back
+    ]);
+    const loc = () => document.documentElement.lang || 'en';
+    const fmt = (d, long) => { try { return new Date(d + 'T12:00:00').toLocaleDateString(loc(), long ? { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' } : { day: 'numeric', month: 'short' }); } catch (e) { return d; } };
+    const catOf = id => PuzzleBank.categories.find(c => c.id === id);
+    const known = d => d && d.id && PuzzleBank.entry(d.id) ? d : null;   // the puzzle file may have been removed since
+    // today's puzzle (cached), or a past day's
+    function get(date) {
+      if (!date) return today ? Promise.resolve(today) : call('').then(d => (today = known(d) ? Object.assign(d, { today: true }) : null));
+      return call('?date=' + encodeURIComponent(date)).then(d => (known(d) ? Object.assign(d, { today: !!(today && today.date === d.date) }) : null));
+    }
+    function open(d) { state.daily = d; state.cat = d.cat; show(PuzzleBank.load(d.id)); }
+    function badge() {
+      const b = $('#p-daily'); if (!b) return;
+      const d = state.daily;
+      b.hidden = !d;
+      if (d) b.textContent = tr(d.today ? '★ Puzzle of the day · {date}' : '★ Daily puzzle · {date}', { date: fmt(d.date) });
+    }
+    function renderPop(pop) {
+      if (!past) { pop.innerHTML = '<p class="dp-empty">…</p>'; return; }
+      Promise.all([PuzzleBank.loadSearch(I18N.lang)]).then(([titles]) => {
+        pop.innerHTML = `<div class="dp-h">${tr('Past daily puzzles')}</div>` + (past.length ? past.map(d => {
+          const c = catOf(d.cat), t = (titles[d.id] && titles[d.id].t) || d.id, on = state.daily && state.daily.date === d.date;
+          return `<button type="button" class="dp-row${on ? ' on' : ''}" data-date="${d.date}"><span class="dp-date">${d.date === (today && today.date) ? tr('Today') : fmt(d.date, true)}</span><span class="dp-cat">${c ? c.icon + ' ' + tr(c.name) : d.cat}</span><span class="dp-title">${t.replace(/[<&]/g, ch => ch === '<' ? '&lt;' : '&amp;')}</span></button>`;
+        }).join('') : `<p class="dp-empty">${tr('No daily puzzles yet.')}</p>`);
+      });
+    }
+    function init() {
+      const wrap = $('#daily'); if (!wrap || !online) return;
+      get('').then(d => {
+        if (!d) return;
+        wrap.hidden = false;
+        const c = catOf(d.cat);
+        $('#btn-daily').title = tr('Today’s puzzle: {cat}', { cat: c ? tr(c.name) : d.cat });
+        $('#btn-daily').onclick = () => open(today);
+        const pop = $('#daily-pop'), more = $('#btn-daily-more');
+        const close = () => { pop.hidden = true; more.setAttribute('aria-expanded', 'false'); };
+        more.onclick = e => {
+          e.stopPropagation();
+          if (!pop.hidden) return close();
+          pop.hidden = false; more.setAttribute('aria-expanded', 'true');
+          renderPop(pop);
+          if (!past) call('?list=1').then(r => { past = r && Array.isArray(r.days) ? r.days.filter(known) : []; renderPop(pop); });
+        };
+        pop.onclick = e => {
+          const row = e.target.closest('.dp-row'); if (!row) return;
+          close();
+          const d0 = row.dataset.date;
+          (today && d0 === today.date ? Promise.resolve(today) : get(d0)).then(x => x && open(x));
+        };
+        document.addEventListener('click', e => { if (!pop.hidden && !wrap.contains(e.target)) close(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && !pop.hidden) close(); });
+        I18N.onChange && I18N.onChange(badge);
+      });
+    }
+    return { get, open, badge, init };
+  })();
+
   // open a specific puzzle from the list page: index.html?p=<id>  (or a category: ?cat=algebra)
   const qs = new URLSearchParams(location.search);
-  const want = PuzzleBank.entry(qs.get('p'));
+  const want = PuzzleBank.entry(qs.get('p') || (window.START && START.p));   // START: set by the generated puzzle/<id>.html pages
   const wantCat = PuzzleBank.categories.find(c => c.id === qs.get('cat'));
+  // a random puzzle from a random topic that has puzzles
+  const randomStart = () => {
+    const cats = PuzzleBank.categories.filter(c => PuzzleBank.count(c.id));
+    const c = cats[Math.floor(Math.random() * cats.length)];
+    if (c) { state.cat = c.id; show(PuzzleBank.random(c.id)); }
+  };
   if (want) { state.cat = want.cat; show(PuzzleBank.load(want.id)); }
   else if (wantCat && PuzzleBank.count(wantCat.id)) { state.cat = wantCat.id; show(PuzzleBank.random(wantCat.id)); }
-  else show(PuzzleBank.random('geometry'));
+  else {
+    // ?daily = today's puzzle, ?daily=2026-11-10 a past one; with no parameters the home page also opens today's puzzle.
+    // No server (opened from disk) or nothing left: a random puzzle instead.
+    Daily.get(qs.get('daily') || '').then(d => d ? Daily.open(d) : randomStart());
+  }
+  Daily.init();
   window.__app = { board, state };
 })();
 

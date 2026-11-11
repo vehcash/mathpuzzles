@@ -32,7 +32,7 @@
         ['Binomial B(n, p)|Binomiale B(n, p)|Binomial B(n, p)|二項分布 B(n, p)|二项分布 B(n, p)', R`P(X = k) = \binom nk p^k(1 - p)^{n-k}, \qquad E = np, \quad \operatorname{Var} = np(1 - p)`],
         ['Geometric|Géométrique|Geométrica|幾何分布|几何分布', R`P(X = k) = (1 - p)^{k-1}p, \qquad E = \frac1p`, 'Number of trials until the first success: on average 6 rolls to get a six.|Nombre d’essais jusqu’au premier succès : en moyenne 6 lancers pour obtenir un six.|Número de intentos hasta el primer éxito: de media 6 tiradas para sacar un seis.|最初の成功までの試行回数。6 が出るまで平均 6 回。|首次成功所需次数：平均掷 6 次得到一个六。'],
         ['Uniform on {1, …, n}|Uniforme sur {1, …, n}|Uniforme en {1, …, n}|{1, …, n} 上の一様分布|{1, …, n} 上的均匀分布', R`P(X = k) = \frac1n, \qquad E = \frac{n + 1}{2}`],
-        ['Normal N(μ, σ²)|Normale N(μ, σ²)|Normal N(μ, σ²)|正規分布 N(μ, σ²)|正态分布 N(μ, σ²)', R`Z = \frac{X - \mu}{\sigma} \sim N(0, 1)`, R`About $68\%$, $95\%$, $99.7\%$ within $1\sigma$, $2\sigma$, $3\sigma$.|Environ $68\%$, $95\%$, $99{,}7\%$ à moins de $1\sigma$, $2\sigma$, $3\sigma$.|Aproximadamente $68\%$, $95\%$, $99{,}7\%$ a menos de $1\sigma$, $2\sigma$, $3\sigma$.|$1\sigma$、$2\sigma$、$3\sigma$ 以内に約 $68\%$、$95\%$、$99.7\%$。|约 $68\%$、$95\%$、$99.7\%$ 落在 $1\sigma$、$2\sigma$、$3\sigma$ 内。`],
+        ['Normal N(μ, σ²)|Normale N(μ, σ²)|Normal N(μ, σ²)|正規分布 N(μ, σ²)|正态分布 N(μ, σ²)', R`Z = \frac{X - \mu}{\sigma} \sim N(0, 1)`, R`About $68\%$, $95\%$, $99.7\%$ within $1\sigma$, $2\sigma$, $3\sigma$.|Environ $68\%$, $95\%$, $99{,}7\%$ à moins de $1\sigma$, $2\sigma$, $3\sigma$.|Aproximadamente $68\%$, $95\%$, $99{,}7\%$ a menos de $1\sigma$, $2\sigma$, $3\sigma$.|$1\sigma$、$2\sigma$、$3\sigma$ 以内に約 $68\%$、$95\%$、$99.7\%$。|约 $68\%$、$95\%$、$99.7\%$ 落在 $1\sigma$、$2\sigma$、$3\sigma$ 内。`, { fig: 'normal' }],
         ['Poisson|Poisson|Poisson|ポアソン分布|泊松分布', R`P(X = k) = e^{-\lambda}\frac{\lambda^k}{k!}, \qquad E = \operatorname{Var} = \lambda`]
       ] },
       { t: 'Continuous distributions|Lois continues|Distribuciones continuas|連続型の分布|连续型分布', items: [
@@ -42,7 +42,7 @@
         ['Uniform on [a, b]|Uniforme sur [a, b]|Uniforme en [a, b]|[a, b] 上の一様分布|[a, b] 上的均匀分布', R`f = \frac{1}{b - a}, \qquad E = \frac{a + b}{2}, \qquad \operatorname{Var} = \frac{(b - a)^2}{12}`],
         ['Exponential|Exponentielle|Exponencial|指数分布|指数分布', R`f(x) = \lambda e^{-\lambda x}\ (x \ge 0), \qquad P(X > t) = e^{-\lambda t}, \qquad E = \frac1\lambda`]
       ] },
-      { t: 'Using the normal distribution|Utiliser la loi normale|Usar la distribución normal|正規分布の使い方|正态分布的应用', items: [
+      { t: 'Using the normal distribution|Utiliser la loi normale|Usar la distribución normal|正規分布の使い方|正态分布的应用', fig: 'phi', items: [
         ['Standardising|Centrer et réduire|Tipificar|標準化|标准化', R`P(a < X < b) = \Phi\left(\frac{b - \mu}{\sigma}\right) - \Phi\left(\frac{a - \mu}{\sigma}\right)`, R`$\Phi$ is the table of $N(0, 1)$: $\Phi(z) = P(Z \le z)$.|$\Phi$ est la table de $N(0, 1)$ : $\Phi(z) = P(Z \le z)$.|$\Phi$ es la tabla de $N(0, 1)$: $\Phi(z) = P(Z \le z)$.|$\Phi$ は $N(0, 1)$ の表：$\Phi(z) = P(Z \le z)$。|$\Phi$ 为 $N(0, 1)$ 的分布表：$\Phi(z) = P(Z \le z)$。`],
         ['Symmetry|Symétrie|Simetría|対称性|对称性', R`\Phi(-z) = 1 - \Phi(z), \qquad P(|Z| \le z) = 2\Phi(z) - 1`],
         ['Key values|Valeurs clés|Valores clave|よく使う値|常用值', R`\Phi(1.645) \approx 0.95, \qquad \Phi(1.96) \approx 0.975, \qquad \Phi(2.576) \approx 0.995`],

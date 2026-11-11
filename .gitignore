@@ -1,0 +1,2 @@
+# server data: the daily-puzzle history lives on the server, never overwrite it on deploy
+data/

@@ -66,7 +66,7 @@
   const sizer = new ResizeObserver(list => list.forEach(en => fit(en.target)));
   function card(e) {
     const p = e.e, a = document.createElement('a');
-    a.className = 'pcard'; a.href = 'index.html?p=' + encodeURIComponent(p.id); a.dataset.cat = p.cat; a.dataset.idx = e.i;
+    a.className = 'pcard'; a.href = /^https?:$/.test(location.protocol) ? 'puzzle/' + encodeURIComponent(p.id) + '.html' : 'index.html?p=' + encodeURIComponent(p.id); a.dataset.cat = p.cat; a.dataset.idx = e.i;   // online: the real puzzle pages (tools/build-pages.js)
     a.innerHTML = '<div class="meta"><span class="cat-badge"><span class="ico">' + e.cat.icon + '</span>' + tr(e.cat.name) + '</span><span class="diff" title="Difficulty">' + '●'.repeat(p.diff) + '<i>' + '●'.repeat(3 - p.diff) + '</i></span></div>' +
       '<h3></h3><p class="statement"></p><figure class="figure"><svg role="img" aria-label="Figure"></svg></figure>' +
       '<div class="pc-foot"><span>' + tr('{n} options · {m} solution steps', { n: p.options, m: p.steps }) + '</span><span class="go">' + tr('Solve →') + '</span></div>';

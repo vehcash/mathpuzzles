@@ -4,7 +4,7 @@
   Cheats.topic({
     id: 'statistics', icon: '▥', color: '#8a4f9e', bg: '#f1e6f5', cat: 'probability',
     name: 'Statistics|Statistiques|Estadística|統計|统计',
-    blurb: 'Centre and spread, quartiles, grouped data, correlation and the regression line.|Position et dispersion, quartiles, données groupées, corrélation et droite de régression.|Centralización y dispersión, cuartiles, datos agrupados, correlación y recta de regresión.|代表値と散らばり、四分位数、度数分布、相関と回帰直線。|集中趋势与离散程度、四分位数、分组数据、相关与回归直线。',
+    blurb: 'Centre and spread, the normal curve, quartiles, grouped data, correlation and the regression line.|Position et dispersion, loi normale, quartiles, données groupées, corrélation et droite de régression.|Centralización y dispersión, distribución normal, cuartiles, datos agrupados, correlación y recta de regresión.|代表値と散らばり、正規分布、四分位数、度数分布、相関と回帰直線。|集中趋势与离散程度、正态分布、四分位数、分组数据、相关与回归直线。',
     sections: [
       { t: 'Measures of centre|Paramètres de position|Medidas de centralización|代表値|集中趋势', items: [
         ['Mean|Moyenne|Media|平均値|平均数', R`\bar x = \frac{1}{n}\sum_{i=1}^n x_i, \qquad \bar x = \frac{\sum f_i x_i}{\sum f_i}`, R`The second form uses frequencies $f_i$ (or class midpoints for grouped data).|La seconde utilise les effectifs $f_i$ (ou les centres de classes pour des données groupées).|La segunda usa las frecuencias $f_i$ (o las marcas de clase en datos agrupados).|2つ目は度数 $f_i$ を使う形（階級値を使えば度数分布表にも）。|第二种用频数 $f_i$（分组数据用组中值）。`],
@@ -19,6 +19,11 @@
         ['Range|Étendue|Rango (recorrido)|範囲（レンジ）|极差', R`x_{\max} - x_{\min}`],
         ['Coefficient of variation|Coefficient de variation|Coeficiente de variación|変動係数|变异系数', R`CV = \frac{s}{\bar x}`, 'Compares spread between data sets with different means or units.|Compare la dispersion de séries de moyennes ou d’unités différentes.|Compara la dispersión de conjuntos con medias o unidades distintas.|平均や単位の異なるデータの散らばりを比べる。|用于比较均值或单位不同的数据的离散程度。'],
         ['Standard score|Score centré réduit|Puntuación típica|標準化（z スコア）|标准分', R`z = \frac{x - \bar x}{s}`]
+      ] },
+      { t: 'The normal distribution|La loi normale|La distribución normal|正規分布|正态分布', fig: 'normal', items: [
+        ['Gauss curve|Courbe de Gauss|Campana de Gauss|ガウス曲線|高斯曲线', R`f(x) = \frac{1}{\sigma\sqrt{2\pi}}\,e^{-\frac{(x - \mu)^2}{2\sigma^2}}`, 'Bell-shaped and symmetric about the mean μ; σ sets its width. The total area under it is 1.|En cloche, symétrique par rapport à la moyenne μ ; σ règle sa largeur. L’aire totale sous la courbe vaut 1.|Con forma de campana y simétrica respecto a la media μ; σ fija su anchura. El área total bajo ella es 1.|平均 μ を軸に左右対称な釣り鐘形で、σ が幅を決める。曲線の下の面積は全体で 1。|钟形，关于均值 μ 对称，σ 决定宽窄。曲线下总面积为 1。'],
+        ['68–95–99.7 rule|Règle 68–95–99,7|Regla 68–95–99,7|68–95–99.7 の法則|68–95–99.7 法则', R`P(|X - \mu| < k\sigma) \approx 0.68,\ 0.95,\ 0.997 \quad (k = 1, 2, 3)`, R`Heights with $\mu = 170$ cm, $\sigma = 8$ cm: about $95\%$ lie between $154$ and $186$ cm.|Tailles avec $\mu = 170$ cm, $\sigma = 8$ cm : environ $95\%$ entre $154$ et $186$ cm.|Estaturas con $\mu = 170$ cm, $\sigma = 8$ cm: cerca del $95\%$ entre $154$ y $186$ cm.|身長 $\mu = 170$ cm、$\sigma = 8$ cm なら約 $95\%$ が $154$〜$186$ cm。|身高 $\mu = 170$ cm、$\sigma = 8$ cm：约 $95\%$ 在 $154$ 到 $186$ cm 之间。`],
+        ['Standardising|Centrer et réduire|Tipificar|標準化|标准化', R`Z = \frac{X - \mu}{\sigma} \sim N(0, 1)`, R`$X = 182$ cm above: $z = \frac{182 - 170}{8} = 1.5$.|$X = 182$ cm ci-dessus : $z = \frac{182 - 170}{8} = 1{,}5$.|$X = 182$ cm de arriba: $z = \frac{182 - 170}{8} = 1{,}5$.|上の例で $X = 182$ cm なら $z = \frac{182 - 170}{8} = 1.5$。|上例中 $X = 182$ cm：$z = \frac{182 - 170}{8} = 1.5$。`]
       ] },
       { t: 'Quartiles and box plots|Quartiles et boîtes à moustaches|Cuartiles y diagramas de caja|四分位数と箱ひげ図|四分位数与箱线图', fig: 'boxplot', items: [
         ['Quartiles|Quartiles|Cuartiles|四分位数|四分位数', R`Q_1 = P_{25}, \quad Q_2 = \tilde x = P_{50}, \quad Q_3 = P_{75}`, 'Medians of the lower and upper halves of the sorted data.|Médianes des moitiés inférieure et supérieure des données triées.|Medianas de las mitades inferior y superior de los datos ordenados.|並べたデータの下半分・上半分の中央値。|排序数据下半部分与上半部分的中位数。'],
