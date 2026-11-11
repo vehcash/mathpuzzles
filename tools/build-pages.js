@@ -41,13 +41,15 @@ function build() {
   for (const e of index) {
     const s = titles[e.id] || { t: e.id, s: '' }, cat = CAT_NAMES[e.cat] || e.cat;
     const url = SITE + 'puzzle/' + e.id + '.html';
-    const title = `${s.t} — ${cat} puzzle | ${NAME}`;
+    const exam = e.from ? e.from.replace(/\s*\(.*?\)/g, '').replace(/,.*$/, '').trim() : '';   // e.g. "Gaokao 2023", "Oxford MAT 2019"
+    const title = `${s.t} — ${exam ? exam + ' ' : ''}${cat.toLowerCase()} math problem | ${NAME}`;
     const statement = plain(s.s);
-    const desc = clip(`${cat} puzzle: ${statement} Pick the true statements, then see the step-by-step solution.`, 158);
+    const desc = clip(`${exam ? 'Real ' + exam + ' question. ' : ''}${cat} math problem: ${statement} Step-by-step solution, free for students and teachers.`, 158);
     const ld = {
       '@context': 'https://schema.org', '@graph': [
         { '@type': 'Quiz', '@id': url + '#quiz', name: s.t, description: statement, url, inLanguage: LANGS, educationalUse: 'practice',
-          learningResourceType: 'Math puzzle', about: { '@type': 'Thing', name: cat }, educationalLevel: ['Beginner', 'Intermediate', 'Advanced'][Math.max(0, Math.min(2, (e.diff || 1) - 1))],
+          learningResourceType: ['Math problem', 'Practice question'], about: { '@type': 'Thing', name: cat }, audience: [{ '@type': 'EducationalAudience', educationalRole: 'student' }, { '@type': 'EducationalAudience', educationalRole: 'teacher' }],
+          ...(e.from ? { isBasedOn: { '@type': 'CreativeWork', name: e.from } } : {}), educationalLevel: ['Beginner', 'Intermediate', 'Advanced'][Math.max(0, Math.min(2, (e.diff || 1) - 1))],
           isAccessibleForFree: true, isPartOf: { '@type': 'WebSite', name: NAME, url: SITE } },
         { '@type': 'BreadcrumbList', itemListElement: [
           { '@type': 'ListItem', position: 1, name: NAME, item: SITE },
@@ -82,7 +84,6 @@ function build() {
     { loc: SITE, file: 'index.html', freq: 'daily', pr: '1.0' },
     { loc: SITE + 'list.html', file: 'puzzles/index.js', freq: 'weekly', pr: '0.8' },
     { loc: SITE + 'cheatsheets.html', file: 'cheatsheets.html', freq: 'monthly', pr: '0.7' },
-    { loc: SITE + 'mcp.html', file: 'mcp.html', freq: 'monthly', pr: '0.5' },
     ...topics.map(t => ({ loc: SITE + 'cheatsheets.html?t=' + t, file: 'cheats/' + t + '.js', freq: 'monthly', pr: '0.6' })),
     ...index.map(e => ({ loc: SITE + 'puzzle/' + e.id + '.html', file: 'puzzles/' + e.file, freq: 'monthly', pr: '0.7' }))
   ];

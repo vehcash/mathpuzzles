@@ -47,7 +47,7 @@
       const F = Figure(svg, { w: 4.5, h: 1.75, scale: 84, pad: 24 });
       [2, 1].forEach(n => F.path(sq(n), 'shear shear-' + n, 'fills'));
       F.path(sq(0), 'fill-blue', 'fills'); F.path(sq(0), 'tri');
-      F.text([S * 0.72, S * 0.28], 'I', 'pt', 0, 0);
+      F.text([S * 0.85, S * 0.15], 'I', 'pt', 0, 0);
       F.text([S * 1.5, S], 'A', 'pt', 0, -14); F.text([S * 2.5, S], 'A²', 'pt', 0, -14);
       F.seg([0, 0], [4.5, 0], 'seg');
       return F;

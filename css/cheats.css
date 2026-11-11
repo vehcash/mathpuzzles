@@ -150,3 +150,10 @@ html[data-lang="ja"] .cs-ex b, html[data-lang="zh"] .cs-ex b { letter-spacing: .
 .cf .seg { stroke: var(--ink-soft); stroke-width: 1.3; stroke-linecap: round; }
 .cf .arw { stroke: var(--c); stroke-width: 1.4; fill: none; }
 .cf .arw2 { stroke: #c4542f; stroke-width: 1.4; fill: none; }
+
+/* phones: the topic row scrolls sideways and fades at the edge so it is clear there is more */
+@media (max-width: 600px) {
+  .cheat-page .top { position: static; }
+  #cs-topics { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); }
+  #cs-topics::-webkit-scrollbar { display: none; }
+}

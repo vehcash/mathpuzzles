@@ -49,7 +49,7 @@
       [0, 1, 2, 3].forEach(k => F.arc(T([0, 0]), 1.18, 90 * k + 12, 90 * k + 78, 'dashc', 'marks'));
       F.arrowDefs();
       PTS.forEach(p => F.dot(T(p)));
-      F.text(T([1, 0]), '1', 'len', 12, 12); F.text(T([0, 1]), 'i', 'len', 12, -10); F.text(T([-1, 0]), '−1', 'len', -14, 12); F.text(T([0, -1]), '−i', 'len', 14, 12);
+      F.text(T([1, 0]), '1', 'len', -12, -12); F.text(T([0, 1]), 'i', 'len', 12, -10); F.text(T([-1, 0]), '−1', 'len', 16, -12); F.text(T([0, -1]), '−i', 'len', 14, -14);
       F.text(T([0.95, 0.95]), '×i', 'len small', 0, 0);
       return F;
     },

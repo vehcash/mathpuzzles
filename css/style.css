@@ -75,6 +75,7 @@ h1 { font-family: var(--serif); font-weight: 800; font-size: 26px; line-height: 
 .figure svg { width: 100%; max-width: 380px; height: auto; overflow: visible; }
 .tri { fill: rgba(255,255,255,.35); stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
 .seg { stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+path.seg, circle.seg, ellipse.seg, path.arc, path.graph { fill: none; }   /* lines are never filled (avoids solid black shapes) */
 .ra { fill: none; stroke: var(--ink); stroke-width: 1.4; }
 .ra.strong { stroke: var(--accent); }
 .incircle { fill: none; stroke: var(--accent-2); stroke-width: 2; stroke-dasharray: 5 5; }
@@ -597,6 +598,12 @@ html[data-lang="ja"] h1, html[data-lang="zh"] h1, html[data-lang="ja"] .pcard h3
 .daily[hidden] { display: none; }
 .daily-btn { background: var(--chalk-y); color: var(--ink); border-color: var(--chalk-y); font-weight: 700; }
 .daily-btn:hover { filter: brightness(1.06); }
+/* every header button has its own chalk colour (the daily puzzle keeps the yellow) */
+.btn.ghost.list-link[href="list.html"] { color: #8cc8ec; background: rgba(140, 200, 236, .10); }
+.btn.ghost.list-link[href="cheatsheets.html"] { color: #e7a3dc; background: rgba(231, 163, 220, .10); }
+.btn.ghost.list-link[href="index.html"] { color: #f2ad74; background: rgba(242, 173, 116, .10); }
+.btn.ghost#btn-random { color: #93d79a; background: rgba(147, 215, 154, .10); }
+.btn.ghost.list-link[href]:hover, .btn.ghost#btn-random:hover { opacity: 1; filter: brightness(1.12); }
 #btn-daily { border-top-right-radius: 0; border-bottom-right-radius: 0; }
 .daily-btn.more { border-top-left-radius: 0; border-bottom-left-radius: 0; padding-left: 9px; padding-right: 9px; border-left: 1px solid rgba(0,0,0,.18); }
 .daily-pop { position: absolute; right: 0; top: calc(100% + 8px); z-index: 70; width: min(420px, 92vw); max-height: 62vh; overflow: auto; background: var(--paper); color: var(--ink); border-radius: 12px; box-shadow: 0 18px 50px rgba(0,0,0,.5); padding: 6px; animation: rise .15s ease; }
@@ -614,10 +621,32 @@ a.brand { color: inherit; text-decoration: none; }
 .noscript { max-width: 760px; margin: 30px auto; padding: 20px 24px; background: var(--paper); color: var(--ink); border-radius: 14px; }
 .noscript a { color: var(--accent-2); }
 
-/* header buttons: one colour each (Puzzle of the day keeps its yellow) */
-.top .btn.hb { opacity: 1; border-width: 1.5px; color: var(--hb); border-color: color-mix(in srgb, var(--hb) 70%, transparent); background: color-mix(in srgb, var(--hb) 13%, transparent); }
-.top .btn.hb:hover { background: color-mix(in srgb, var(--hb) 24%, transparent); border-color: var(--hb); }
-.hb-list { --hb: #93d3f5; }     /* blue: all puzzles */
-.hb-cheats { --hb: #a6e39f; }   /* green: cheat sheets */
-.hb-ai { --hb: #d4b5ff; }       /* violet: AI lesson */
-.hb-random { --hb: #f7b267; }   /* orange: random puzzle */
+/* ---- phone header: brand + language on one row, the buttons in an even grid, search and categories full width ---- */
+@media (max-width: 600px) {
+  .top { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; padding: 10px 12px; }
+  .top .brand { grid-row: 1; grid-column: 1 / -1; order: 1; min-width: 0; gap: 8px; }
+  .top .brand .mark { font-size: 22px; }
+  .top .brand b { font-size: 17px; white-space: nowrap; }
+  .top .hdr-right { grid-row: 1; grid-column: 2; order: 2; justify-self: end; margin: 0; gap: 4px; }
+  .top .flags { gap: 2px; padding: 3px 4px; } .top .flag { width: 21px; height: 15px; }
+  .top .cookie-link { padding: 4px !important; }
+  .top .hb-list { order: 3; } .top .hb-cheats { order: 4; } .top .daily { order: 5; } .top .hb-random { order: 6; } .top .list-link { order: 3; }
+  .top .btn.ghost, .top .daily { margin: 0; width: 100%; justify-content: center; text-align: center; padding: 8px 10px; font-size: 14px; white-space: nowrap; }
+  .top .daily { display: flex; margin: 0 !important; padding: 0; }
+  .top .daily .daily-btn:first-child { flex: 1; padding: 8px 10px; font-size: 14px; margin: 0; }
+  .top:has(#daily[hidden]) .hb-random { grid-column: 1 / -1; }
+  .top:not(:has(.list-link + .list-link)) .list-link { grid-column: 1 / -1; }
+  .top .lcount { order: 8; grid-column: 1 / -1; font-size: 12px; }
+  .top .search { order: 9; grid-column: 1 / -1; max-width: none; min-width: 0; }
+  .top .cats { order: 10; grid-column: 1 / -1; min-width: 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); }
+  .top .cats::-webkit-scrollbar { display: none; }
+  .top .cat { flex: none; }
+}
+
+/* phones: a spacer after the last category, so the selected one can be scrolled clear of the fade at the edge */
+@media (max-width: 600px) { .top .cats::after, .lfilters::after, #cs-topics::after { content: ''; flex: 0 0 28px; } }
+
+/* ---- "about" block: what the site is, for students and for teachers. It is there for search engines and screen readers,
+   so it stays in the page but takes no room and is never drawn over or under the app. ---- */
+.about { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }

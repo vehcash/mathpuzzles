@@ -47,8 +47,9 @@ puzzles/
     url: 'https://…'               // optional link for `from`
   },
   ```
-  All current puzzles were written for the site, so they say "Original puzzle"; `exams` only says the type of question is standard there, never that the exact question was set there. Use `from` (shown instead of "Original puzzle", tagged "Exam question" in the list) only when the puzzle really is a past exam question. Exam keys: `gaokao`, `zhongkao`, `kyotsu`, `ebau`, `bac`, `alevel`, `alevelfm`, `gcse`, `ib`, `ap`, `amc`, `uni` — add new ones to `EXAMS`. Exam names and notes are searchable ("gaokao", "高考", "Montmort").
+  Most puzzles were written for the site and say "Original puzzle"; `exams` only says the type of question is standard there, never that the exact question was set there. 37 puzzles are real past entrance-exam questions (reworded, with 8 options) from STEP, the Oxford MAT, the Gaokao, JEE Advanced, IME, ITA and the EBAU, and carry `from` with the paper and question number. Use `from` (shown instead of "Original puzzle", tagged "Exam question" in the list) only when the puzzle really is a past exam question. Exam keys: `gaokao`, `zhongkao`, `kyotsu`, `ebau`, `bac`, `alevel`, `alevelfm`, `gcse`, `ib`, `ap`, `amc`, `uni`, `step`, `mat`, `jee`, `ime`, `ita` — add new ones to `EXAMS`. Exam names and notes are searchable ("gaokao", "高考", "Montmort").
 - **After adding or editing a puzzle run `node tools/build-index.js`** (needs Node.js). It rebuilds `index.js` and the search files, checks the puzzle (8 options, at most 2 correct, steps present, unique id, a `source` with known exam keys) and lists any missing translations.
+- **Figures:** lines (`seg`, `arc`, `graph`) are never filled, so no solid black shapes. Keep labels off lines and other labels and inside the figure box (`pad` in `Figure(...)`); the figure's `w`/`h` must cover the plotted range, or it spills into the text above.
 
 ## AI assistants on the blackboard (MCP) — live lessons
 AI assistants can teach on the blackboard: they draw an explanation step by step and the student watches it appear live.

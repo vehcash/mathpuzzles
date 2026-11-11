@@ -54,7 +54,7 @@
       F.path([A, B, C], 'tri');
       [[A, mid(B, C)], [B, mid(A, C)], [C, mid(A, B)]].forEach(([p, q]) => F.seg(p, q, 'seg thin'));
       F.dot(G, 'center');
-      F.text(A, 'A', 'pt', 0, -14); F.text(B, 'B', 'pt', -12, 10); F.text(C, 'C', 'pt', 12, 10); F.text(G, 'G', 'pt', 12, -8);
+      F.text(A, 'A', 'pt', 0, -14); F.text(B, 'B', 'pt', -12, 10); F.text(C, 'C', 'pt', 12, 10); F.text(G, 'G', 'pt', 2, -16);
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas

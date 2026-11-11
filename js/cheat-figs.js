@@ -107,6 +107,130 @@
         Pth(br(1), 'ac') + Pth(br(-1), 'ac') + D(O[0] - c, 85) + D(O[0] + c, 85) + D(O[0] - a, 85, 'dtc') + D(O[0] + a, 85, 'dtc') +
         T(O[0] - c, 99, 'F₁', 'sm') + T(O[0] + c, 99, 'F₂', 'sm') + T(O[0] + a / 2, 74, 'a', 'sm') + T(140, 150, 'y = ±(b/a)x', 'tl'));
     },
+    // Heron: a triangle with sides a, b, c and the semi-perimeter as half of the unrolled perimeter
+    heron(lang) {
+      const A = [30, 100], B = [190, 100], Cc = [80, 22];
+      const per = 160 + Math.hypot(50, 78) + Math.hypot(110, 78), k = 240 / per, la = Math.hypot(110, 78) * k, lb = Math.hypot(50, 78) * k, lc = 160 * k, x0 = 20;
+      return svg(280, 160, Pth(`M${A}L${B}L${Cc}Z`, 'fl') + L(...A, ...B, 'ac') + L(...B, ...Cc, 'ac2') + L(...Cc, ...A, 'ln') + T(110, 112, 'c', 'up') + T(146, 52, 'a', 'up') + T(44, 56, 'b', 'up') +
+        L(x0, 132, x0 + lc, 132, 'ac') + L(x0 + lc, 132, x0 + lc + la, 132, 'ac2') + L(x0 + lc + la, 132, x0 + lc + la + lb, 132, 'ln') + L(x0 + 120, 124, x0 + 120, 140, 'th') +
+        T(x0 + 60, 148, 's', 'up') + T(x0 + 180, 148, 's', 'up') + T(236, 40, w(lang, 'perimeter = 2s|périmètre = 2s|perímetro = 2s|周の長さ = 2s|周长 = 2s'), 'tl') + T(236, 60, 'S = √(s(s−a)(s−b)(s−c))', 'tl'));
+    },
+    // ---------- conics: every figure is drawn from its equation in a maths frame
+    // circle (x − a)² + (y − b)² = r² with centre, radius and the tangent at a point
+    circle2(lang) {
+      const P = frame(10, 8, 260, 150, [-1.5, 6.5], [-0.8, 3.8]), a = 2, b = 1.5, r = 1.6, t = 0.75, T0 = [a + r * Math.cos(t), b + r * Math.sin(t)];
+      const tan = s => [T0[0] - s * Math.sin(t), T0[1] + s * Math.cos(t)];
+      return svg(280, 166, L(...P(-1.4, 0), ...P(6.4, 0), 'ax') + L(...P(0, -0.7), ...P(0, 3.7), 'ax') + C(...P(a, b), r * 260 / 8, 'fl') + C(...P(a, b), r * 260 / 8, 'ac') +
+        L(...P(a, b), ...P(...T0), 'ln') + L(...P(...tan(-1.6)), ...P(...tan(1.6)), 'ac2') + D(...P(a, b)) + D(...P(...T0)) +
+        T(...P(a - 0.25, b - 0.25), 'C', 'up') + T(...P(a + 0.55, b + 0.85), 'r', 'sm') + T(...P(T0[0] + 0.3, T0[1] + 0.05), 'T', 'up') +
+        T(214, 30, w(lang, 'tangent ⟂ radius|tangente ⟂ rayon|tangente ⟂ radio|接線 ⟂ 半径|切线 ⟂ 半径'), 'tl') + T(214, 140, '(x − a)² + (y − b)² = r²', 'tl'));
+    },
+    // a line and a circle: secant, tangent, outside, decided by d against r
+    linecircle(lang) {
+      const one = (x0, d, lab) => C(x0, 70, 30, 'ac') + L(x0 - 42, 70 - d, x0 + 42, 70 - d, 'ac2') + L(x0, 70, x0, 70 - d, 'th') + D(x0, 70) + T(x0, 128, lab, 'tl');
+      return svg(280, 140, one(48, 14, 'd < r: 2') + one(140, 30, 'd = r: 1') + one(232, 44, 'd > r: 0') + D(48 - 26.5, 56, 'dtc') + D(48 + 26.5, 56, 'dtc') + D(140, 40, 'dtc'));
+    },
+    // the slope of a line and a perpendicular line
+    lines2(lang) {
+      const P = frame(14, 8, 252, 140, [-1, 6], [-0.6, 3.6]);
+      return svg(280, 160, L(...P(-0.9, 0), ...P(5.9, 0), 'ax') + L(...P(0, -0.5), ...P(0, 3.5), 'ax') + L(...P(-0.5, 0.25), ...P(5.5, 3.25), 'ac') +
+        L(...P(1, 0.75), ...P(3, 0.75), 'th') + L(...P(3, 0.75), ...P(3, 1.75), 'th') + T(...P(2, 0.5), 'Δx', 'sm') + T(...P(3.4, 1.25), 'Δy', 'sm') + Pth(arc(...P(-0.5, 0.25), 26, 0, 26.6), 'ln') + T(...P(0.45, 0.42), 'α', 'sm') +
+        L(...P(3.6, 3.4), ...P(5.2, 0.2), 'ac2') + T(...P(5.35, 0.55), 'm₂ = −1/m₁', 'sm') + T(...P(1.4, 2.9), 'm = Δy/Δx = tan α', 'tl'));
+    },
+    // ellipse: a, b, c and the right triangle b² + c² = a²
+    ellfoci(lang) {
+      const a = 3, b = 1.8, c = 2.4, P = frame(14, 8, 252, 150, [-3.6, 3.6], [-2.1, 2.1]);
+      const E = poly(curve(t => t, 0, 2 * Math.PI, 90).map(([t]) => P(a * Math.cos(t), b * Math.sin(t))));
+      return svg(280, 168, L(...P(-3.5, 0), ...P(3.5, 0), 'ax') + L(...P(0, -2), ...P(0, 2), 'ax') + Pth(E, 'fl') + Pth(E, 'ac') +
+        L(...P(0, b), ...P(c, 0), 'ac2') + L(...P(0, 0), ...P(c, 0), 'ln') + L(...P(0, 0), ...P(0, b), 'ln') + D(...P(-c, 0)) + D(...P(c, 0)) +
+        T(...P(1.5, 1.2), 'a', 'up') + T(...P(-0.25, 0.9), 'b', 'up') + T(...P(1.2, -0.25), 'c', 'up') + T(...P(-c, -0.35), 'F₁', 'sm') + T(...P(c, -0.35), 'F₂', 'sm') + T(...P(0, -1.6), 'c² = a² − b²', 'tl'));
+    },
+    // the eccentricity: from the circle (e = 0) to flatter and flatter ellipses
+    ecc(lang) {
+      const P = frame(14, 4, 252, 128, [-5.6, 5.6], [-2.85, 2.85]); let body = L(...P(-5.5, 0), ...P(5.5, 0), 'ax');
+      [[0, 'ac'], [0.6, 'ln'], [0.85, 'ac2'], [0.97, 'th']].forEach(([e, c]) => { const a = 2.7, b = a * Math.sqrt(1 - e * e); body += Pth(poly(curve(t => t, 0, 2 * Math.PI, 90).map(([t]) => P(a * Math.cos(t), b * Math.sin(t)))), c); });
+      return svg(280, 150, body + T(...P(-3.7, 2.2), 'e = 0', 'sm') + T(...P(3.5, 1.75), 'e = 0.6', 'sm') + T(...P(3.6, 1.0), '0.85', 'sm') + T(...P(3.6, 0.35), '0.97', 'sm') + T(140, 142, w(lang, 'e = c/a: 0 is a circle, near 1 very flat|e = c/a : 0 cercle, près de 1 très aplatie|e = c/a: 0 circunferencia, cerca de 1 muy achatada|e = c/a：0 は円、1 に近いほど扁平|e = c/a：0 为圆，越接近 1 越扁'), 'tl'));
+    },
+    // the parametrisation (a cos t, b sin t) with the auxiliary circle
+    ellparam(lang) {
+      const a = 2, b = 1.15, t = 0.9, P = frame(14, 6, 252, 156, [-3.5, 3.5], [-2.17, 2.17]);
+      const E = poly(curve(u => u, 0, 2 * Math.PI, 90).map(([u]) => P(a * Math.cos(u), b * Math.sin(u))));
+      const Q = [a * Math.cos(t), a * Math.sin(t)], M = [a * Math.cos(t), b * Math.sin(t)];
+      return svg(280, 168, L(...P(-3.4, 0), ...P(3.4, 0), 'ax') + L(...P(0, -2.1), ...P(0, 2.1), 'ax') + C(...P(0, 0), a * 252 / 7, 'th') + Pth(E, 'fl') + Pth(E, 'ac') +
+        L(...P(0, 0), ...P(...Q), 'ln') + L(...P(...Q), ...P(Q[0], 0), 'th') + D(...P(...M)) + D(...P(...Q), 'dtc') + Pth(arc(...P(0, 0), 18, 0, t * 180 / Math.PI), 'ln') +
+        T(...P(0.75, 0.3), 't', 'sm') + T(...P(M[0] + 1.25, M[1] - 0.15), '(a cos t, b sin t)', 'sm') + T(...P(-2.6, -1.85), 'S = πab', 'tl'));
+    },
+    // parabola y² = 4px opening right and x² = 4py opening up, with foci
+    parab2(lang) {
+      const P = frame(10, 8, 125, 132, [-1, 4], [-2.8, 2.8]), Q = frame(148, 8, 125, 132, [-2.6, 2.6], [-0.6, 4.4]), p = 0.7;
+      return svg(280, 160, L(...P(-0.9, 0), ...P(3.9, 0), 'ax') + L(...P(0, -2.7), ...P(0, 2.7), 'ax') + Pth(poly(curve(y => y, -2.7, 2.7).map(([y]) => P(y * y / (4 * p), y))), 'ac') + D(...P(p, 0)) + L(...P(-p, -2.6), ...P(-p, 2.6), 'ac2') + T(...P(p + 0.2, -0.45), 'F(p, 0)', 'sm') + T(72, 152, 'y² = 4px', 'tl') +
+        L(...Q(-2.5, 0), ...Q(2.5, 0), 'ax') + L(...Q(0, -0.5), ...Q(0, 4.3), 'ax') + Pth(poly(curve(x => x * x / (4 * p), -2.4, 2.4).map(([x, y]) => Q(x, y)).filter(q => q[1] > 6)), 'ac') + D(...Q(0, p)) + L(...Q(-2.5, -p), ...Q(2.5, -p), 'ac2') + T(...Q(0.85, p), 'F(0, p)', 'sm') + T(210, 152, 'x² = 4py', 'tl'));
+    },
+    // vertex form y = a(x − h)² + k: the vertex (h, k) and the axis x = h
+    vertexform(lang) {
+      const P = frame(14, 8, 252, 140, [-1, 5], [-0.5, 4.2]), h = 2.2, k = 0.8;
+      return svg(280, 160, L(...P(-0.9, 0), ...P(4.9, 0), 'ax') + L(...P(0, -0.4), ...P(0, 4.1), 'ax') + Pth(poly(curve(x => 0.8 * (x - h) ** 2 + k, -0.2, 4.6).map(([x, y]) => P(x, y))), 'ac') +
+        L(...P(h, -0.3), ...P(h, 4.1), 'th') + D(...P(h, k)) + L(...P(h, k), ...P(h, 0), 'ln') + L(...P(0, k), ...P(h, k), 'th') + T(...P(h + 0.55, k - 0.2), '(h, k)', 'sm') + T(...P(h + 0.45, 3.9), 'x = h', 'sm') + T(...P(-0.4, k), 'k', 'sm') + T(...P(h, -0.3), 'h', 'sm') +
+        T(70, 132, 'a > 0: ∪', 'tl'));
+    },
+    // hyperbola: c² = a² + b², the box a × b and the asymptotes through its corners
+    hypfoci(lang) {
+      const a = 1.4, b = 1, c = Math.hypot(a, b), P = frame(14, 6, 252, 150, [-3.7, 3.7], [-2.2, 2.2]);
+      const br = s => Pth(poly(curve(u => u, -1.6, 1.6).map(([u]) => P(s * a * Math.cosh(u), b * Math.sinh(u)))), 'ac');
+      return svg(280, 162, L(...P(-3.6, 0), ...P(3.6, 0), 'ax') + L(...P(0, -2.1), ...P(0, 2.1), 'ax') + Pth('M' + [P(-a, -b), P(a, -b), P(a, b), P(-a, b)].map(q => q.join(',')).join('L') + 'Z', 'fl') + Pth('M' + [P(-a, -b), P(a, -b), P(a, b), P(-a, b)].map(q => q.join(',')).join('L') + 'Z', 'th') +
+        L(...P(-3.1, -3.1 * b / a), ...P(3.1, 3.1 * b / a), 'th') + L(...P(-3.1, 3.1 * b / a), ...P(3.1, -3.1 * b / a), 'th') + br(1) + br(-1) + L(...P(0, 0), ...P(a, b), 'ac2') + D(...P(-c, 0)) + D(...P(c, 0)) +
+        T(...P(0.5, 0.75), 'c', 'up') + T(...P(a / 2, -1.25), 'a', 'sm') + T(...P(a + 0.25, -0.5), 'b', 'sm') + T(...P(-c, -0.35), 'F₁', 'sm') + T(...P(c, -0.35), 'F₂', 'sm') + T(...P(0, 1.95), 'c² = a² + b²', 'tl'));
+    },
+    // hyperbola definition |PF₁ − PF₂| = 2a
+    hypdef(lang) {
+      const a = 1.3, b = 1, c = Math.hypot(a, b), P = frame(14, 6, 252, 150, [-3.7, 3.7], [-2.2, 2.2]), u = 0.9, Q = [a * Math.cosh(u), b * Math.sinh(u)];
+      const br = s => Pth(poly(curve(t => t, -1.6, 1.6).map(([t]) => P(s * a * Math.cosh(t), b * Math.sinh(t)))), 'ac');
+      return svg(280, 162, L(...P(-3.6, 0), ...P(3.6, 0), 'ax') + br(1) + br(-1) + L(...P(-c, 0), ...P(...Q), 'ac2') + L(...P(c, 0), ...P(...Q), 'ac2') + D(...P(-c, 0)) + D(...P(c, 0)) + D(...P(...Q)) +
+        D(...P(-a, 0), 'dtc') + D(...P(a, 0), 'dtc') + T(...P(-c, -0.35), 'F₁', 'sm') + T(...P(c + 0.1, -0.35), 'F₂', 'sm') + T(...P(Q[0] + 0.25, Q[1] + 0.2), 'P', 'up') + T(...P(0, -0.35), '2a', 'sm') + T(140, 154, '|PF₁ − PF₂| = 2a', 'tl'));
+    },
+    // rectangular hyperbola xy = k (k > 0 and k < 0)
+    recthyp(lang) {
+      const P = frame(14, 6, 252, 150, [-4, 4], [-2.4, 2.4]), f = x => 1.5 / x;
+      return svg(280, 162, L(...P(-3.9, 0), ...P(3.9, 0), 'ax') + L(...P(0, -2.3), ...P(0, 2.3), 'ax') + Pth(plot(f, 0.6, 3.9, P, -2.4, 2.4), 'ac') + Pth(plot(f, -3.9, -0.6, P, -2.4, 2.4), 'ac') +
+        Pth(plot(x => -1.5 / x, 0.6, 3.9, P, -2.4, 2.4), 'ac2') + Pth(plot(x => -1.5 / x, -3.9, -0.6, P, -2.4, 2.4), 'ac2') + T(...P(2.6, 1.05), 'xy = k > 0', 'sm') + T(...P(2.6, -1.05), 'k < 0', 'sm') +
+        T(70, 152, w(lang, 'asymptotes: the axes|asymptotes : les axes|asíntotas: los ejes|漸近線：座標軸|渐近线：坐标轴'), 'tl'));
+    },
+    // tangent lines: ellipse at a point, parabola with the reflection property
+    conictan(lang) {
+      const P = frame(6, 8, 140, 130, [-3.4, 3.4], [-2.6, 3.4]), a = 3, b = 1.8, t = 0.8, T0 = [a * Math.cos(t), b * Math.sin(t)];
+      const E = poly(curve(u => u, 0, 2 * Math.PI, 90).map(([u]) => P(a * Math.cos(u), b * Math.sin(u))));
+      const tl = x => (1 - x * T0[0] / (a * a)) * b * b / T0[1];
+      const Q = frame(150, 8, 128, 130, [-0.5, 4.2], [-2.6, 2.6]), p = 0.8, y0 = 1.6, x0 = y0 * y0 / (4 * p);
+      return svg(280, 158, L(...P(-3.3, 0), ...P(3.3, 0), 'ax') + Pth(E, 'ac') + L(...P(0.3, tl(0.3)), ...P(3.4, tl(3.4)), 'ac2') + D(...P(...T0)) + T(...P(T0[0] - 0.45, T0[1] - 0.3), 'P', 'up') + T(76, 150, 'xx₀/a² + yy₀/b² = 1', 'tl') +
+        L(...Q(-0.4, 0), ...Q(4.1, 0), 'ax') + Pth(poly(curve(y => y, -2.5, 2.5).map(([y]) => Q(y * y / (4 * p), y))), 'ac') + D(...Q(p, 0)) + L(...Q(p, 0), ...Q(x0, y0), 'th') + L(...Q(x0, y0), ...Q(4.2, y0), 'th') +
+        L(...Q(-0.4, (2 * p * (-0.4 + x0)) / y0), ...Q(3.2, (2 * p * (3.2 + x0)) / y0), 'ac2') + D(...Q(x0, y0)) + T(...Q(p, -0.35), 'F', 'up') + T(214, 150, 'yy₀ = 2p(x + x₀)', 'tl'));
+    },
+    // latus rectum and focal chord of a parabola
+    latus(lang) {
+      const P = frame(40, 6, 150, 150, [-1.4, 5], [-3.2, 3.2]), p = 1;
+      const yA = -1.2, xA = yA * yA / 4, yB = -4 * p * p / yA, xB = yB * yB / 4;
+      return svg(280, 162, L(...P(-1.1, 0), ...P(4.9, 0), 'ax') + L(...P(0, -3.1), ...P(0, 3.1), 'ax') + Pth(poly(curve(y => y, -3.1, 3.1).map(([y]) => P(y * y / 4, y))), 'ac') + L(...P(-p, -3.1), ...P(-p, 3.1), 'th') +
+        L(...P(p, -2 * p), ...P(p, 2 * p), 'ac2') + L(...P(xA, yA), ...P(xB, yB), 'ln') + D(...P(p, 0)) + D(...P(xA, yA)) + D(...P(xB, yB)) + D(...P(p, 2)) + D(...P(p, -2)) +
+        T(...P(p + 0.35, -0.3), 'F', 'up') + T(...P(p + 0.45, 1.2), '4p', 'sm') + T(...P(xA - 0.15, yA - 0.35), 'A', 'up') + T(...P(xB + 0.3, yB), 'B', 'up') + T(236, 70, '|AB| =', 'tl') + T(236, 86, 'x₁ + x₂ + 2p', 'tl') + T(236, 112, w(lang, 'latus rectum: 4p|corde focale ⟂ : 4p|lado recto: 4p|通径：4p|通径：4p'), 'tl'));
+    },
+    // a chord of an ellipse with its midpoint M
+    chordmid(lang) {
+      const a = 3, b = 1.8, P = frame(14, 6, 252, 150, [-3.6, 3.6], [-2.1, 2.1]), M = [1.1, 0.6], m = -(b * b * M[0]) / (a * a * M[1]);
+      // the chord through M with slope m meets the ellipse where x²/a² + (M₁ + m(x − M₀))²/b² = 1
+      const A2 = 1 / (a * a) + m * m / (b * b), B2 = 2 * m * (M[1] - m * M[0]) / (b * b), C2 = (M[1] - m * M[0]) ** 2 / (b * b) - 1, dsc = Math.sqrt(B2 * B2 - 4 * A2 * C2);
+      const x1 = (-B2 - dsc) / (2 * A2), x2 = (-B2 + dsc) / (2 * A2), y = x => M[1] + m * (x - M[0]);
+      const E = poly(curve(u => u, 0, 2 * Math.PI, 90).map(([u]) => P(a * Math.cos(u), b * Math.sin(u))));
+      return svg(280, 162, L(...P(-3.5, 0), ...P(3.5, 0), 'ax') + L(...P(0, -2), ...P(0, 2), 'ax') + Pth(E, 'ac') + L(...P(x1, y(x1)), ...P(x2, y(x2)), 'ac2') + L(...P(0, 0), ...P(...M), 'th') +
+        D(...P(x1, y(x1))) + D(...P(x2, y(x2))) + D(...P(...M), 'dtc') + T(...P(M[0] + 0.25, M[1] + 0.3), 'M', 'up') + T(140, 154, 'm_AB · m_OM = −b²/a²', 'tl'));
+    },
+    // one focus, one directrix, several eccentricities: circle-like, ellipse, parabola, hyperbola
+    conicfamily(lang) {
+      const P = frame(10, 6, 260, 150, [-3.3, 5.3], [-2.6, 2.6]), pdist = 1.4;
+      const conic = (e, c) => { let d = '', pen = false; for (let k = 0; k <= 360; k++) { const th = -Math.PI + 2 * Math.PI * k / 360, den = 1 + e * Math.cos(th); if (den < 0.06) { pen = false; continue; } const r = e * pdist / den, x = r * Math.cos(th), y = r * Math.sin(th);
+        if (Math.abs(x) > 5.2 || Math.abs(y) > 2.6) { pen = false; continue; } const [X, Y] = P(x, y); d += (pen ? 'L' : 'M') + X.toFixed(1) + ',' + Y.toFixed(1); pen = true; } return Pth(d, c); };
+      return svg(280, 162, L(...P(-3.2, 0), ...P(5.2, 0), 'ax') + L(...P(pdist, -2.5), ...P(pdist, 2.5), 'ac2') + conic(0.5, 'ln') + conic(1, 'ac') + conic(1.8, 'th') + D(...P(0, 0)) + T(...P(-0.2, -0.3), 'F', 'up') +
+        T(...P(-1.5, 0.75), 'e = ½', 'sm') + T(...P(-2.6, 2.0), 'e = 1', 'sm') + T(...P(0.7, 2.2), 'e = 1.8', 'sm') + T(...P(pdist + 0.2, -2.3), 'ℓ', 'up') + T(210, 150, 'PF = e · d(P, ℓ)', 'tl'));
+    },
     // a line in space: point P₀, direction d, points P₀ + t d (oblique axes)
     line3d(lang) {
       const O = [70, 120], X = [-40, 30], Y = [172, 0], Z = [0, -100];
@@ -126,6 +250,67 @@
         L(60, 28, 140, 95, 'ac2') + L(140, 95, 164, 115, 'th') + L(164, 115, 190, 137, 'ac2') + D(140, 95) + T(124, 104, 'P', 'up') + T(60, 18, 'ℓ', 'up') +
         L(...Q, ...H, 'th') + D(...Q) + D(...H, 'dtc') + T(222, 34, 'Q', 'up') + T(222, 66, 'd', 'sm') + T(58, 112, 'π', 'up') +
         T(84, 140, 'Ax + By + Cz + D = 0', 'tl'));
+    },
+    // angles in space: a line through a plane (θ against its shadow) and two planes with their normals
+    angle3d(lang) {
+      const pl = (pts, c) => Pth('M' + pts.map(p => p.join(',')).join('L') + 'Z', c);
+      return svg(300, 150,
+        pl([[10, 120], [120, 120], [150, 90], [40, 90]], 'fl') + pl([[10, 120], [120, 120], [150, 90], [40, 90]], 'ln') +
+        L(48, 128, 120, 52, 'ac2') + L(84, 105, 120, 105, 'th') + L(120, 52, 120, 105, 'th') + Pth(arc(84, 105, 18, 0, 47), 'ac') + D(84, 105) + T(108, 100, 'θ', 'sm') + T(126, 50, 'ℓ', 'up') +
+        T(80, 142, w(lang, 'sin θ: line with plane|sin θ : droite et plan|sin θ: recta y plano|sin θ：直線と平面|sin θ：线与面'), 'tl') +
+        pl([[175, 125], [275, 125], [290, 100], [190, 100]], 'fl') + pl([[175, 125], [275, 125], [290, 100], [190, 100]], 'ln') +
+        pl([[190, 112], [280, 112], [250, 40], [160, 40]], 'fl2') + pl([[190, 112], [280, 112], [250, 40], [160, 40]], 'ln') +
+        `<line x1="232" y1="112" x2="232" y2="62" class="ac" marker-end="ARROW"/>` + `<line x1="232" y1="112" x2="268" y2="92" class="ac2" marker-end="ARROW"/>` +
+        T(220, 60, 'n₁', 'sm') + T(270, 86, 'n₂', 'sm') + T(232, 142, w(lang, 'cos θ: normals|cos θ : normales|cos θ: normales|cos θ：法線|cos θ：法向量'), 'tl'));
+    },
+    // distances: point to plane (foot H) and skew lines with their common perpendicular
+    dist3d(lang) {
+      const pl = (pts, c) => Pth('M' + pts.map(p => p.join(',')).join('L') + 'Z', c);
+      return svg(300, 150,
+        pl([[10, 125], [125, 125], [150, 95], [35, 95]], 'fl') + pl([[10, 125], [125, 125], [150, 95], [35, 95]], 'ln') +
+        L(80, 30, 80, 110, 'ac') + D(80, 30) + D(80, 110, 'dtc') + right(80, 110, 1, -1, 8) + T(66, 26, 'Q', 'up') + T(66, 120, 'H', 'up') + T(88, 74, 'd', 'up') + T(18, 112, 'π', 'up') +
+        T(80, 143, w(lang, 'point – plane|point – plan|punto – plano|点と平面|点到平面'), 'tl') +
+        L(170, 40, 290, 40, 'ac2') + L(190, 128, 280, 84, 'ac2') + L(236, 40, 236, 106, 'ac') + D(236, 40) + D(236, 106) + right(236, 40, 1, 1, 8) +
+        T(292, 34, 'ℓ₁', 'sm') + T(282, 80, 'ℓ₂', 'sm') + T(244, 78, 'd', 'up') + T(232, 143, w(lang, 'skew lines: common perpendicular|droites non coplanaires|rectas que se cruzan|ねじれ：共通垂線|异面直线：公垂线'), 'tl'));
+    },
+    // intersections: a line piercing a plane, two planes meeting in a line
+    inter3d(lang) {
+      const pl = (pts, c) => Pth('M' + pts.map(p => p.join(',')).join('L') + 'Z', c);
+      return svg(300, 150,
+        pl([[10, 120], [120, 120], [150, 85], [40, 85]], 'fl') + pl([[10, 120], [120, 120], [150, 85], [40, 85]], 'ln') +
+        L(50, 20, 80, 102, 'ac2') + L(80, 102, 86, 118, 'th') + L(86, 118, 92, 136, 'ac2') + D(80, 102) + T(90, 100, 'P', 'up') +
+        T(80, 143, w(lang, 'one point: solve for t|un point : trouver t|un punto: hallar t|1 点：t を求める|一个点：解出 t'), 'tl') +
+        pl([[170, 120], [290, 120], [270, 80], [150, 80]], 'fl') + pl([[170, 120], [290, 120], [270, 80], [150, 80]], 'ln') +
+        pl([[175, 100], [280, 100], [250, 25], [145, 25]], 'fl2') + pl([[175, 100], [280, 100], [250, 25], [145, 25]], 'ln') +
+        L(163, 100, 285, 100, 'ac') + T(258, 94, 'n₁ × n₂', 'sm') + T(222, 143, w(lang, 'two planes: a line|deux plans : une droite|dos planos: una recta|2 平面：直線|两平面：一条直线'), 'tl'));
+    },
+    // relative positions of two lines: meeting, parallel, skew
+    pos3d(lang) {
+      const lab = (x, s) => T(x + 30, 140, s, 'tl');
+      return svg(300, 150,
+        L(15, 110, 85, 30, 'ac') + L(10, 50, 90, 100, 'ac2') + D(55, 75) + lab(20, w(lang, 'meet|sécantes|se cortan|交わる|相交')) +
+        L(110, 110, 175, 30, 'ac') + L(130, 115, 195, 35, 'ac2') + lab(118, w(lang, 'parallel|parallèles|paralelas|平行|平行')) +
+        L(210, 105, 295, 70, 'ac') + L(225, 40, 252.4, 78.9, 'ac2') + L(261.6, 92, 285, 125, 'ac2') +
+        lab(226, w(lang, 'skew|non coplanaires|se cruzan|ねじれ|异面')) + T(252, 22, w(lang, 'triple product ≠ 0|produit mixte ≠ 0|producto mixto ≠ 0|三重積 ≠ 0|混合积 ≠ 0'), 'tl'));
+    },
+    // the foot H of the perpendicular from Q and the reflection Q′
+    reflect3d(lang) {
+      const pl = (pts, c) => Pth('M' + pts.map(p => p.join(',')).join('L') + 'Z', c);
+      return svg(280, 160,
+        pl([[20, 95], [200, 95], [250, 60], [70, 60]], 'fl') + pl([[20, 95], [200, 95], [250, 60], [70, 60]], 'ln') +
+        L(140, 15, 140, 78, 'ac') + L(140, 78, 140, 140, 'th') + D(140, 15) + D(140, 78, 'dtc') + D(140, 140, 'dt') + right(140, 78, 1, -1, 8) +
+        `<line x1="100" y1="78" x2="100" y2="40" class="ac2" marker-end="ARROW"/>` + T(86, 42, 'n', 'up') +
+        T(150, 18, 'Q', 'up') + T(150, 82, 'H', 'up') + T(150, 146, 'Q′', 'up') + T(214, 146, 'Q′ = Q − 2λn', 'sm') + T(30, 88, 'π', 'up') + T(160, 50, 'λn', 'sm') +
+        T(62, 130, w(lang, 'H: midpoint of QQ′|H : milieu de QQ′|H: punto medio de QQ′|H：QQ′ の中点|H：QQ′ 的中点'), 'tl'));
+    },
+    // a sphere cut by a plane: distance d, radius r, circle of radius ρ
+    sphereplane(lang) {
+      const O = [100, 92], r = 62;
+      return svg(280, 175, C(O[0], O[1], r, 'ln') + `<ellipse cx="${O[0]}" cy="${O[1]}" rx="${r}" ry="14" class="th"/>` +
+        Pth(`M12,60L178,60L212,34L46,34Z`, 'fl') + Pth(`M12,60L178,60L212,34L46,34Z`, 'ln') +
+        `<ellipse cx="${O[0]}" cy="47" rx="44" ry="8" class="ac"/>` + D(...O) + L(O[0], O[1], O[0], 47, 'ac2') + L(O[0], 47, O[0] + 44, 47, 'ac2') + L(O[0], O[1], O[0] + 44, 47, 'th') +
+        T(O[0] - 10, 74, 'd', 'up') + T(O[0] + 22, 42, 'ρ', 'up') + T(O[0] + 30, 78, 'r', 'up') + T(O[0] - 12, O[1] + 14, 'C', 'up') +
+        T(232, 100, 'ρ² = r² − d²', 'tl') + T(232, 120, w(lang, 'd = r: tangent|d = r : tangent|d = r: tangente|d = r：接する|d = r：相切'), 'tl'));
     },
     // Sarrus' rule: copy two columns, ↘ diagonals +, ↙ diagonals −
     sarrus(lang) {

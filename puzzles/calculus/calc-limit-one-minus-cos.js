@@ -54,7 +54,7 @@
       const g = x => 4 * f(x);   // vertical scale ×4
       plot(F, T, g, -4.1, -0.02, 'graph'); plot(F, T, g, 0.02, 4.1, 'graph');
       F.circle(T([0, 2]), 0.09, 'seg').setAttribute('fill', 'var(--paper)');
-      F.text(T([0, 2]), '1/2', 'len small', 18, -10);
+      F.text(T([0, 2]), '1/2', 'len small', 24, 16);
       return F;
     },
     options: [

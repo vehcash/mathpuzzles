@@ -169,6 +169,11 @@
     ib:       { en: 'IB Diploma', fr: 'Baccalauréat international (IB)', es: 'Bachillerato Internacional (IB)', ja: '国際バカロレア（IB）', zh: 'IB 国际文凭' },
     ap:       { en: 'AP Calculus (USA)', fr: 'AP Calculus (États-Unis)', es: 'AP Calculus (EE. UU.)', ja: 'AP Calculus（米国）', zh: '美国 AP 微积分' },
     amc:      { en: 'AMC 8/10 (USA)', fr: 'AMC 8/10 (États-Unis)', es: 'AMC 8/10 (EE. UU.)', ja: 'AMC 8/10（米国）', zh: '美国 AMC 8/10' },
+    step:     { en: 'STEP (Cambridge, UK)', fr: 'STEP (Cambridge, Royaume-Uni)', es: 'STEP (Cambridge, Reino Unido)', ja: 'STEP（ケンブリッジ大学）', zh: 'STEP（剑桥大学）' },
+    mat:      { en: 'MAT (Oxford, UK)', fr: 'MAT (Oxford, Royaume-Uni)', es: 'MAT (Oxford, Reino Unido)', ja: 'MAT（オックスフォード大学）', zh: 'MAT（牛津大学）' },
+    jee:      { en: 'JEE Advanced (India)', fr: 'JEE Advanced (Inde)', es: 'JEE Advanced (India)', ja: 'JEE Advanced（インド）', zh: 'JEE Advanced（印度）' },
+    ime:      { en: 'IME (Brazil)', fr: 'IME (Brésil)', es: 'IME (Brasil)', ja: 'IME（ブラジル）', zh: 'IME（巴西）' },
+    ita:      { en: 'ITA (Brazil)', fr: 'ITA (Brésil)', es: 'ITA (Brasil)', ja: 'ITA（ブラジル）', zh: 'ITA（巴西）' },
     uni:      { en: 'University linear algebra', fr: 'Algèbre linéaire (université)', es: 'Álgebra lineal (universidad)', ja: '大学の線形代数', zh: '大学线性代数' }
   };
 
@@ -193,6 +198,9 @@
     });
   }
 
+  const SEEN_KEY = 'chalkproof.seen.v1', SEEN_MEM = {};
+  const seenOf = cat => { const all = global.Store ? Store.getJSON(SEEN_KEY, {}) : SEEN_MEM; const ids = new Set(INDEX.filter(e => e.cat === cat).map(e => e.id)); return (all[cat] || []).filter(id => ids.has(id)); };
+
   global.PuzzleBank = {
     categories: CATEGORIES, kit, define, load, loadSearch, localize, text: pick,
     exams: EXAMS,
@@ -203,10 +211,25 @@
     get index() { return INDEX; },
     entry: id => byId.get(id),
     count: cat => INDEX.filter(e => e.cat === cat).length,
-    /** a random index entry of a category, avoiding exceptId when possible */
+    /** a random index entry of a category. No puzzle repeats until every puzzle of the category has been shown;
+        then the round starts again (still avoiding exceptId, the one on screen). The record is kept with Store:
+        for this visit only, or across visits if the visitor accepted preference storage. */
     pick(cat, exceptId) {
-      const pool = INDEX.filter(e => e.cat === cat), fresh = pool.filter(e => e.id !== exceptId), from = fresh.length ? fresh : pool;
-      return from[Math.floor(Math.random() * from.length)] || null;
+      const pool = INDEX.filter(e => e.cat === cat); if (!pool.length) return null;
+      const seen = seenOf(cat);
+      let from = pool.filter(e => !seen.includes(e.id) && e.id !== exceptId);
+      if (!from.length) {   // the round is over: start a new one
+        seen.length = 0; if (exceptId && pool.some(e => e.id === exceptId)) seen.push(exceptId);
+        from = pool.filter(e => e.id !== exceptId); if (!from.length) from = pool;
+      }
+      const e = from[Math.floor(Math.random() * from.length)];
+      PuzzleBank.markSeen(e.id); return e;
+    },
+    /** remember that a puzzle was shown (random pick, daily puzzle, link or list) */
+    markSeen(id) {
+      const e = byId.get(id); if (!e) return;
+      const seen = seenOf(e.cat); if (!seen.includes(id)) seen.push(id);
+      const all = global.Store ? Store.getJSON(SEEN_KEY, {}) : {}; all[e.cat] = seen; if (global.Store) Store.setJSON(SEEN_KEY, all); else SEEN_MEM[e.cat] = seen;
     },
     random(cat, exceptId) { const e = PuzzleBank.pick(cat, exceptId); return e ? load(e.id) : Promise.resolve(null); }
   };

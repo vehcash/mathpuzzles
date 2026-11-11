@@ -62,3 +62,13 @@
 .pc-tag { padding: 0 7px; border-radius: 9px; background: rgba(47,111,143,.1); color: var(--accent-2); font-weight: 600; white-space: nowrap; }
 .pc-tag.classic { background: rgba(226,173,26,.22); color: #8a6400; }
 .pc-tag.exam { background: rgba(214,90,133,.16); color: #a73a63; }
+
+/* the category row must never be squeezed by the page layout */
+.lfilters { flex-shrink: 0; }
+@media (max-width: 600px) {
+  .list-page .top { position: static; }
+  .lfilters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 10px 12px 4px;
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); }
+  .lfilters::-webkit-scrollbar { display: none; }
+  .lchip { flex: none; }
+}

@@ -51,8 +51,8 @@
       const F = Figure(svg, { w: 7.4, h: 4.4, scale: 40, pad: 18 });
       const T = F.T = axes(F, -3.7, 3.7, -2.2, 2.2);
       plot(F, T, x => x, -2.2, 2.2, 'seg thin');
-      plot(F, T, x => x - x ** 3 / 6, -3.6, 3.6, 'seg', 'base', -2.2, 2.2).setAttribute('fill', 'none');
-      plot(F, T, Math.sin, -3.6, 3.6, 'graph');
+      plot(F, T, x => x - x ** 3 / 6, -3.3, 3.3, 'seg', 'base', -2.2, 2.2).setAttribute('fill', 'none');
+      plot(F, T, Math.sin, -3.3, 3.3, 'graph');
       F.text(T([2.2, 1.05]), 'sin x', 'len small', 8, -12); F.text(T([2.9, -1.2]), 'x − x³/6', 'len small', -30, 0);
       return F;
     },

@@ -49,11 +49,11 @@
       zh: "如果可以，请用另一种方法求解（例如直接求出两根 (5 ± √13)/2 再平方），写出每一步，然后逐项检查选项并指出哪些正确。"
     },
     figure(svg) {
-      const F = Figure(svg, { w: 7, h: 6, scale: 34, pad: 18 });
+      const F = Figure(svg, { w: 7, h: 8, scale: 30, pad: 18 });
       const T = F.T = axes(F, -1, 6, -3.6, 4.4, { grid: true });
       plot(F, T, f, -0.4, 5.4, 'graph', 'base', -3.6, 4.4);
       F.dot(T([a, 0])); F.dot(T([b, 0]));
-      F.text(T([a, 0]), 'α', 'pt', -10, -12); F.text(T([b, 0]), 'β', 'pt', 10, -12);
+      F.text(T([a, 0]), 'α', 'pt', -14, 16); F.text(T([b, 0]), 'β', 'pt', 14, 16);
       return F;
     },
     options: [

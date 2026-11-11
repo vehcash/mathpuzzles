@@ -48,7 +48,7 @@
       zh: "如果可以，请用另一种方法求解（例如对 4x、12 − 2x、12 − 2x 用均值不等式），写出每一步，然后逐项检查选项并指出哪些正确。"
     },
     figure(svg) {
-      const F = Figure(svg, { w: 6, h: 6, scale: 40, pad: 20 });
+      const F = Figure(svg, { w: 6, h: 6, scale: 40, pad: 30 });
       F.rect(0, 0, 6, 6, 'tri');
       [[0, 0], [5, 0], [0, 5], [5, 5]].forEach(([x, y]) => F.rect(x, y, 1, 1, 'fill-pink', 'fills'));
       F.seg([1, 1], [5, 1], 'seg thin'); F.seg([1, 5], [5, 5], 'seg thin'); F.seg([1, 1], [1, 5], 'seg thin'); F.seg([5, 1], [5, 5], 'seg thin');

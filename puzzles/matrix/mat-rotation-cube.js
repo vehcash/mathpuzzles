@@ -49,7 +49,7 @@
       F.circle(C, R, 'seg thin').setAttribute('fill', 'none');
       arrow(F, C, P(0), 'vec'); F.dot(P(0)); F.text(P(0), 'P', 'pt', 12, 12);
       F.dot(C); F.text(C, 'O', 'pt', -10, 12);
-      F.text([C[0] + 0.32, C[1] + 0.2], '60°', 'len small', 8, 0);
+      F.text([C[0] + 0.32, C[1] + 0.2], '60°', 'len small', 14, 0);
       F.seg(C, P(60), 'seg thin');                 // the second side of the 60° angle
       F.arc(C, 0.3, 0, 60, '', 'marks');
       return F;

@@ -93,7 +93,7 @@
   $('#btn-random').onclick = () => show(PuzzleBank.random(state.cat, state.base && state.base.id));
   // puzzle files load on demand; only the latest request is shown
   let showSeq = 0;
-  function show(promise) { const my = ++showSeq; return Promise.resolve(promise).then(p => { if (my === showSeq && p) load(p); }).catch(err => console.error(err)); }
+  function show(promise) { const my = ++showSeq; return Promise.resolve(promise).then(p => { if (my === showSeq && p) { if (p.id && PuzzleBank.markSeen) PuzzleBank.markSeen(p.id); load(p); } }).catch(err => console.error(err)); }
 
   // ---------- puzzle ----------
   function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }

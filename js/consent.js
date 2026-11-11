@@ -9,7 +9,7 @@
   'use strict';
   const CONSENT_KEY = 'cp_consent', VERSION = 1, DAYS = 180;
   const PREF_COOKIES = ['cp_lang', 'cp_askmode'];
-  const PREF_LOCAL = ['chalkproof.intents.v1', 'chalkproof.recent', 'cp_lang', 'cp_askmode', 'chalkproof.askmode.v1'];
+  const PREF_LOCAL = ['chalkproof.intents.v1', 'chalkproof.recent', 'cp_lang', 'cp_askmode', 'chalkproof.askmode.v1', 'chalkproof.seen.v1'];
 
   // ---- low-level cookie / local helpers ----
   const cookiesWork = (() => { try { if (location.protocol === 'file:') return false; document.cookie = 'cp_t=1; path=/; SameSite=Lax'; const ok = document.cookie.indexOf('cp_t=1') >= 0; document.cookie = 'cp_t=; path=/; max-age=0'; return ok; } catch (e) { return false; } })();

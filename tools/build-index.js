@@ -26,8 +26,10 @@ const problems = [], missing = {};
 for (const cat of fs.readdirSync(DIR).filter(d => fs.statSync(path.join(DIR, d)).isDirectory() && d !== 'search').sort((a, b) => cats.indexOf(a) - cats.indexOf(b))) {
   for (const f of fs.readdirSync(path.join(DIR, cat)).filter(f => f.endsWith('.js')).sort()) {
     const rel = cat + '/' + f;
+    const code = fs.readFileSync(path.join(DIR, rel), 'utf8');
+    if (code.startsWith('// REMOVED')) continue;   // withdrawn puzzle left on disk: delete the file
     let got = null; Bank.define = p => { got = p; };
-    try { vm.runInContext(fs.readFileSync(path.join(DIR, rel), 'utf8'), sandbox, { filename: 'puzzles/' + rel }); }
+    try { vm.runInContext(code, sandbox, { filename: 'puzzles/' + rel }); }
     catch (e) { problems.push(rel + ': ' + e.message); continue; }
     if (!got) { problems.push(rel + ': no PuzzleBank.define(...)'); continue; }
     const p = got;
@@ -49,7 +51,7 @@ for (const cat of fs.readdirSync(DIR).filter(d => fs.statSync(path.join(DIR, d))
       const miss = fields.filter(([, v]) => v && !(typeof v === 'object' && v[l] !== undefined) && hasWords(pick(v, 'en'))).map(([n]) => n);
       if (miss.length) (missing[l] = missing[l] || []).push(p.id + ' (' + miss.length + ': ' + miss.slice(0, 4).join(', ') + (miss.length > 4 ? '…' : '') + ')');
     }
-    entries.push({ id: p.id, cat: p.category, diff: p.difficulty || 1, file: rel, options: (p.options || []).length, steps: (p.steps || []).length, src: src.from ? 'exam' : (src.kind || 'standard'), ex: src.exams || [] });
+    entries.push({ id: p.id, cat: p.category, diff: p.difficulty || 1, file: rel, options: (p.options || []).length, steps: (p.steps || []).length, src: src.from ? 'exam' : (src.kind || 'standard'), ex: src.exams || [], ...(src.from ? { from: typeof src.from === 'object' ? src.from.en : src.from } : {}) });
     for (const l of LANGS) {
       const body = [plain(pick(p.statement, l)), pick(p.figureText, l), plain(pick(p.hint, l)), ...(p.steps || []).map(s => plain(pick(s.title, l))),
         plain(pick(src.from, l)), plain(pick(src.note, l)), ...(src.exams || []).flatMap(k => Bank.exams[k] ? [...new Set([pick(Bank.exams[k], l), Bank.exams[k].en])] : [])].filter(Boolean).join(' ');

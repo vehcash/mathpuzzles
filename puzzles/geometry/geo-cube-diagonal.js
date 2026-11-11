@@ -52,7 +52,7 @@
       [[cA, cB], [cB, cC], [cA1, cB1], [cB1, cC1], [cC1, cD1], [cD1, cA1], [cA, cA1], [cB, cB1], [cC, cC1]].forEach(([p, q]) => F.seg(p, q));
       [[cA, cD], [cD, cC], [cD, cD1]].forEach(([p, q]) => F.seg(p, q, 'hidden-edge'));
       F.seg(cA, cC1, 'diag');
-      [[cA, 'A', -10, 10], [cB, 'B', 10, 10], [cC, 'C', 12, 6], [cD, 'D', -12, -6], [cA1, 'A₁', -14, -4], [cB1, 'B₁', 12, 8], [cC1, 'C₁', 12, -6], [cD1, 'D₁', -6, -10]].forEach(([p, t, dx, dy]) => F.text(p, t, 'pt', dx, dy));
+      [[cA, 'A', -10, 10], [cB, 'B', 10, 10], [cC, 'C', 12, 6], [cD, 'D', 12, 12], [cA1, 'A₁', -14, -4], [cB1, 'B₁', 14, 16], [cC1, 'C₁', 12, -6], [cD1, 'D₁', -6, -10]].forEach(([p, t, dx, dy]) => F.text(p, t, 'pt', dx, dy));
       F.text(mid(cA, cB), '2', 'len', 0, 14);
       return F;
     },

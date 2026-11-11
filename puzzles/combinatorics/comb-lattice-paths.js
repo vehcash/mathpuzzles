@@ -48,7 +48,7 @@
       zh: "如果可以，请用另一种方法求解（例如在每个格点写出到达它的路径数（杨辉三角）），写出每一步，然后逐项检查选项并指出哪些正确。"
     },
     figure(svg) {
-      const F = Figure(svg, { w: 4, h: 3, scale: 56, pad: 22 });
+      const F = Figure(svg, { w: 4, h: 3, scale: 56, pad: 34 });
       grid(F, 0, 0, 4, 3);
       F.path([[0, 0], [2, 0], [2, 1], [3, 1], [3, 3], [4, 3]], 'hl yellow', 'over', false);
       F.dot([0, 0]); F.dot([4, 3]); F.text([0, 0], '(0, 0)', 'len small', -6, 16); F.text([4, 3], '(4, 3)', 'len small', 6, -14);

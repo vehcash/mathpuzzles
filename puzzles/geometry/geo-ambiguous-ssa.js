@@ -50,7 +50,7 @@
       F.seg(aB, [aB[0] + 1.6, aB[1] + 1.6], 'sight');
       F.seg(aB, aC); F.seg(aC, aA1); F.seg(aC, aA2, 'thin');
       F.arc(aC, S2, 82, 192, 'dashc', 'base');
-      F.arc(aB, 0.22, 0, 45); F.text([aB[0] + 0.33, aB[1] + 0.1], '45°', 'len small');
+      F.arc(aB, 0.5, 0, 45); F.text([aB[0] + 0.64, aB[1] + 0.12], '45°', 'len small');
       [aB, aC, aA1, aA2].forEach(p => F.dot(p));
       F.text(aB, 'B', 'pt', -10, 12); F.text(aC, 'C', 'pt', 10, 12); F.text(aA1, 'A₁', 'pt', -10, -10); F.text(aA2, 'A₂', 'pt', -14, -6);
       F.text(mid(aB, aC), 'a = √3', 'len small', 0, 16); F.text(mid(aC, aA1), 'b', 'len it', 10, -4); F.text(mid(aC, aA2), 'b', 'len it', 2, -10);

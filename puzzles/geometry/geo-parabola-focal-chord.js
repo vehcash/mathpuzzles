@@ -47,12 +47,12 @@
       zh: '如果可以，请用另一种方法求解（例如公式 |AB| = 2p/sin²θ，或直接求出 A 和 B），写出每一步，然后逐项检查选项并指出哪一个正确。'
     },
     figure(svg) {
-      const F = Figure(svg, { w: 8.3, h: 8.8, scale: 34, pad: 16 });
+      const F = Figure(svg, { w: 8.3, h: 8.8, scale: 34, pad: 30 });
       F.seg(pS([-1.4, 0]), pS([6.7, 0]), 'axis'); F.seg(pS([0, -3.3]), pS([0, 5.3]), 'axis');
       F.seg(pS([-1, -3.3]), pS([-1, 5.3]), 'hidden-edge'); F.text(pS([-1, 5.1]), 'x = −1', 'tick', -26, 0);
       const pts = []; for (let y = -3.3; y <= 5.3; y += 0.1) pts.push(pS([y * y / 4, y])); F.curve(pts, 'conic');
       F.seg(pS([-1.2, -2.2]), pS([6.6, 5.6]), 'sight');
-      [pF, pA, pB].forEach(p => F.dot(p)); F.text(pF, 'F', 'pt', 4, 16); F.text(pA, 'A', 'pt', -12, -6); F.text(pB, 'B', 'pt', 12, 10);
+      [pF, pA, pB].forEach(p => F.dot(p)); F.text(pF, 'F', 'pt', 4, 16); F.text(pA, 'A', 'pt', -12, -6); F.text(pB, 'B', 'pt', -16, 4);
       F.text(pS([0, 0]), 'O', 'pt small', -10, 12);
       return F;
     },

@@ -50,13 +50,13 @@
       zh: "如果可以，请用另一种方法求解（例如求出垂足 H 再计算 PH），写出每一步，然后逐项检查选项并指出哪些正确。"
     },
     figure(svg) {
-      const F = Figure(svg, { w: X1 - X0, h: Y1 - Y0, scale: 50, pad: 18 });
+      const F = Figure(svg, { w: X1 - X0, h: Y1 - Y0, scale: 50, pad: 30 });
       const T = F.T = axes(F, X0, X1, Y0, Y1, { grid: true });
       plot(F, T, Ln, -2, 3, 'graph', 'base', -1, 3);
       F.seg(T([1, 2]), T([-0.2, 0.4]), 'seg thin');
       F.dot(T([1, 2])); F.text(T([1, 2]), 'P(1, 2)', 'len', 30, -8);
-      F.dot(T([-0.2, 0.4])); F.text(T([-0.2, 0.4]), 'H', 'pt', -12, -8);
-      F.text(T([2.4, Ln(2.4)]), '3x + 4y − 1 = 0', 'len it small', -10, 16);
+      F.dot(T([-0.2, 0.4])); F.text(T([-0.2, 0.4]), 'H', 'pt', -12, 14);
+      F.text(T([2.4, Ln(2.4)]), '3x + 4y − 1 = 0', 'len it small', 0, -14);
       return F;
     },
     options: [

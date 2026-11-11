@@ -148,7 +148,9 @@
     const it = e.target.closest('.cs-item'); if (!it) return;
     if (e.target.closest('.cs-copy')) { copy(it.dataset.tex); it.classList.add('copied'); setTimeout(() => it.classList.remove('copied'), 700); return; }
     if (e.target.closest('a')) return;
-    if (window.Tutor && it._tu) Tutor.open(it._tu.tp, it._tu.s, it._tu.it, it);
+    // in a table, each row (after the header) has its own lesson
+    const tr = e.target.closest('.cs-tbl tr'), row = tr ? [...tr.parentNode.children].indexOf(tr) : -1;
+    if (window.Tutor && it._tu) Tutor.open(it._tu.tp, it._tu.s, it._tu.it, it, row > 0 ? { row } : {});
   });
   main.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('cs-item')) { e.preventDefault(); e.target.click(); } });
 

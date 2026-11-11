@@ -55,7 +55,7 @@
       F.text(eF1, 'F₁', 'pt', 0, 16); F.text(eF2, 'F₂', 'pt', 0, 16); F.text(eP, 'P', 'pt', 10, -8);
       F.text(eS([0, 0]), 'O', 'pt small', -10, 12);
       const a1 = Math.atan2(eF1[1] - eP[1], eF1[0] - eP[0]) * 180 / Math.PI, a2 = Math.atan2(eF2[1] - eP[1], eF2[0] - eP[0]) * 180 / Math.PI;
-      F.arc(eP, 0.8, Math.min(a1, a2), Math.max(a1, a2)); F.text([eP[0] - 1.25, eP[1] - 0.5], '60°', 'len small');
+      F.arc(eP, 0.8, Math.min(a1, a2), Math.max(a1, a2)); F.text([eP[0] - 1.1, eP[1] - 1.0], '60°', 'len small');
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas

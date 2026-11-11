@@ -89,12 +89,24 @@
     return steps;
   }
 
+  // automatic lesson for one row of a table: the row's cells, each under its column heading
+  function rowTutorial(tp, sec, it, r) {
+    const cellTex = c => String(c).startsWith('~') ? '\\text{' + pick(String(c).slice(1)).replace(/\$[^$]*\$/g, '').replace(/[{}\\]/g, '') + '}' : c;
+    const head = it.tbl[0], row = it.tbl[r];
+    const lines = row.slice(1).map((c, j) => ['w', '\\displaystyle ' + cellTex(head[j + 1]) + ':\\quad ' + cellTex(c), { s: 26, d: 300 + j * 600 }]);
+    return [
+      { t: UI.aT1, s: fill(T('aS1'), { name: '', section: pick(sec.t) }).replace(/[“«「]\s*[”»」]\s*(—\s*)?/, '').trim() + ' ' + T('aTbl'), a: [['w', '\\displaystyle ' + cellTex(row[0]), { head: true, s: 18, c: CH.y }], ...lines] },
+      { t: UI.aT6, s: UI.aS6, a: [] }
+    ];
+  }
+
   // ---------- loading the board scripts and topic tutorials on first use ----------
   const loaded = {};
   const script = src => loaded[src] || (loaded[src] = new Promise(ok => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ok; document.head.appendChild(s); }));
   const BOARD_JS = ['js/mathcore.js', 'js/recognizer.js', 'js/intent.js', 'js/geometry.js', 'js/board.js'];
   const ready = () => BOARD_JS.reduce((p, src) => p.then(() => script(src)), Promise.resolve());
-  const topicTutorials = id => script('cheats/tutorials/' + id + '.js').then(() => (window.Cheats.tutorials || {})[id] || {});
+  const TUT_V = '20261111b';  // bump when lesson files change, so browsers fetch the new version
+  const topicTutorials = id => script('cheats/tutorials/' + id + '.js?v=' + TUT_V).then(() => (window.Cheats.tutorials || {})[id] || {});
 
   // ---------- the player ----------
   let el = null, board = null, cur = null, idx = 0, timer = null, playing = false;
@@ -136,7 +148,7 @@
   function segmentHasGraph(steps, k) {
     let a = k; while (a > 0 && !(steps[a].a || []).some(x => x[0] === 'clr')) a--;
     let b = k; while (b + 1 < steps.length && !(steps[b + 1].a || []).some(x => x[0] === 'clr')) b++;
-    for (let i = a; i <= b; i++) if ((steps[i].a || []).some(x => x[0] === 'ax' || x[0] === 'p')) return true;
+    for (let i = a; i <= b; i++) if ((steps[i].a || []).some(x => x[0] === 'ax' || x[0] === 'p' || S3[x[0]])) return true;
     return false;
   }
   function place(state, m, o) {
@@ -224,13 +236,59 @@
     }
     return { xw, yw };
   }
+  // ---------- 3D scenes (geometry in space): actions '3d', 'seg', 'vec', 'line3', 'pl', 'pt3', 'sph', 'circ3', 'lab3', 'poly3'
+  const S3 = { '3d': 1, seg: 1, vec: 1, line3: 1, pl: 1, pt3: 1, sph: 1, circ3: 1, lab3: 1, poly3: 1 };
+  const dot3 = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  // the part of the line P + t d inside the scene's cube
+  function clipLine(sc, P, d, f = 1) {
+    let t0 = -1e9, t1 = 1e9;
+    for (let k = 0; k < 3; k++) {
+      const lo = sc.c[k] - sc.r * f, hi = sc.c[k] + sc.r * f;
+      if (Math.abs(d[k]) < 1e-12) { if (P[k] < lo || P[k] > hi) return null; continue; }
+      let a = (lo - P[k]) / d[k], b = (hi - P[k]) / d[k]; if (a > b) [a, b] = [b, a];
+      t0 = Math.max(t0, a); t1 = Math.min(t1, b);
+    }
+    if (t0 >= t1) return null;
+    return [P.map((v, k) => v + t0 * d[k]), P.map((v, k) => v + t1 * d[k])];
+  }
+  // the polygon where the plane n·x + D = 0 cuts the scene's cube (shrunk by f)
+  function clipPlane(sc, n, D, f = 0.85) {
+    const lo = sc.c.map(v => v - sc.r * f), hi = sc.c.map(v => v + sc.r * f), pts = [];
+    for (let k = 0; k < 3; k++) for (const a of [0, 1]) for (const b of [0, 1]) {
+      const i = (k + 1) % 3, j = (k + 2) % 3, P = [0, 0, 0]; P[i] = a ? hi[i] : lo[i]; P[j] = b ? hi[j] : lo[j];
+      if (Math.abs(n[k]) < 1e-12) continue;
+      const v = -(D + n[i] * P[i] + n[j] * P[j]) / n[k];
+      if (v >= lo[k] - 1e-9 && v <= hi[k] + 1e-9) { P[k] = v; pts.push(P); }
+    }
+    if (pts.length < 3) return null;
+    const m = [0, 1, 2].map(k => pts.reduce((s, p) => s + p[k], 0) / pts.length);
+    const N = n.map(v => v / Math.hypot(...n)), h = Math.abs(N[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
+    const cr = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]], u = cr(N, h), w = cr(N, u);
+    const ang = p => { const q = p.map((v, k) => v - m[k]); return Math.atan2(dot3(q, w), dot3(q, u)); };
+    return pts.sort((a, b) => ang(a) - ang(b));
+  }
+  function run3(kk, a, o, state, k3) {
+    if (!state.sc) state.sc = board.sScene(GRAPH, kk === '3d' ? a[1] : {});
+    if (kk === '3d') return;
+    const sc = state.sc, it = Object.assign({}, o); if (it.c) it.c = col(it.c);
+    if (it.d === undefined) it.d = 300 * k3;
+    if (kk === 'seg' || kk === 'vec') Object.assign(it, { k: 'seg', a: a[1], b: a[2], arrow: kk === 'vec' });
+    else if (kk === 'line3') { const ab = clipLine(sc, a[1], a[2], it.f || 1); if (!ab) return; Object.assign(it, { k: 'seg', a: ab[0], b: ab[1] }); }
+    else if (kk === 'pl') { const pts = clipPlane(sc, a[1], a[2], it.f || 0.7); if (!pts) return; Object.assign(it, { k: 'poly', pts, fill: it.fill !== undefined ? it.fill : 0.16, w: it.w || 1.6 }); }
+    else if (kk === 'poly3') Object.assign(it, { k: 'poly', pts: a[1], fill: it.fill !== undefined ? it.fill : 0.14 });
+    else if (kk === 'pt3') Object.assign(it, { k: 'pt', p: a[1], lab: a[2] ? pick(a[2]) : '' });
+    else if (kk === 'sph') Object.assign(it, { k: 'sph', o: a[1], r: a[2], fill: it.fill !== undefined ? it.fill : 0.08 });
+    else if (kk === 'circ3') Object.assign(it, { k: 'circ', o: a[1], n: a[2], r: a[3] });
+    else if (kk === 'lab3') Object.assign(it, { k: 'lab', p: a[1], s: pick(a[2]) });
+    board.s3(sc, it);
+  }
   // run one step's actions on the board
   function run(steps, k, state) {
     const step = steps[k];
     let acts = step.a || [];
     // a wipe comes first: it must happen before this step's graph is framed and created
     if (acts.some(a => a[0] === 'clr')) {
-      board.reset(); Object.assign(state, { ax: null, gr: null, flow: [], y: TOP * board.H, wide: !segmentHasGraph(steps, k) });
+      board.reset(); Object.assign(state, { ax: null, gr: null, sc: null, flow: [], y: TOP * board.H, wide: !segmentHasGraph(steps, k) });
       acts = acts.filter(a => a[0] !== 'clr');
     }
     // the graph of this step: gather its curves, shading and points first, so the window fits all of them
@@ -241,7 +299,9 @@
       const w = frame(spec);
       state.ax = board.sWindow(GRAPH, w.xw, w.yw); state.view = { xw: w.xw, yw: w.yw };
     }
+    let k3 = 0;
     for (const a of acts) {
+      if (S3[a[0]]) { const o = a.length > 1 && a[a.length - 1] && typeof a[a.length - 1] === 'object' && !Array.isArray(a[a.length - 1]) && a[0] !== '3d' ? a[a.length - 1] : {}; try { run3(a[0], a, o, state, k3++); } catch (err) { console.warn('3d action', a, err); } continue; }
       const [kk, x, y, z, w] = a, o = Object.assign({}, kk === 'w' || kk === 't' ? y : kk === 'pt' ? w : kk === 'lbl' ? w : kk === 'ln' ? a[5] : y);
       if (o.c) o.c = col(o.c);
       try {
@@ -263,18 +323,20 @@
   // zoom / move the graph: + − and ⟲ back to the framed view
   function viewTools() {
     const t = $('.tu-view', el); if (!t) return;
-    const ax = board.objects.find(o => o.type === 'axes'); t.hidden = !ax;
+    const ax = board.objects.find(o => o.type === 'axes' || o.type === 'scene'); t.hidden = !ax;
   }
-  function zoom(f) { const ax = board.objects.find(o => o.type === 'axes'); if (!ax) return; board.zoomAxes(ax, f, { x: (ax.x0 + ax.x1) / 2, y: (ax.y0 + ax.y1) / 2 }); }
+  function zoom(f) { const sc = board.objects.find(o => o.type === 'scene'); if (sc) { sc.zoom = Math.max(0.4, Math.min(4, sc.zoom * f)); board.render(); return; }
+    const ax = board.objects.find(o => o.type === 'axes'); if (!ax) return; board.zoomAxes(ax, f, { x: (ax.x0 + ax.x1) / 2, y: (ax.y0 + ax.y1) / 2 }); }
   function resetView() {
+    const sc = board.objects.find(o => o.type === 'scene'); if (sc) { Object.assign(sc, sc.home); board.render(); return; }
     const ax = board.objects.find(o => o.type === 'axes'); if (!ax || !cur.view) return;
     const { xw, yw } = cur.view, ux = (ax.x1 - ax.x0) / (xw[1] - xw[0]), uy = (ax.y1 - ax.y0) / (yw[1] - yw[0]);
     Object.assign(ax, { unit: ux, uy, ox: ax.x0 - xw[0] * ux, oy: ax.y0 + yw[1] * uy }); board.implicitCache.clear(); board.render();
   }
   function go(i) {
     idx = Math.max(0, Math.min(cur.steps.length - 1, i));
-    board.reset();
-    const state = { ax: null, gr: null, flow: [], y: TOP * board.H, wide: !segmentHasGraph(cur.steps, 0) };
+    board.reset(); { const st = $('.tu-status', el); if (st) st.textContent = ''; }
+    const state = { ax: null, gr: null, sc: null, flow: [], y: TOP * board.H, wide: !segmentHasGraph(cur.steps, 0) };
     for (let k = 0; k < idx; k++) run(cur.steps, k, state);   // earlier steps appear at once…
     board.sSettle();
     const step = cur.steps[idx];
@@ -297,9 +359,19 @@
   const EXT = {
     head: 'Exam-style exercise|Exercice type examen|Ejercicio tipo examen|入試レベルの演習|考试风格练习',
     val: 'Compute: {q}|Calculez : {q}|Calcula: {q}|次を計算せよ：{q}|计算：{q}',
+    der: 'Differentiate: {q}|Dérivez : {q}|Deriva: {q}|次を微分せよ：{q}|求导：{q}',
+    helpD: 'An expression in x, e.g. 3x^2, 2x*cos(x^2), e^(2x)/x, 1/sqrt(1-x^2)|Une expression en x, par ex. 3x^2, 2x*cos(x^2), e^(2x)/x, 1/sqrt(1-x^2)|Una expresión en x, p. ej. 3x^2, 2x*cos(x^2), e^(2x)/x, 1/sqrt(1-x^2)|x の式。例：3x^2, 2x*cos(x^2), e^(2x)/x, 1/sqrt(1-x^2)|关于 x 的表达式，如 3x^2, 2x*cos(x^2), e^(2x)/x, 1/sqrt(1-x^2)',
     anti: 'Find an antiderivative of {q}|Trouvez une primitive de {q}|Halla una primitiva de {q}|{q} の原始関数を 1 つ求めよ|求 {q} 的一个原函数',
     helpV: 'A number or an exact value: 2/3, pi/4, e-1, sqrt(3), ln(2)…|Un nombre ou une valeur exacte : 2/3, pi/4, e-1, sqrt(3), ln(2)…|Un número o un valor exacto: 2/3, pi/4, e-1, sqrt(3), ln(2)…|数値または厳密な値：2/3, pi/4, e-1, sqrt(3), ln(2)…|数字或精确值：2/3, pi/4, e-1, sqrt(3), ln(2)…',
     helpA: 'An expression in x, e.g. x^3/3 + 2x, sin(x), ln(x), e^(2x)/2 (+C is optional)|Une expression en x, par ex. x^3/3 + 2x, sin(x), ln(x), e^(2x)/2 (+C facultatif)|Una expresión en x, p. ej. x^3/3 + 2x, sin(x), ln(x), e^(2x)/2 (+C opcional)|x の式。例：x^3/3 + 2x, sin(x), ln(x), e^(2x)/2（+C は省略可）|关于 x 的表达式，如 x^3/3 + 2x, sin(x), ln(x), e^(2x)/2（+C 可省略）',
+    helpP: 'Three coordinates, e.g. (1, -2, 3) or 1; -2; 3/2|Trois coordonnées, par ex. (1; -2; 3) ou 1; -2; 3/2|Tres coordenadas, p. ej. (1, -2, 3) o 1; -2; 3/2|3 つの座標。例：(1, -2, 3)、1; -2; 3/2|三个坐标，如 (1, -2, 3) 或 1; -2; 3/2',
+    helpP2: 'Two numbers, e.g. (2, -1) or x = 2; y = -1|Deux nombres, par ex. (2; -1) ou x = 2; y = -1|Dos números, p. ej. (2, -1) o x = 2; y = -1|2 つの数。例：(2, -1)、x = 2; y = -1|两个数，如 (2, -1) 或 x = 2; y = -1',
+    helpN: 'A vector, e.g. (2, -1, 3) — any non-zero multiple is accepted|Un vecteur, par ex. (2; -1; 3) — tout multiple non nul est accepté|Un vector, p. ej. (2, -1, 3): vale cualquier múltiplo no nulo|ベクトル。例：(2, -1, 3)（0 でない定数倍も正解）|一个向量，如 (2, -1, 3)——任意非零倍数都算对',
+    helpE: 'An expression in x, e.g. (x - 1)(x + 2), 2sin(x)cos(x), (x+1)/(x-1)|Une expression en x, par ex. (x - 1)(x + 2), 2sin(x)cos(x), (x+1)/(x-1)|Una expresión en x, p. ej. (x - 1)(x + 2), 2sin(x)cos(x), (x+1)/(x-1)|x の式。例：(x - 1)(x + 2), 2sin(x)cos(x), (x+1)/(x-1)|关于 x 的表达式，如 (x - 1)(x + 2), 2sin(x)cos(x), (x+1)/(x-1)',
+    helpR: 'All the solutions, separated by ; e.g. 2; -3 or x = 1/2; x = 4|Toutes les solutions, séparées par ; par ex. 2; -3 ou x = 1/2; x = 4|Todas las soluciones, separadas por ; p. ej. 2; -3 o x = 1/2; x = 4|すべての解を ; で区切って。例：2; -3、x = 1/2; x = 4|所有解，用 ; 分隔，如 2; -3 或 x = 1/2; x = 4',
+    helpM: 'A matrix, row by row: [[1, 2], [3, 4]] or 1 2; 3 4 (fractions allowed: 1/2)|Une matrice, ligne par ligne : [[1, 2], [3, 4]] ou 1 2; 3 4 (fractions permises : 1/2)|Una matriz, fila a fila: [[1, 2], [3, 4]] o 1 2; 3 4 (se admiten fracciones: 1/2)|行列を行ごとに：[[1, 2], [3, 4]] または 1 2; 3 4（分数可：1/2）|按行输入矩阵：[[1, 2], [3, 4]] 或 1 2; 3 4（可用分数：1/2）',
+    helpC: 'A complex number a + bi, e.g. 3 - 2i, 1/2 + (sqrt(3)/2)i|Un nombre complexe a + bi, par ex. 3 - 2i, 1/2 + (sqrt(3)/2)i|Un número complejo a + bi, p. ej. 3 - 2i, 1/2 + (sqrt(3)/2)i|複素数 a + bi。例：3 - 2i, 1/2 + (sqrt(3)/2)i|复数 a + bi，如 3 - 2i, 1/2 + (sqrt(3)/2)i',
+    helpPl: 'An equation in x, y, z, e.g. 2x - y + 3z = 5 — any multiple is accepted|Une équation en x, y, z, par ex. 2x - y + 3z = 5 — tout multiple est accepté|Una ecuación en x, y, z, p. ej. 2x - y + 3z = 5: vale cualquier múltiplo|x, y, z の方程式。例：2x - y + 3z = 5（定数倍も正解）|关于 x, y, z 的方程，如 2x - y + 3z = 5——任意倍数都算对',
     check: 'Check|Vérifier|Comprobar|答え合わせ|检查',
     hint: 'Hint|Indice|Pista|ヒント|提示',
     show: 'Show the solution|Voir la solution|Ver la solución|解答を見る|查看解答',
@@ -308,12 +380,85 @@
     bad: 'I can’t read that — use the notation shown below the box.|Je ne peux pas lire cela : utilisez la notation indiquée sous la case.|No puedo leerlo: usa la notación indicada bajo la casilla.|読み取れません。入力欄の下の書き方を使ってください。|无法识别——请按输入框下方的写法输入。'
   };
   const E = k => pick(EXT[k]);
-  const norm = s => String(s).toLowerCase().replace(/π/g, 'pi').replace(/\barc(sin|cos|tan)\b/g, 'a$1').replace(/√/g, 'sqrt').replace(/,/g, '.').replace(/^\s*[a-z]\s*\(\s*x\s*\)\s*=|^\s*y\s*=/, '').replace(/\+\s*c\s*$/, '').trim();
+  // functions the maths engine does not know, rewritten with ones it does (simple arguments)
+  const EXPAND = [[/(?<![a-z])sinh\(([^()]*)\)/g, '((e^($1)-e^(-($1)))/2)'], [/(?<![a-z])cosh\(([^()]*)\)/g, '((e^($1)+e^(-($1)))/2)'], [/(?<![a-z])tanh\(([^()]*)\)/g, '((e^($1)-e^(-($1)))/(e^($1)+e^(-($1))))'],
+    [/(?<![a-z])(?:arccot|acot)\(([^()]*)\)/g, '(pi/2-atan($1))'], [/(?<![a-z])sec\(([^()]*)\)/g, '(1/cos($1))'], [/(?<![a-z])(?:csc|cosec)\(([^()]*)\)/g, '(1/sin($1))'], [/(?<![a-z])cot\(([^()]*)\)/g, '(cos($1)/sin($1))'],
+    [/(?<![a-z])log_?(\d+)\(([^()]*)\)/g, '(ln($2)/ln($1))']];
+  const expand = s => { for (let k = 0; k < 3; k++) for (const [re, to] of EXPAND) s = s.replace(re, to); return s; };
+  const norm = s => expand(String(s).toLowerCase().replace(/π/g, 'pi').replace(/\barc(sin|cos|tan)\b/g, 'a$1').replace(/√/g, 'sqrt').replace(/,/g, '.').replace(/^\s*[a-z]\s*\(\s*x\s*\)\s*=|^\s*y\s*=/, '').replace(/\+\s*c\s*$/, '').trim());
   function evalAt(src, x) { const st = MathCore.parse(src); return MathCore.evaluate(st.sides ? st.sides[0] : st, { x }); }
+  // answers in space: a point (x, y, z), a direction (any multiple) or a plane Ax + By + Cz + D = 0 (any multiple)
+  const lite = s => String(s).toLowerCase().replace(/π/g, 'pi').replace(/√/g, 'sqrt').replace(/°/g, '').replace(/−/g, '-').trim();
+  function tuple(input, n = 3) {
+    const raw = lite(input).replace(/^[a-z]\s*'?\s*=\s*/, '').replace(/^[(\[<]|[)\]>]$/g, '');
+    const parts = raw.includes(';') ? raw.split(';') : raw.split(',');
+    if (parts.length !== n) return null;
+    const v = parts.map(t => evalAt(lite(t).replace(/,/g, '.'), 0)); return v.every(isFinite) ? v : null;
+  }
+  function planeOf(input) {
+    const st = MathCore.parse(lite(input).replace(/,/g, '.'));
+    const f = (x, y, z) => MathCore.evaluate(st.sides[0], { x, y, z }) - (st.sides[1] ? MathCore.evaluate(st.sides[1], { x, y, z }) : 0);
+    const D = f(0, 0, 0), c = [f(1, 0, 0) - D, f(0, 1, 0) - D, f(0, 0, 1) - D, D];
+    if (!c.every(isFinite) || Math.abs(f(2.3, -1.7, 0.9) - (2.3 * c[0] - 1.7 * c[1] + 0.9 * c[2] + D)) > 1e-6) return null;   // not linear
+    return c;
+  }
+  const propto = (a, b) => { const l = dot(a, b) / dot(b, b); return dot(b, b) > 1e-12 && Math.abs(l) > 1e-9 && a.every((v, i) => Math.abs(v - l * b[i]) <= 1e-3 * Math.max(1, Math.abs(v))); };
+  const dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
   function checkAnswer(ex, input) {
-    const src = norm(input); if (!src) return null;
+    if (!String(input).trim()) return null;
     try {
-      if (ex.k === 'val') { const want = evalAt(ex.v, 0), got = evalAt(src, 0); if (!isFinite(got)) return null; return Math.abs(got - want) <= 1e-3 * Math.max(1, Math.abs(want)); }
+      if (ex.k === 'pt' || ex.k === 'dir') { const got = tuple(input, ex.v.length); if (!got) return null; const want = ex.v.map(v => typeof v === 'number' ? v : evalAt(v, 0)); return ex.k === 'pt' ? got.every((v, i) => Math.abs(v - want[i]) <= 1e-3 * Math.max(1, Math.abs(want[i]))) : propto(got, want); }
+      if (ex.k === 'cx') {   // a complex number a + bi (anything linear in i: 3 - 2i, (1 + i)/2, sqrt(3)i)
+        const src = lite(input).replace(/,/g, '.').replace(/(?<![a-z])[ij](?![a-z])/g, 'x');
+        const f = t => evalAt(src, t), a = f(0), b = f(1) - a;
+        if (![a, b].every(isFinite) || Math.abs(f(2) - (a + 2 * b)) > 1e-9 * Math.max(1, Math.abs(a) + Math.abs(b))) return null;
+        const w = ex.v.map(v => typeof v === 'number' ? v : evalAt(v, 0));
+        return Math.abs(a - w[0]) <= 1e-3 * Math.max(1, Math.abs(w[0])) && Math.abs(b - w[1]) <= 1e-3 * Math.max(1, Math.abs(w[1]));
+      }
+      if (ex.k === 'mat') {   // a matrix: rows split by ; or ][ , entries by commas or spaces — [[1, 2], [3, 4]] or 1 2; 3 4
+        const raw = lite(input).replace(/^\s*[a-z]\s*(\^\S*)?\s*=\s*/, '');
+        const rows = raw.replace(/\]\s*,?\s*\[/g, ';').replace(/[\[\]()]/g, '').split(/;|\n/).map(r => r.trim()).filter(Boolean);
+        const got = rows.map(r => (r.includes(',') ? r.split(',') : r.split(/\s+/)).map(t => t.trim()).filter(Boolean).map(t => evalAt(t, 0)));
+        if (got.length !== ex.v.length || got.some((r, i) => r.length !== ex.v[i].length || !r.every(isFinite))) return null;
+        return got.every((r, i) => r.every((v, j) => { const w = typeof ex.v[i][j] === 'number' ? ex.v[i][j] : evalAt(ex.v[i][j], 0); return Math.abs(v - w) <= 1e-3 * Math.max(1, Math.abs(w)); }));
+      }
+      if (ex.k === 'roots') {   // a list of numbers in any order: x = 2, x = -3  or  2; -3
+        const raw = lite(input).replace(/[{}()\[\]]/g, '').replace(/[a-z]\s*=/g, '').replace(/\b(or|ou|o|y|and|et)\b/g, ';');
+        const parts = (raw.includes(';') ? raw.split(';') : raw.split(',')).map(t => t.trim()).filter(Boolean);
+        const got = parts.map(t => evalAt(lite(t).replace(/,/g, '.'), 0)); if (!got.length || !got.every(isFinite)) return null;
+        const want = ex.v.map(v => typeof v === 'number' ? v : evalAt(v, 0)).sort((a, b) => a - b); got.sort((a, b) => a - b);
+        return got.length === want.length && got.every((v, i) => Math.abs(v - want[i]) <= 1e-3 * Math.max(1, Math.abs(want[i])));
+      }
+      if (ex.k === 'plane') { const got = planeOf(input); if (!got || got.slice(0, 3).every(v => Math.abs(v) < 1e-12)) return null; return propto(got, ex.v); }
+    } catch (e) { return null; }
+    const src = norm(String(input).replace(/°/g, '')); if (!src) return null;
+    try {
+      if (ex.k === 'val') {
+        const want = evalAt(ex.v, 0), got = evalAt(src, 0); if (!isFinite(got)) return null;
+        const dec = /^-?\d*\.(\d+)$/.exec(src), round = dec ? 0.5 * Math.pow(10, -dec[1].length) + 1e-9 : 0;   // a rounded decimal (0.58 for 1/√3) is right to its last digit
+        const exact = Math.abs(want) >= 10 && Math.abs(want - Math.round(want)) < 1e-9;   // a count (676 000 codes) must be exact
+        return Math.abs(got - want) <= Math.max(exact ? 1e-9 : 1e-4 * Math.max(1, Math.abs(want)), round);
+      }
+      if (ex.k === 'expr') {   // an expression equal to ex.f for every x where both are defined (simplify, factor, expand…)
+        let tested = 0;
+        for (const x0 of [0.37, 0.81, 1.23, 1.77, 2.41, -0.63, -1.42, 3.1, 0.13, -2.29]) {
+          const want = evalAt(ex.f, x0), got = evalAt(src, x0);
+          if (!isFinite(want) || !isFinite(got)) continue;
+          if (Math.abs(got - want) > 1e-6 * Math.max(1, Math.abs(want))) return false;
+          tested++;
+        }
+        return tested >= 3 ? true : null;
+      }
+      if (ex.k === 'der') {   // a derivative: it must match the slope of f wherever both are defined
+        let tested = 0;
+        for (const x0 of [0.37, 0.81, 1.23, 1.77, 2.41, -0.63, -1.42, 3.1, 0.13, -0.29]) {
+          const h = 1e-5, a = evalAt(ex.f, x0 + h), b = evalAt(ex.f, x0 - h), want = (a - b) / (2 * h), got = evalAt(src, x0);
+          if (!isFinite(want) || !isFinite(got) || Math.abs(want) > 1e6) continue;
+          if (Math.abs(got - want) > 2e-3 * Math.max(1, Math.abs(want))) return false;
+          tested++;
+        }
+        return tested >= 3 ? true : null;
+      }
       // an antiderivative: its derivative must match the integrand wherever both are defined (the constant does not matter)
       let tested = 0;
       for (const x0 of [0.37, 0.81, 1.23, 1.77, 2.41, -0.63, -1.42, 3.1]) {
@@ -328,10 +473,10 @@
   }
   function exercise(ex, box, state) {
     const q = String(ex.q).includes('|') ? inline(pick(ex.q)) : K(ex.q, false);
-    const task = ex.k === 'anti' ? E('anti') : E('val');
+    const task = ex.k === 'anti' ? E('anti') : ex.k === 'der' ? E('der') : E('val');
     box.insertAdjacentHTML('beforeend', `<div class="tu-ex"><div class="tu-ex-h">${esc(E('head'))}</div><div class="tu-ex-q">${String(ex.q).includes('|') ? q : esc(task).replace('{q}', q)}</div>
       <div class="tu-ex-row"><input type="text" class="tu-ex-in" spellcheck="false" autocomplete="off" aria-label="${esc(E('check'))}"><button type="button" class="tu-ex-go">${esc(E('check'))}</button></div>
-      <div class="tu-ex-help">${esc(ex.k === 'anti' ? E('helpA') : E('helpV'))}</div><div class="tu-ex-msg" aria-live="polite"></div>
+      <div class="tu-ex-help">${ex.k === 'pt' && ex.v.length === 2 ? esc(E('helpP2')) : esc(E({ anti: 'helpA', der: 'helpD', pt: 'helpP', dir: 'helpN', plane: 'helpPl', expr: 'helpE', roots: 'helpR', mat: 'helpM', cx: 'helpC' }[ex.k] || 'helpV'))}</div><div class="tu-ex-msg" aria-live="polite"></div>
       <div class="tu-ex-more"><button type="button" class="tu-ex-hint">${esc(E('hint'))}</button><button type="button" class="tu-ex-sol">${esc(E('show'))}</button></div></div>`);
     const inp = $('.tu-ex-in', box), msg = $('.tu-ex-msg', box);
     const solve = (n) => { (ex.sol || []).slice(0, n).forEach((t, i) => { if (state.shown > i) return; state.shown = i + 1; const m = board.sWrite('\\displaystyle ' + t, { s: 24, c: col('y'), d: 0 }); place(state, m, {}); }); relayout(state); };
@@ -349,22 +494,24 @@
   function close() { if (!el) return; el.hidden = true; clearTimeout(timer); playing = false; document.body.classList.remove('tu-open'); if (cur && cur.from) cur.from.focus && cur.from.focus(); }
 
   /** open the tutorial of one card: tp = topic, sec = section, it = item, from = the clicked element */
-  function open(tp, sec, it, from) {
+  function open(tp, sec, it, from, opts = {}) {
     if (!el) build();
     el.hidden = false; document.body.classList.add('tu-open');
     el.style.setProperty('--c', tp.color); el.style.setProperty('--cbg', tp.bg);
     $('.tu-ico', el).textContent = tp.icon;
     $('.tu-ttl small', el).textContent = pick(tp.name) + ' · ' + pick(sec.t);
-    $('.tu-ttl b', el).textContent = it.tbl ? pick(sec.t) : pick(it[0] || sec.t);
+    const row = it.tbl && opts.row ? it.tbl[opts.row] : null;
+    if (row) $('.tu-ttl b', el).innerHTML = K(String(row[0]).startsWith('~') ? '\\text{' + pick(String(row[0]).slice(1)) + '}' : row[0], false);
+    else $('.tu-ttl b', el).textContent = it.tbl ? pick(sec.t) : pick(it[0] || sec.t);
     $('.tu-text', el).textContent = T('loading'); $('.tu-st', el).textContent = ''; $('.tu-extra', el).innerHTML = ''; $('.tu-dots', el).innerHTML = ''; $('.tu-count', el).textContent = '';
     $('.tu-hint', el).textContent = T('draw');
     const pr = $('.tu-practice', el); pr.hidden = !tp.cat; if (tp.cat) { pr.href = 'index.html?cat=' + tp.cat; pr.textContent = T('practice'); }
-    const tex = from && from.dataset ? from.dataset.tex : '';
+    const tex = row ? row.filter(c => !String(c).startsWith('~')).join(' \\quad ') : from && from.dataset ? from.dataset.tex : '';
     Promise.all([ready(), topicTutorials(tp.id)]).then(([, hand]) => {
       if (!board) { board = new window.SmartBoard($('.tu-board', el), { panAxes: true, onStatus: m => { $('.tu-status', el).textContent = m || ''; } }); board.showKeyPoints = false; }
       board.resize();
-      const key = en(sec.t) + '/' + (it.tbl ? '' : en(it[0]));
-      const steps = hand[key] || autoTutorial(tp, sec, it);
+      const key = en(sec.t) + '/' + (row ? String(row[0]) : it.tbl ? '' : en(it[0]));
+      const steps = (row && hand[en(sec.t) + '/#' + opts.row]) || hand[key] || (row ? rowTutorial(tp, sec, it, opts.row) : autoTutorial(tp, sec, it));   // 'Section/#2' names a row by its number (rows whose first cells repeat)
       cur = { steps, tex, from };
       requestAnimationFrame(() => { board.resize(); go(0); });
       $('.tu-next', el).focus();

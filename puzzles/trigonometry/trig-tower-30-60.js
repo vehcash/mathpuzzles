@@ -56,7 +56,7 @@
       zh: '如果可以，请用等腰三角形捷径以外的方法求解（例如列两个正切方程，或用正弦定理），写出每一步，然后逐项检查选项并指出哪些正确。'
     },
     figure(svg) {
-      const F = Figure(svg, { w: 30, h: 17.6, scale: 10.6, pad: 30 });
+      const F = Figure(svg, { w: 30, h: 17.6, scale: 10.6, pad: 40 });
       F.seg([-1.5, 0], [32.5, 0], 'ground');
       for (let x = -1; x < 32; x += 1.6) F.seg([x, 0], [x - 0.9, -0.9], 'hatch');
       F.rect(29.2, 0, 1.6, 10 * Math.sqrt(3), 'towerbody');
@@ -64,8 +64,8 @@
       F.arc(tP, 4, 0, 30); F.arc(tQ, 3, 0, 60);
       F.text([5.6, 1.4], '30°', 'len small'); F.text([24.2, 2.3], '60°', 'len small');
       [tP, tQ, tF, tT].forEach(p => F.dot(p));
-      F.text(tP, 'P', 'pt', -4, 14); F.text(tQ, 'Q', 'pt', 0, 16); F.text(tF, 'F', 'pt', 8, 16); F.text(tT, 'T', 'pt', -12, -8);
-      F.text([10, 0], '20 m', 'len', 0, 16); F.text([25, 0], 'x', 'len it', 0, 16);
+      F.text(tP, 'P', 'pt', -14, -6); F.text(tQ, 'Q', 'pt', 0, 16); F.text(tF, 'F', 'pt', 14, -6); F.text(tT, 'T', 'pt', -12, -8);
+      F.text([10, 0], '20 m', 'len', 0, 26); F.text([25, 0], 'x', 'len it', 0, 26);
       F.text([30, 5 * Math.sqrt(3)], 'h', 'len it', 18, 0);
       return F;
     },

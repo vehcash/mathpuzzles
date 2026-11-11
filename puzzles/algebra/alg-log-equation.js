@@ -54,7 +54,7 @@
       F.seg(T([2, -2]), T([2, 4.4]), 'seg thin');
       F.seg(T([-0.6, 3]), T([6.4, 3]), 'seg thin');
       plot(F, T, f, 2.02, 6.3, 'graph', 'base', -2, 4.4);
-      F.text(T([2, -2]), 'x = 2', 'len small', 22, -6); F.text(T([0, 3]), '3', 'len small', -10, -6);
+      F.text(T([2, -2]), 'x = 2', 'len small', -28, -6); F.text(T([0, 3]), '3', 'len small', -12, -14);
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas

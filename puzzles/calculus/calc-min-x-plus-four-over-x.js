@@ -54,7 +54,7 @@
       const g = x => f(x) / 2.5;   // vertical scale 1/2.5
       plot(F, T, g, 0.4, 5.8, 'graph', 'base', -0.4, 4);
       F.seg(T([2, 0]), T([2, 1.6]), 'seg thin'); F.dot(T([2, 1.6]));
-      F.text(T([2, 1.6]), '(2, 4)', 'len small', 0, 16);
+      F.text(T([2, 1.6]), '(2, 4)', 'len small', 28, 16);
       return F;
     },
     options: [

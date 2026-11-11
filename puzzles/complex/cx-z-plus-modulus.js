@@ -48,11 +48,11 @@
       zh: "如果可以，请用另一种方法求解（例如几何论证：z 与 z + |z| 相差一个水平平移），写出每一步，然后逐项检查选项并指出哪些正确。"
     },
     figure(svg) {
-      const F = Figure(svg, { w: 19, h: 10, scale: 18, pad: 16 });
+      const F = Figure(svg, { w: 19, h: 10, scale: 18, pad: 34 });
       const T = F.T = argand(F, -16, 3, -1, 9, { grid: false });
       F.seg(T([0, 0]), T([-15, 8]), 'seg thin'); F.dot(T([-15, 8])); F.dot(T([2, 8]));
       const a = arrow(F, T([-15, 8]), T([1.6, 8]), 'vec two');
-      F.text(T([-15, 8]), 'z', 'pt', -10, -8); F.text(T([2, 8]), '2 + 8i', 'len small', 18, 14); F.text(T([-7.5, 4]), '17', 'len', -12, -4); F.text(T([-6.5, 8]), '+17', 'len small', 0, -12);
+      F.text(T([-15, 8]), 'z', 'pt', -10, -8); F.text(T([2, 8]), '2 + 8i', 'len small', 18, 14); F.text(T([-7.5, 4]), '17', 'len', -12, 14); F.text(T([-6.5, 8]), '+17', 'len small', 0, -12);
       return F;
     },
     options: [

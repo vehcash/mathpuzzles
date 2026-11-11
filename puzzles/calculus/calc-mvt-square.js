@@ -55,7 +55,7 @@
       F.seg(T([1, 0.5]), T([3, 4.5]), 'seg');
       plot(F, T, x => 2 + 2 * (x - 2), 0.9, 3.1, 'seg thin', 'base', -0.5, 4.9);
       F.dot(T([1, 0.5])); F.dot(T([3, 4.5])); F.dot(T([2, 2]));
-      F.text(T([1, 0.5]), '(1, 1)', 'len small', 22, 8); F.text(T([3, 4.5]), '(3, 9)', 'len small', -28, 0);
+      F.text(T([1, 0.5]), '(1, 1)', 'len small', -30, -10); F.text(T([3, 4.5]), '(3, 9)', 'len small', -28, 0);
       return F;
     },
     options: [

@@ -453,5 +453,12 @@ I18N.add('fr', {
 "LaTeX copied": "LaTeX copié",
 "Practice puzzles →": "S’entraîner avec des problèmes →",
 "∑ Cheat sheets": "∑ Fiches de formules",
-"Formula cheat sheets (opens in a new tab)": "Fiches de formules (s’ouvre dans un nouvel onglet)"
+"Formula cheat sheets (opens in a new tab)": "Fiches de formules (s’ouvre dans un nouvel onglet)",
+"A daily math puzzle for students and teachers": "Un problème de maths par jour pour élèves et enseignants",
+"For students": "Pour les élèves",
+"For teachers and professors": "Pour les enseignants et professeurs",
+"Daily Math Puzzle gives you a new <b>daily math problem</b> to solve: pick the true statements, sketch your ideas on the smart blackboard and check every step of the solution. Each puzzle has eight options, so you have to think about every one of them.": "Daily Math Puzzle vous propose chaque jour un nouveau <b>problème de maths</b> : choisissez les affirmations vraies, esquissez vos idées sur le tableau intelligent et vérifiez chaque étape de la solution. Chaque problème a huit options, il faut donc réfléchir à chacune.",
+"Practise geometry, trigonometry, algebra, matrices, complex numbers, calculus, combinatorics, probability and number theory, from school level to university entrance. Many puzzles are real questions from the Gaokao, the Oxford MAT, JEE Advanced, ITA, IME and the EBAU.": "Entraînez-vous en géométrie, trigonométrie, algèbre, matrices, nombres complexes, analyse, combinatoire, probabilités et arithmétique, du lycée à l’entrée à l’université. Beaucoup de problèmes sont de vraies questions du Gaokao, du MAT d’Oxford, du JEE Advanced, de l’ITA, de l’IME et de l’EBAU.",
+"Use the puzzles as warm-ups, homework or exam practice, project the blackboard in class and share the <a href=\"cheatsheets.html\">formula cheat sheets</a>. Every puzzle has its own link, its source and a worked solution, in English, French, Spanish, Japanese and Chinese — free and without sign-up.": "Utilisez les problèmes en échauffement, en devoir ou pour préparer un examen, projetez le tableau en classe et partagez les <a href=\"cheatsheets.html\">fiches de formules</a>. Chaque problème a son propre lien, sa source et une solution détaillée, en anglais, français, espagnol, japonais et chinois — gratuit et sans inscription.",
+"<a href=\"list.html\">Browse all math puzzles</a> · <a href=\"cheatsheets.html\">Math cheat sheets</a>": "<a href=\"list.html\">Voir tous les problèmes</a> · <a href=\"cheatsheets.html\">Fiches de maths</a>"
 });

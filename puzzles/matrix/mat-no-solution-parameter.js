@@ -53,7 +53,7 @@
       const T = F.T = axes(F, X0, X1, Y0, Y1, { grid: true });
       plot(F, T, x => 2 - x, -1, 3, 'graph');
       const l = plot(F, T, x => 2.5 - x, -1, 3.5); l.style.stroke = '#3b8fbb';
-      F.text(T([2.7, -0.7]), 'x + y = 2', 'len it small', -10, 14); F.text(T([0.4, 2.1]), '2x + 2y = 5', 'len it small', 36, -12);
+      F.text(T([2.7, -0.7]), 'x + y = 2', 'len it small', -46, 6); F.text(T([0.4, 2.1]), '2x + 2y = 5', 'len it small', 36, -12);
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
