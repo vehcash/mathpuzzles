@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "nt-divisors-360",
     category: "number",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["amc", "kyotsu"]
+    },
     difficulty: 1,
     title: {
       en: "Counting the divisors of 360",

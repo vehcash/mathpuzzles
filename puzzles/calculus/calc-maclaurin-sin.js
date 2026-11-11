@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "calc-maclaurin-sin",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ap", "alevelfm"]
+    },
     difficulty: 1,
     title: {
       en: "The cubic term of sine",

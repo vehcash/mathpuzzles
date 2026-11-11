@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "calc-limit-sqrt-difference",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ebau", "bac"]
+    },
     difficulty: 2,
     title: {
       en: "Infinity minus infinity",

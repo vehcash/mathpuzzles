@@ -7,6 +7,17 @@
   PuzzleBank.define({
     id: "calc-area-parabola-line",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "classic",
+      note: {
+        en: "Archimedes, <i>Quadrature of the Parabola</i> (3rd century BC), the first known computation of the area of a parabolic segment.",
+        fr: "Archimède, <i>La Quadrature de la parabole</i> (IIIᵉ siècle av. J.-C.), premier calcul connu de l’aire d’un segment de parabole.",
+        es: "Arquímedes, <i>La cuadratura de la parábola</i> (siglo III a. C.), el primer cálculo conocido del área de un segmento parabólico.",
+        ja: "アルキメデス『放物線の求積』（紀元前3世紀）。放物線の切片の面積を求めた最古の記録。",
+        zh: "阿基米德《抛物线求积》（公元前3世纪），已知最早的抛物线弓形面积计算。"
+      },
+      exams: ["kyotsu", "ap", "ebau", "alevel"]
+    },
     difficulty: 2,
     title: {
       en: "Between a line and a parabola",

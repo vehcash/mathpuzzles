@@ -13,7 +13,11 @@
       es: 'El triángulo focal de una elipse',
       ja: '楕円の焦点三角形',
       zh: '椭圆的焦点三角形'
-    }, difficulty: 3,
+    }, source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao"]
+    },
+    difficulty: 3,
     statement: {
       en: 'For the ellipse $\\dfrac{x^2}{25} + \\dfrac{y^2}{9} = 1$ with foci $F_1, F_2$, a point $P$ on the ellipse satisfies $\\angle F_1PF_2 = 60^\\circ$. <b>Which of the following are true?</b>',
       fr: 'Pour l\'ellipse $\\dfrac{x^2}{25} + \\dfrac{y^2}{9} = 1$ de foyers $F_1, F_2$, un point $P$ de l\'ellipse vérifie $\\angle F_1PF_2 = 60^\\circ$. <b>Lesquelles des affirmations suivantes sont vraies ?</b>',

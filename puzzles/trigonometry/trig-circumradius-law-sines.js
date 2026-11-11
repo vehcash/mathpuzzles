@@ -9,6 +9,10 @@
   PuzzleBank.define({
     id: "trig-circumradius-law-sines",
     category: "trigonometry",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "ib"]
+    },
     difficulty: 1,
     title: {
       en: "The circle around a triangle",

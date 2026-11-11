@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live lesson on the blackboard | Daily Math Puzzle</title>
+<meta name="description" content="A maths lesson drawn live on the Daily Math Puzzle blackboard by an AI assistant.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#17201c">
+<link rel="stylesheet" href="lib/fonts.css">
+<link rel="stylesheet" href="lib/katex/katex.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/live.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%E2%88%B4%3C/text%3E%3C/svg%3E">
+</head>
+<body class="live-page">
+<header class="top">
+  <a class="brand" href="index.html" title="Daily Math Puzzle — today’s puzzle"><span class="mark">∴</span><div><b>Daily Math Puzzle</b><small>live lesson</small></div></a>
+  <h1 id="lv-title" class="lv-title" data-no-i18n></h1>
+  <span id="lv-live" class="lv-live" hidden><i></i><span>Live</span></span>
+  <a href="mcp.html" class="btn ghost list-link" title="How AI assistants connect to the blackboard">🤖 For AI assistants</a>
+  <div class="hdr-right"><span id="lang-host"></span><button type="button" class="cookie-link tool svg" data-cookie-settings title="Cookie settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 1 0 9.4 10.9 3 3 0 0 1-3.6-3.3 3 3 0 0 1-3.7-3.7A3 3 0 0 1 12 2.5Z"/><circle cx="8.5" cy="10" r="1" class="dot"/><circle cx="9.5" cy="15.5" r="1" class="dot"/><circle cx="14.5" cy="14.5" r="1" class="dot"/></svg><span>Cookies</span></button></div>
+</header>
+
+<main class="lv-layout">
+  <section class="board-wrap">
+    <div id="board" class="board" data-tool="smart">
+      <canvas class="board-ink"></canvas>
+      <div class="board-overlay"></div>
+      <canvas class="board-live"></canvas>
+      <div id="board-empty" class="board-empty">
+        <p id="lv-empty-1">Waiting for the lesson…</p>
+        <p id="lv-empty-2" class="small">The AI assistant draws here. Keep this page open — new steps appear by themselves.</p>
+      </div>
+      <div id="board-status" class="board-status"></div>
+    </div>
+  </section>
+
+  <aside class="paper lv-panel" aria-label="Lesson steps">
+    <div class="lv-head">
+      <h2>Steps</h2>
+      <span id="lv-count" class="sub"></span>
+    </div>
+    <ol id="lv-steps" class="lv-steps" data-no-i18n></ol>
+    <div class="lv-ctl">
+      <button id="lv-prev" class="btn small" title="Previous step">‹ Back</button>
+      <button id="lv-play" class="btn small" title="Play / pause">❚❚ Pause</button>
+      <button id="lv-next" class="btn small" title="Next step">Next ›</button>
+      <button id="lv-replay" class="btn small ghost" title="Play the lesson again from the start">↺ Replay</button>
+      <button id="lv-link" class="btn small ghost" title="Copy the link to this lesson (to watch it, not to change it)">🔗 Copy link</button>
+    </div>
+    <p class="lv-note">You can draw on the board too — smart chalk is on. Your drawings are only on this screen.</p>
+  </aside>
+</main>
+
+<script src="lib/katex/katex.min.js"></script>
+<script src="js/consent.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/lang/fr.js"></script>
+<script src="js/lang/es.js"></script>
+<script src="js/lang/ja.js"></script>
+<script src="js/lang/zh.js"></script>
+<script>I18N.start();</script>
+<script src="js/consent-ui.js"></script>
+<script src="js/mathcore.js"></script>
+<script src="js/recognizer.js"></script>
+<script src="js/intent.js"></script>
+<script src="js/geometry.js"></script>
+<script src="js/board.js"></script>
+<script src="js/live.js"></script>
+<script>I18N.flags(document.getElementById('lang-host')); CookieUI.init();</script>
+</body>
+</html>

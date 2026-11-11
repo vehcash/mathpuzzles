@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "geo-cone-inscribed-sphere",
     category: "geometry",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao"]
+    },
     difficulty: 2,
     title: {
       en: "A ball inside a cone",

@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "calc-tangent-cubic",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "kyotsu", "ap"]
+    },
     difficulty: 1,
     title: {
       en: "Touching the cubic",

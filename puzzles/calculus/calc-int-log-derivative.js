@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "calc-int-log-derivative",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ap", "alevel", "ebau", "bac"]
+    },
     difficulty: 1,
     title: {
       en: "A derivative on top",

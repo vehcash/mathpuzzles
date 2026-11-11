@@ -17,6 +17,17 @@
       ja: '直角三角形の中の円',
       zh: '直角三角形中的圆'
     },
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "classic",
+      note: {
+        en: "The same question appears in <i>The Nine Chapters on the Mathematical Art</i> (China, c. 1st century), chapter 9, problem 16, with legs 8 and 15.",
+        fr: "La même question figure dans <i>Les Neuf Chapitres sur l’art mathématique</i> (Chine, vers le Iᵉʳ siècle), chapitre 9, problème 16, avec des côtés 8 et 15.",
+        es: "La misma pregunta aparece en <i>Los nueve capítulos sobre el arte matemático</i> (China, hacia el siglo I), capítulo 9, problema 16, con catetos 8 y 15.",
+        ja: "同じ問いが『九章算術』（中国、1世紀頃）勾股章第16問にある（勾8・股15）。",
+        zh: "同类问题见《九章算术》（约公元1世纪）勾股章第16题：“今有勾八步，股十五步，问勾中容圆径几何”。"
+      },
+      exams: ["zhongkao", "amc"]
+    },
     difficulty: 2,
     statement: {
       en: 'Triangle $ABC$ has a right angle at $C$, with $AC = 6$ and $BC = 8$. A circle with centre $I$ is inscribed in the triangle, touching all three sides. <b>Which of the following equal the radius $r$ of the circle?</b>',

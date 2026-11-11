@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "calc-horizontal-tangents",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["kyotsu", "ap"]
+    },
     difficulty: 1,
     title: {
       en: "Flat spots on a cubic",

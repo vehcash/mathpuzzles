@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "cx-square-vertex",
     category: "complex",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["bac"]
+    },
     difficulty: 2,
     title: {
       en: "Completing a square with i",

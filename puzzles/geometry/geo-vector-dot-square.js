@@ -12,7 +12,11 @@
       es: 'Un producto escalar en el cuadrado',
       ja: '正方形の中の内積',
       zh: '正方形中的数量积'
-    }, difficulty: 1,
+    }, source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao"]
+    },
+    difficulty: 1,
     statement: {
       en: 'Square $ABCD$ has side $2$, and $E$ is the midpoint of $CD$. <b>What is $\\overrightarrow{AE}\\cdot\\overrightarrow{BD}$?</b>',
       fr: 'Le carré $ABCD$ a pour côté $2$, et $E$ est le milieu de $CD$. <b>Que vaut $\\overrightarrow{AE}\\cdot\\overrightarrow{BD}$ ?</b>',

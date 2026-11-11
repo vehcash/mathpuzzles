@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect an AI assistant to the blackboard (MCP) | Daily Math Puzzle</title>
+<meta name="description" content="AI assistants can teach maths on the Daily Math Puzzle blackboard through MCP: create a board, share the link, and draw the explanation step by step while the student watches live.">
+<link rel="canonical" href="https://dailymathpuzzle.com/mcp.html">
+<meta name="theme-color" content="#17201c">
+<link rel="stylesheet" href="lib/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/live.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%E2%88%B4%3C/text%3E%3C/svg%3E">
+<link rel="alternate" type="text/markdown" href="board-guide.md" title="Blackboard guide for AI assistants">
+<style>
+  .doc { max-width: 900px; margin: 6px auto 40px; padding: 30px 38px 34px; max-height: none; overflow: visible; }
+  .doc h1 { font-size: 32px; margin: 0 0 6px; }
+  .doc h2 { font-family: var(--serif); font-size: 22px; margin: 30px 0 8px; }
+  .doc p, .doc li { font-size: 16px; line-height: 1.6; }
+  .doc code { font-size: 14px; background: rgba(47,111,143,.09); padding: 1px 5px; border-radius: 4px; }
+  .doc pre { background: #17201c; color: #f4f1e8; padding: 14px 16px; border-radius: 10px; overflow: auto; font-size: 13.5px; line-height: 1.5; }
+  .doc pre code { background: none; padding: 0; font-size: inherit; }
+  .doc table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  .doc td, .doc th { border-bottom: 1px solid var(--line); padding: 7px 8px; text-align: left; vertical-align: top; }
+  .endpoint { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 12px 0; }
+  .endpoint code { font-size: 16px; padding: 8px 12px; background: #fff; border: 1px solid var(--line); }
+  .lead { font-size: 18px !important; color: var(--ink-soft); }
+  .doc .btn.primary { display: inline-block; text-decoration: none; }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html" title="Daily Math Puzzle — today’s puzzle"><span class="mark">∴</span><div><b>Daily Math Puzzle</b><small>for AI assistants</small></div></a>
+  <span style="flex:1"></span>
+  <a href="index.html" class="btn ghost list-link">✎ Open the board</a>
+</header>
+
+<main class="paper doc">
+  <h1>Teach on the blackboard — for AI assistants</h1>
+  <p class="lead">Any AI assistant that speaks <a href="https://modelcontextprotocol.io">MCP</a> can explain maths on the Daily Math Puzzle blackboard. It creates a board, gives you a link, and draws the explanation step by step — equations the board solves, graphs, shaded areas, tangents and geometry you can drag — while you watch it appear live.</p>
+
+  <div class="endpoint"><b>MCP server:</b> <code id="ep">https://dailymathpuzzle.com/api/mcp.php</code> <button class="btn small" onclick="navigator.clipboard.writeText(document.getElementById('ep').textContent);this.textContent='Copied ✓'">Copy</button></div>
+  <p>Transport: <b>Streamable HTTP</b>. No account, no sign-in, free.</p>
+
+  <h2>Connect it</h2>
+  <ul>
+    <li><b>Claude</b> (claude.ai or the desktop app): in Settings, open <i>Connectors</i>, choose <i>Add custom connector</i> and paste the URL above. Then ask, for example, “Explain completing the square on the Daily Math Puzzle blackboard”.</li>
+    <li><b>ChatGPT</b>: in Settings, look for <i>Apps &amp; Connectors</i>; with developer mode turned on you can create a connector from the URL above.</li>
+    <li><b>Claude Code</b>: <code>claude mcp add --transport http dailymathpuzzle https://dailymathpuzzle.com/api/mcp.php</code></li>
+    <li><b>Cursor, VS Code and other MCP clients</b>: add a server to your MCP configuration:
+<pre><code>{ "mcpServers": { "dailymathpuzzle": { "url": "https://dailymathpuzzle.com/api/mcp.php" } } }</code></pre></li>
+    <li><b>Testing</b>: <code>npx @modelcontextprotocol/inspector</code>, transport “Streamable HTTP”, the URL above.</li>
+  </ul>
+
+  <h2>What the assistant can do</h2>
+  <table>
+    <tr><th>Tool</th><th>What it does</th></tr>
+    <tr><td><code>board_guide</code></td><td>The full guide: every drawing command, the maths syntax, layout and a complete example.</td></tr>
+    <tr><td><code>create_board</code></td><td>Makes an empty board and returns <code>board_id</code>, <code>edit_key</code> and the <code>view_url</code> to give to the student.</td></tr>
+    <tr><td><code>draw</code></td><td>Adds commands — <code>step</code> captions, <code>write</code>, <code>equation</code> (solved by the board), <code>system</code>, <code>axes</code>, <code>plot</code>, <code>shade</code>, <code>tangent</code>, <code>point</code>, <code>line</code>, <code>arrow</code>, <code>circle</code>, <code>geometry</code> (named points, polygons, incircle, circumcircle, altitudes, medians…), <code>highlight</code>, <code>wait</code>, <code>clear</code>.</td></tr>
+    <tr><td><code>get_board</code></td><td>What is on the board, step by step, plus anything the student’s screen could not draw, so the assistant can fix it.</td></tr>
+  </table>
+  <p>The server also offers the guide as the resource <code>board://guide</code> and a prompt <code>explain_on_board</code>. The guide is public here: <a href="board-guide.md">board-guide.md</a>.</p>
+
+  <h2>What a lesson looks like</h2>
+<pre><code>[
+ {"type":"step","title":"The question","text":"Where do $y = x^2$ and $y = x + 2$ meet?"},
+ {"type":"axes","id":"A","x_range":[-4,4],"y_range":[-1,7]},
+ {"type":"plot","axes":"A","equation":"y = x^2","id":"f","color":"yellow"},
+ {"type":"plot","axes":"A","equation":"y = x + 2","color":"blue"},
+ {"type":"step","text":"Set the two right-hand sides equal and solve."},
+ {"type":"equation","equation":"x^2 - x - 2 = 0","x":0.04,"y":0.15,"solve":true},
+ {"type":"step","text":"They meet at $(-1, 1)$ and $(2, 4)$."},
+ {"type":"point","axes":"A","x":-1,"y":1,"label":"(-1, 1)","color":"pink"},
+ {"type":"point","axes":"A","x":2,"y":4,"label":"(2, 4)","color":"pink"}
+]</code></pre>
+  <p>Positions are fractions of the board (x from left to right, y from top to bottom), so the lesson fits any screen. Captions and written text use LaTeX between <code>$…$</code>; equations and graphs use the board’s calculator syntax (<code>y = sin(x)</code>, <code>sqrt(x)</code>, <code>x^2</code>).</p>
+
+  <h2>Watching a lesson</h2>
+  <p>The link opens the blackboard with the lesson’s steps beside it. New steps appear by themselves while the assistant draws. You can go back a step, replay the lesson, copy the link to share it, and draw on the board yourself (your drawings stay on your screen).</p>
+
+  <h2>Privacy and limits</h2>
+  <ul>
+    <li>Anyone with a lesson’s link can watch it; only whoever holds its <code>edit_key</code> can change it. Do not put personal information on a board.</li>
+    <li>Boards are deleted 30 days after their last change. Up to 600 commands per board, 80 per <code>draw</code> call.</li>
+    <li>No accounts, no tracking, no advertising. The server stores only the board’s title and commands.</li>
+  </ul>
+</main>
+</body>
+</html>

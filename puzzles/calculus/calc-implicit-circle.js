@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "calc-implicit-circle",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ap", "alevel"]
+    },
     difficulty: 1,
     title: {
       en: "The slope of a circle",

@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "trig-tan-ratio",
     category: "trigonometry",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao"]
+    },
     difficulty: 1,
     title: {
       en: "Only the tangent is known",

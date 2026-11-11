@@ -9,6 +9,10 @@
   PuzzleBank.define({
     id: "geo-point-line-distance",
     category: "geometry",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao"]
+    },
     difficulty: 1,
     title: {
       en: "How far from the line?",

@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "prob-binomial-two-of-four",
     category: "probability",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "bac", "alevel", "ebau"]
+    },
     difficulty: 2,
     title: {
       en: "Exactly two hits",

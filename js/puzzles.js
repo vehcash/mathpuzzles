@@ -154,6 +154,24 @@
     return searchWait[lang];
   }
 
+  // ------- sources -------
+  // Exam systems a puzzle's `source.exams` can name. It means "this kind of question is standard there",
+  // not that the exact question was set there — for a real past-paper question use `source.from` (see README: Sources).
+  const EXAMS = {
+    gaokao:   { en: 'Gaokao (China)', fr: 'Gaokao (Chine)', es: 'Gaokao (China)', ja: '高考（中国）', zh: '高考' },
+    zhongkao: { en: 'Zhongkao (China)', fr: 'Zhongkao (Chine)', es: 'Zhongkao (China)', ja: '中考（中国）', zh: '中考' },
+    kyotsu:   { en: 'Common Test (Japan)', fr: 'Common Test (Japon)', es: 'Common Test (Japón)', ja: '大学入学共通テスト', zh: '日本大学入学共通考试' },
+    ebau:     { en: 'EBAU / PAU (Spain)', fr: 'EBAU / PAU (Espagne)', es: 'EBAU / PAU (Selectividad)', ja: 'EBAU（スペイン）', zh: '西班牙高考（EBAU）' },
+    bac:      { en: 'Baccalauréat (France)', fr: 'Baccalauréat', es: 'Bachillerato francés (Bac)', ja: 'バカロレア（フランス）', zh: '法国高中会考（Bac）' },
+    alevel:   { en: 'A-level (UK)', fr: 'A-level (Royaume-Uni)', es: 'A-level (Reino Unido)', ja: 'Aレベル（英国）', zh: '英国 A-level' },
+    alevelfm: { en: 'A-level Further Maths (UK)', fr: 'A-level Further Maths (Royaume-Uni)', es: 'A-level Further Maths (Reino Unido)', ja: 'Aレベル Further Maths（英国）', zh: '英国 A-level 进阶数学' },
+    gcse:     { en: 'GCSE (UK)', fr: 'GCSE (Royaume-Uni)', es: 'GCSE (Reino Unido)', ja: 'GCSE（英国）', zh: '英国 GCSE' },
+    ib:       { en: 'IB Diploma', fr: 'Baccalauréat international (IB)', es: 'Bachillerato Internacional (IB)', ja: '国際バカロレア（IB）', zh: 'IB 国际文凭' },
+    ap:       { en: 'AP Calculus (USA)', fr: 'AP Calculus (États-Unis)', es: 'AP Calculus (EE. UU.)', ja: 'AP Calculus（米国）', zh: '美国 AP 微积分' },
+    amc:      { en: 'AMC 8/10 (USA)', fr: 'AMC 8/10 (États-Unis)', es: 'AMC 8/10 (EE. UU.)', ja: 'AMC 8/10（米国）', zh: '美国 AMC 8/10' },
+    uni:      { en: 'University linear algebra', fr: 'Algèbre linéaire (université)', es: 'Álgebra lineal (universidad)', ja: '大学の線形代数', zh: '大学线性代数' }
+  };
+
   // ------- language -------
   const langOf = () => (global.I18N ? I18N.lang : 'en');
   /** text field: either a plain English string (translated through the site dictionaries) or { en, fr, es, ja, zh } */
@@ -169,6 +187,7 @@
     const t = v => pick(v, lang);
     return Object.assign({}, p, {
       title: t(p.title), statement: t(p.statement), hint: t(p.hint), figureText: t(p.figureText), aiHint: t(p.aiHint),
+      source: p.source && Object.assign({}, p.source, { note: t(p.source.note), from: t(p.source.from), exams: (p.source.exams || []).map(k => EXAMS[k] ? pick(EXAMS[k], lang) : k) }),
       options: p.options.map(o => Object.assign({}, o, { why: t(o.why), tex: tx(o.tex) })),
       steps: p.steps.map(st => Object.assign({}, st, { title: t(st.title), note: t(st.note), lines: st.lines && st.lines.map(tx) }))
     });
@@ -176,6 +195,7 @@
 
   global.PuzzleBank = {
     categories: CATEGORIES, kit, define, load, loadSearch, localize, text: pick,
+    exams: EXAMS,
     /** called by puzzles/index.js */
     setIndex(list) { INDEX = list; byId.clear(); list.forEach(e => byId.set(e.id, e)); },
     /** called by puzzles/search/<lang>.js */

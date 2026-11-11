@@ -16,6 +16,10 @@
       ja: '巨大な数の一の位',
       zh: '巨大数的个位'
     },
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["amc"]
+    },
     difficulty: 2,
     statement: {
       en: '$7^{2026}$ has more than 1700 digits. <b>Which of the following is its last digit?</b>',

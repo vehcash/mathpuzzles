@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "prob-expected-maximum",
     category: "probability",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "ib"]
+    },
     difficulty: 3,
     title: {
       en: "The larger of two dice",

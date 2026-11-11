@@ -8,6 +8,17 @@
   PuzzleBank.define({
     id: "comb-handshakes",
     category: "combinatorics",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "classic",
+      note: {
+        en: "The classic handshake problem.",
+        fr: "Le problème classique des poignées de main.",
+        es: "El clásico problema de los apretones de manos.",
+        ja: "定番の握手の問題。",
+        zh: "经典的握手问题。"
+      },
+      exams: ["amc"]
+    },
     difficulty: 1,
     title: {
       en: "Everybody shakes hands",

@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "calc-limit-exp-taylor",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ebau", "ap"]
+    },
     difficulty: 2,
     title: {
       en: "What is left of eˣ",

@@ -12,7 +12,11 @@
       es: 'Un ángulo obtuso de 120°',
       ja: '120° の鈍角',
       zh: '120° 的钝角'
-    }, difficulty: 2,
+    }, source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "alevel", "ib"]
+    },
+    difficulty: 2,
     statement: {
       en: 'In triangle $ABC$, $AB = 3$, $AC = 5$ and $\\angle A = 120^\\circ$. <b>Which of the following statements are true?</b>',
       fr: 'Dans le triangle $ABC$, $AB = 3$, $AC = 5$ et $\\angle A = 120^\\circ$. <b>Lesquelles des affirmations suivantes sont vraies ?</b>',

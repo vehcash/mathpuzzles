@@ -38,17 +38,21 @@ for (const cat of fs.readdirSync(DIR).filter(d => fs.statSync(path.join(DIR, d))
     if ((p.options || []).length !== 8) problems.push(rel + ': ' + (p.options || []).length + ' options (expected 8)');
     if (nOk > 2) problems.push(rel + ': ' + nOk + ' correct options (0–2 allowed)');
     if (!(p.steps || []).length) problems.push(rel + ': no solution steps');
+    const src = p.source || {};
+    if (!p.source) problems.push(rel + ': no source (add source: { kind, exams, note | from })');
+    (src.exams || []).filter(k => !Bank.exams[k]).forEach(k => problems.push(rel + ': unknown exam "' + k + '" in source.exams (see EXAMS in js/puzzles.js)'));
     // translations
-    const fields = [['title', p.title], ['statement', p.statement], ['hint', p.hint], ['figureText', p.figureText], ['aiHint', p.aiHint]]
+    const fields = [['title', p.title], ['statement', p.statement], ['hint', p.hint], ['figureText', p.figureText], ['aiHint', p.aiHint], ['source note', src.note], ['source', src.from]]
       .concat((p.options || []).map((o, i) => ['option ' + 'ABCDEFGH'[i], o.why]))
       .concat((p.steps || []).flatMap((s, i) => [['step ' + (i + 1) + ' title', s.title], ['step ' + (i + 1) + ' note', s.note]]));
     for (const l of LANGS.slice(1)) {
       const miss = fields.filter(([, v]) => v && !(typeof v === 'object' && v[l] !== undefined) && hasWords(pick(v, 'en'))).map(([n]) => n);
       if (miss.length) (missing[l] = missing[l] || []).push(p.id + ' (' + miss.length + ': ' + miss.slice(0, 4).join(', ') + (miss.length > 4 ? '…' : '') + ')');
     }
-    entries.push({ id: p.id, cat: p.category, diff: p.difficulty || 1, file: rel, options: (p.options || []).length, steps: (p.steps || []).length });
+    entries.push({ id: p.id, cat: p.category, diff: p.difficulty || 1, file: rel, options: (p.options || []).length, steps: (p.steps || []).length, src: src.from ? 'exam' : (src.kind || 'standard'), ex: src.exams || [] });
     for (const l of LANGS) {
-      const body = [plain(pick(p.statement, l)), pick(p.figureText, l), plain(pick(p.hint, l)), ...(p.steps || []).map(s => plain(pick(s.title, l)))].filter(Boolean).join(' ');
+      const body = [plain(pick(p.statement, l)), pick(p.figureText, l), plain(pick(p.hint, l)), ...(p.steps || []).map(s => plain(pick(s.title, l))),
+        plain(pick(src.from, l)), plain(pick(src.note, l)), ...(src.exams || []).flatMap(k => Bank.exams[k] ? [...new Set([pick(Bank.exams[k], l), Bank.exams[k].en])] : [])].filter(Boolean).join(' ');
       search[l][p.id] = { t: pick(p.title, l), s: pick(p.statement, l), k: body };
     }
   }

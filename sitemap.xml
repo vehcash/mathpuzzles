@@ -182,8 +182,68 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://dailymathpuzzle.com/cheatsheets.html"/>
   </url>
   <url>
-    <loc>https://dailymathpuzzle.com/cheatsheets.html?t=algebra</loc>
+    <loc>https://dailymathpuzzle.com/mcp.html</loc>
     <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/mcp.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://dailymathpuzzle.com/mcp.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://dailymathpuzzle.com/mcp.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://dailymathpuzzle.com/mcp.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://dailymathpuzzle.com/mcp.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://dailymathpuzzle.com/mcp.html"/>
+  </url>
+  <url>
+    <loc>https://dailymathpuzzle.com/mcp.html?lang=fr</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/mcp.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://dailymathpuzzle.com/mcp.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://dailymathpuzzle.com/mcp.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://dailymathpuzzle.com/mcp.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://dailymathpuzzle.com/mcp.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://dailymathpuzzle.com/mcp.html"/>
+  </url>
+  <url>
+    <loc>https://dailymathpuzzle.com/mcp.html?lang=es</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/mcp.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://dailymathpuzzle.com/mcp.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://dailymathpuzzle.com/mcp.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://dailymathpuzzle.com/mcp.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://dailymathpuzzle.com/mcp.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://dailymathpuzzle.com/mcp.html"/>
+  </url>
+  <url>
+    <loc>https://dailymathpuzzle.com/mcp.html?lang=ja</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/mcp.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://dailymathpuzzle.com/mcp.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://dailymathpuzzle.com/mcp.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://dailymathpuzzle.com/mcp.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://dailymathpuzzle.com/mcp.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://dailymathpuzzle.com/mcp.html"/>
+  </url>
+  <url>
+    <loc>https://dailymathpuzzle.com/mcp.html?lang=zh</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/mcp.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://dailymathpuzzle.com/mcp.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://dailymathpuzzle.com/mcp.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://dailymathpuzzle.com/mcp.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://dailymathpuzzle.com/mcp.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://dailymathpuzzle.com/mcp.html"/>
+  </url>
+  <url>
+    <loc>https://dailymathpuzzle.com/cheatsheets.html?t=algebra</loc>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=algebra"/>
@@ -195,7 +255,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=algebra&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=algebra"/>
@@ -207,7 +267,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=algebra&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=algebra"/>
@@ -219,7 +279,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=algebra&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=algebra"/>
@@ -231,7 +291,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=algebra&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=algebra"/>
@@ -243,7 +303,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=analytic</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=analytic"/>
@@ -255,7 +315,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=analytic&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=analytic"/>
@@ -267,7 +327,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=analytic&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=analytic"/>
@@ -279,7 +339,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=analytic&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=analytic"/>
@@ -291,7 +351,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=analytic&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=analytic"/>
@@ -363,7 +423,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=complex</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=complex"/>
@@ -375,7 +435,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=complex&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=complex"/>
@@ -387,7 +447,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=complex&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=complex"/>
@@ -399,7 +459,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=complex&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=complex"/>
@@ -411,7 +471,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=complex&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=complex"/>
@@ -423,7 +483,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=derivatives</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=derivatives"/>
@@ -435,7 +495,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=derivatives&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=derivatives"/>
@@ -447,7 +507,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=derivatives&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=derivatives"/>
@@ -459,7 +519,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=derivatives&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=derivatives"/>
@@ -471,7 +531,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=derivatives&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=derivatives"/>
@@ -483,7 +543,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=functions</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=functions"/>
@@ -495,7 +555,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=functions&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=functions"/>
@@ -507,7 +567,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=functions&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=functions"/>
@@ -519,7 +579,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=functions&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=functions"/>
@@ -531,7 +591,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=functions&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=functions"/>
@@ -543,7 +603,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=geometry</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=geometry"/>
@@ -555,7 +615,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=geometry&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=geometry"/>
@@ -567,7 +627,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=geometry&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=geometry"/>
@@ -579,7 +639,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=geometry&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=geometry"/>
@@ -591,7 +651,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=geometry&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=geometry"/>
@@ -663,7 +723,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=limits</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=limits"/>
@@ -675,7 +735,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=limits&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=limits"/>
@@ -687,7 +747,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=limits&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=limits"/>
@@ -699,7 +759,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=limits&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=limits"/>
@@ -711,7 +771,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=limits&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=limits"/>
@@ -723,7 +783,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=logic</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=logic"/>
@@ -735,7 +795,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=logic&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=logic"/>
@@ -747,7 +807,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=logic&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=logic"/>
@@ -759,7 +819,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=logic&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=logic"/>
@@ -771,7 +831,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=logic&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=logic"/>
@@ -783,7 +843,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=number</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=number"/>
@@ -795,7 +855,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=number&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=number"/>
@@ -807,7 +867,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=number&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=number"/>
@@ -819,7 +879,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=number&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=number"/>
@@ -831,7 +891,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=number&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=number"/>
@@ -903,7 +963,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=space</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=space"/>
@@ -915,7 +975,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=space&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=space"/>
@@ -927,7 +987,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=space&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=space"/>
@@ -939,7 +999,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=space&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=space"/>
@@ -951,7 +1011,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=space&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=space"/>
@@ -1023,7 +1083,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=trigonometry</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=trigonometry"/>
@@ -1035,7 +1095,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=trigonometry&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=trigonometry"/>
@@ -1047,7 +1107,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=trigonometry&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=trigonometry"/>
@@ -1059,7 +1119,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=trigonometry&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=trigonometry"/>
@@ -1071,7 +1131,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=trigonometry&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=trigonometry"/>
@@ -1083,7 +1143,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=vectors</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=vectors"/>
@@ -1095,7 +1155,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=vectors&amp;lang=fr</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=vectors"/>
@@ -1107,7 +1167,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=vectors&amp;lang=es</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=vectors"/>
@@ -1119,7 +1179,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=vectors&amp;lang=ja</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=vectors"/>
@@ -1131,7 +1191,7 @@
   </url>
   <url>
     <loc>https://dailymathpuzzle.com/cheatsheets.html?t=vectors&amp;lang=zh</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html?t=vectors"/>

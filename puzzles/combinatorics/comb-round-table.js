@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "comb-round-table",
     category: "combinatorics",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "amc"]
+    },
     difficulty: 1,
     title: {
       en: "A round table",

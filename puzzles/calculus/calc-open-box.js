@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "calc-open-box",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ap", "alevel"]
+    },
     difficulty: 2,
     title: {
       en: "The biggest open box",

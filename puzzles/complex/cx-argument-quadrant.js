@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: 'cx-argument-quadrant',
     category: 'complex',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "alevelfm", "ib"]
+    },
     difficulty: 2,
     title: { en: 'Which way does it point?', fr: 'Dans quelle direction pointe-t-il ?', es: '¿Hacia dónde apunta?', ja: 'どちらを向いている？', zh: '它指向哪里？' },
     statement: {

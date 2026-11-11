@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "trig-sinusoid-properties",
     category: "trigonometry",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao"]
+    },
     difficulty: 2,
     title: {
       en: "Reading a sinusoid",

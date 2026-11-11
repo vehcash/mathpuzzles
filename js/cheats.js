@@ -54,11 +54,14 @@
           const o = opt && typeof opt === 'object' && !Array.isArray(opt) ? opt : {};
           const tex = Array.isArray(texs) ? (texs[LANGS.indexOf(I18N.lang)] || texs[0]) : texs;   // a formula with words may come in five versions
           el.className = 'cs-item';
-          el.innerHTML = (name ? `<div class="cs-name">${esc(pick(name))}</div>` : '') + `<div class="cs-tex" title="${esc(tr('Click a formula to copy its LaTeX'))}">${tex.split(/\\qquad/).map(part => '<span class="cs-part">' + K(part.trim().replace(/,$/, ''), true) + '</span>').join('')}</div>` + (note ? `<div class="cs-note">${inline(pick(note))}</div>` : '') +
+          el.innerHTML = (name ? `<div class="cs-name">${esc(pick(name))}</div>` : '') + `<div class="cs-tex" title="${esc(tr('Click for a step-by-step explanation'))}">${tex.split(/\\qquad/).map(part => '<span class="cs-part">' + K(part.trim().replace(/,$/, ''), true) + '</span>').join('')}</div>` + (note ? `<div class="cs-note">${inline(pick(note))}</div>` : '') +
             fig(o.fig, 'mini') + (o.ex ? `<div class="cs-ex"><b>${esc(pick(EX))}</b> ${inline(pick(o.ex))}</div>` : '');
           el.dataset.tex = tex;
           text = norm(String(name || '').replace(/\|/g, ' ') + ' ' + String(note || '').replace(/\|/g, ' ') + ' ' + String(o.ex || '').replace(/\|/g, ' ') + ' ' + texWords(Array.isArray(texs) ? texs.join(' ') : tex));
         }
+        el._tu = { tp, s, it };   // the card's tutorial (js/tutor.js)
+        el.tabIndex = 0; el.setAttribute('role', 'button');
+        el.insertAdjacentHTML('afterbegin', `<button type="button" class="cs-copy" title="${esc(tr('Copy LaTeX'))}" aria-label="${esc(tr('Copy LaTeX'))}">⧉</button>`);
         card.appendChild(el);
         items.push({ el, card, topic: tp.id, text });
       });
@@ -140,7 +143,14 @@
     fallback(text, done);
   };
   const fallback = (text, done) => { const a = document.createElement('textarea'); a.value = text; a.style.position = 'fixed'; a.style.opacity = '0'; document.body.appendChild(a); a.select(); try { document.execCommand('copy'); done(); } catch (e) { /* ignore */ } a.remove(); };
-  main.addEventListener('click', e => { const f = e.target.closest('.cs-tex, .cs-tbl'); if (!f) return; const it = f.closest('.cs-item'); copy(it.dataset.tex); it.classList.add('copied'); setTimeout(() => it.classList.remove('copied'), 700); });
+  // ⧉ copies the LaTeX; anywhere else on a card opens its tutorial on the blackboard
+  main.addEventListener('click', e => {
+    const it = e.target.closest('.cs-item'); if (!it) return;
+    if (e.target.closest('.cs-copy')) { copy(it.dataset.tex); it.classList.add('copied'); setTimeout(() => it.classList.remove('copied'), 700); return; }
+    if (e.target.closest('a')) return;
+    if (window.Tutor && it._tu) Tutor.open(it._tu.tp, it._tu.s, it._tu.it, it);
+  });
+  main.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('cs-item')) { e.preventDefault(); e.target.click(); } });
 
   // a formula wider than its card is scaled down (to 62% at most); anything wider still scrolls
   function fit() {
@@ -155,5 +165,5 @@
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(fit, 150); });
   if (document.fonts) document.fonts.ready.then(fit);
   showAndFit();
-  window.CheatsUI = { show: showAndFit };
+  window.CheatsUI = { show: showAndFit, copy };
 })();

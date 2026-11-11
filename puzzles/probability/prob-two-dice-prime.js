@@ -16,6 +16,10 @@
       ja: '2つのさいころで素数',
       zh: '两颗骰子与质数'
     },
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gcse", "amc"]
+    },
     difficulty: 1,
     statement: {
       en: 'Two fair six-sided dice are rolled and the two numbers are added. <b>Which of the following equal the probability that the sum is a prime number?</b>',

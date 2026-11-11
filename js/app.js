@@ -112,7 +112,20 @@
     mathText($('#p-statement'), p.statement);
     mathText($('#p-hint-text'), p.hint || '');
     $('#p-hint').hidden = !p.hint;
+    renderSource(p);
     seo(p, cat);
+  }
+  // where the problem comes from: a real exam question (source.from), or an original puzzle with its classic origin
+  // (source.note) and the exams where this kind of question is standard (source.exams)
+  function renderSource(p) {
+    const s = p.source || {}, el = $('#p-source');
+    const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+    let h = '<span class="src-k">' + tr('Source') + '</span> ';
+    if (s.from) h += s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + s.from + '</a>' : s.from;
+    else h += tr('Original puzzle written for Daily Math Puzzle.');
+    if (s.note) h += ' <span class="src-note">' + tr('Based on:') + ' ' + s.note + '</span>';
+    if (s.exams && s.exams.length) h += '<span class="src-ex">' + tr('This kind of question is typical of:') + ' ' + s.exams.map(x => '<span class="src-chip">' + esc(x) + '</span>').join(' ') + '</span>';
+    mathText(el, h);
   }
   // ---------- addresses and search-engine tags ----------
   // online: puzzle/<id>.html (real pages made by tools/build-pages.js) and ./?daily; from disk: index.html?p=<id>

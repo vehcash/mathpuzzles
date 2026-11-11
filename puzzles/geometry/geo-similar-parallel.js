@@ -12,7 +12,11 @@
       es: 'Cortado por una paralela',
       ja: '平行線で切る',
       zh: '被平行线截'
-    }, difficulty: 1,
+    }, source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["zhongkao", "gcse"]
+    },
+    difficulty: 1,
     statement: {
       en: 'In triangle $ABC$, $D$ is on $AB$ and $E$ is on $AC$ with $DE \\parallel BC$ and $AD : DB = 2 : 3$. The area of $\\triangle ADE$ is $8$. <b>What is the area of $\\triangle ABC$?</b>',
       fr: 'Dans le triangle $ABC$, $D$ est sur $AB$ et $E$ sur $AC$ avec $DE \\parallel BC$ et $AD : DB = 2 : 3$. L\'aire de $\\triangle ADE$ vaut $8$. <b>Quelle est l\'aire de $\\triangle ABC$ ?</b>',

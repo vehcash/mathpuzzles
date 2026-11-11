@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: 'cx-de-moivre-power',
     category: 'complex',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["bac", "alevelfm", "ib"]
+    },
     difficulty: 2,
     title: { en: 'A spiral of powers', fr: 'Une spirale de puissances', es: 'Una espiral de potencias', ja: 'べき乗のらせん', zh: '幂的螺旋' },
     statement: {

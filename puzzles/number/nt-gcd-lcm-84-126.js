@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "nt-gcd-lcm-84-126",
     category: "number",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gcse", "kyotsu"]
+    },
     difficulty: 1,
     title: {
       en: "Common factors",

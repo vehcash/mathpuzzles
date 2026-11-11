@@ -82,6 +82,7 @@ function build() {
     { loc: SITE, file: 'index.html', freq: 'daily', pr: '1.0' },
     { loc: SITE + 'list.html', file: 'puzzles/index.js', freq: 'weekly', pr: '0.8' },
     { loc: SITE + 'cheatsheets.html', file: 'cheatsheets.html', freq: 'monthly', pr: '0.7' },
+    { loc: SITE + 'mcp.html', file: 'mcp.html', freq: 'monthly', pr: '0.5' },
     ...topics.map(t => ({ loc: SITE + 'cheatsheets.html?t=' + t, file: 'cheats/' + t + '.js', freq: 'monthly', pr: '0.6' })),
     ...index.map(e => ({ loc: SITE + 'puzzle/' + e.id + '.html', file: 'puzzles/' + e.file, freq: 'monthly', pr: '0.7' }))
   ];

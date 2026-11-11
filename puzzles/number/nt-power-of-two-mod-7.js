@@ -9,6 +9,10 @@
   PuzzleBank.define({
     id: "nt-power-of-two-mod-7",
     category: "number",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["amc"]
+    },
     difficulty: 2,
     title: {
       en: "A huge power of two",

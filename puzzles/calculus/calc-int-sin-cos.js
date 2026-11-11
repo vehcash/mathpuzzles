@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "calc-int-sin-cos",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ap", "alevel", "ebau"]
+    },
     difficulty: 1,
     title: {
       en: "Sine times cosine",

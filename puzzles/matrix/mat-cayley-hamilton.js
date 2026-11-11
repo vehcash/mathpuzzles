@@ -7,6 +7,17 @@
   PuzzleBank.define({
     id: "mat-cayley-hamilton",
     category: "matrix",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "classic",
+      note: {
+        en: "The Cayley–Hamilton theorem (Cayley, 1858).",
+        fr: "Le théorème de Cayley-Hamilton (Cayley, 1858).",
+        es: "El teorema de Cayley-Hamilton (Cayley, 1858).",
+        ja: "ケーリー・ハミルトンの定理（ケーリー、1858年）。",
+        zh: "凯莱-哈密顿定理（凯莱，1858年）。"
+      },
+      exams: ["uni"]
+    },
     difficulty: 3,
     title: {
       en: "A matrix obeys its own equation",

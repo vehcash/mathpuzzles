@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "geo-centroid-area",
     category: "geometry",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["zhongkao", "amc"]
+    },
     difficulty: 1,
     title: {
       en: "The centroid’s third",

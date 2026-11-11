@@ -9,6 +9,10 @@
   PuzzleBank.define({
     id: 'mat-shear-power',
     category: 'matrix',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ebau"]
+    },
     difficulty: 1,
     title: { en: 'Ten slides of a shear', fr: 'Dix glissements d’une transvection', es: 'Diez deslizamientos de una cizalla', ja: 'せん断を10回', zh: '错切十次' },
     statement: {

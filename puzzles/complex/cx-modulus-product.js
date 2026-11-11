@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: 'cx-modulus-product',
     category: 'complex',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "bac"]
+    },
     difficulty: 1,
     title: { en: 'The length of a product', fr: 'La longueur d’un produit', es: 'La longitud de un producto', ja: '積の大きさ', zh: '乘积的模' },
     statement: {

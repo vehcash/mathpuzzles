@@ -8,6 +8,17 @@
     id: 'alg-rectangle-area-40',
     category: 'algebra',
     title: { en: 'Three metres longer', fr: 'Trois mètres de plus', es: 'Tres metros más largo', ja: '3メートル長い', zh: '长三米' },
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "classic",
+      note: {
+        en: "Babylonian clay tablets (c. 1800 BC) already pose this kind of problem: two numbers with a known difference and a known product.",
+        fr: "Les tablettes d’argile babyloniennes (vers 1800 av. J.-C.) posent déjà ce type de problème : deux nombres dont on connaît la différence et le produit.",
+        es: "Las tablillas de arcilla babilónicas (hacia 1800 a. C.) ya plantean este tipo de problema: dos números de los que se conocen la diferencia y el producto.",
+        ja: "バビロニアの粘土板（紀元前1800年頃）にすでに同じ型の問題がある：差と積がわかっている2つの数。",
+        zh: "古巴比伦泥板（约公元前1800年）中已有此类问题：已知两数之差与两数之积。"
+      },
+      exams: ["zhongkao", "gcse"]
+    },
     difficulty: 1,
     statement: {
       en: 'The length of a rectangle is $3$ more than its width $w$, and its area is $40$. <b>Which of the following are equal to $w$?</b>',

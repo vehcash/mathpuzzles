@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "calc-x-exp-minus-x",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "bac", "ap"]
+    },
     difficulty: 2,
     title: {
       en: "A hump that fades away",

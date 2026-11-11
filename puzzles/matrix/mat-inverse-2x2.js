@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: 'mat-inverse-2x2',
     category: 'matrix',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ebau", "alevelfm"]
+    },
     difficulty: 1,
     title: { en: 'Undo the matrix', fr: 'Défaire la matrice', es: 'Deshacer la matriz', ja: '行列を元に戻す', zh: '撤销这个矩阵' },
     statement: {

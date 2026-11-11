@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "comb-lattice-paths",
     category: "combinatorics",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["amc"]
+    },
     difficulty: 1,
     title: {
       en: "Walking on a grid",

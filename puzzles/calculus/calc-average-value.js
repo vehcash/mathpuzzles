@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "calc-average-value",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ap"]
+    },
     difficulty: 1,
     title: {
       en: "The average height of a curve",

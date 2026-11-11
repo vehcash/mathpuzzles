@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: 'cx-locus-circle',
     category: 'complex',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["bac", "alevelfm"]
+    },
     difficulty: 2,
     title: { en: 'A circle written with a modulus', fr: 'Un cercle écrit avec un module', es: 'Una circunferencia escrita con un módulo', ja: '絶対値で表した円', zh: '用模表示的圆' },
     statement: {

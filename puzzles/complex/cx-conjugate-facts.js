@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: 'cx-conjugate-facts',
     category: 'complex',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "bac"]
+    },
     difficulty: 1,
     title: { en: 'A number and its mirror image', fr: 'Un nombre et son reflet', es: 'Un número y su reflejo', ja: '数とその鏡像', zh: '一个数和它的镜像' },
     statement: {

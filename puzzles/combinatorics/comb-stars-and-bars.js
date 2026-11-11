@@ -7,6 +7,17 @@
   PuzzleBank.define({
     id: "comb-stars-and-bars",
     category: "combinatorics",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "classic",
+      note: {
+        en: "The “stars and bars” method, a name made popular by William Feller’s probability textbook (1950).",
+        fr: "La méthode « des étoiles et des barres », nom popularisé par le manuel de probabilités de William Feller (1950).",
+        es: "El método de «estrellas y barras», nombre popularizado por el libro de probabilidad de William Feller (1950).",
+        ja: "「星と棒」の方法。この名前はウィリアム・フェラーの確率論の教科書（1950年）で広まった。",
+        zh: "“隔板法”（stars and bars），这一名称因威廉·费勒的概率论教材（1950年）而流行。"
+      },
+      exams: ["amc"]
+    },
     difficulty: 2,
     title: {
       en: "Stars and bars",

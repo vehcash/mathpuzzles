@@ -12,7 +12,11 @@
       es: 'Una cuerda de longitud 8',
       ja: '長さ 8 の弦',
       zh: '长为 8 的弦'
-    }, difficulty: 2,
+    }, source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["zhongkao", "gcse"]
+    },
+    difficulty: 2,
     statement: {
       en: 'Circle $O$ has radius $5$ and chord $AB = 8$. Point $C$ lies on the major arc $AB$. <b>Which of the following are true?</b>',
       fr: 'Le cercle $O$ a pour rayon $5$ et la corde $AB = 8$. Le point $C$ est sur le grand arc $AB$. <b>Lesquelles des affirmations suivantes sont vraies ?</b>',

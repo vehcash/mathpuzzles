@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: 'mat-det-parallelogram-area',
     category: 'matrix',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["alevelfm"]
+    },
     difficulty: 1,
     title: { en: 'The area hidden in a determinant', fr: 'L’aire cachée dans un déterminant', es: 'El área escondida en un determinante', ja: '行列式に隠れた面積', zh: '藏在行列式里的面积' },
     statement: {

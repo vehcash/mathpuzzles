@@ -2,6 +2,7 @@
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /live.html?
 Disallow: /data/
 Disallow: /daily-admin.html
 Disallow: /tools/

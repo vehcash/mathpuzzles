@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "calc-chain-sin-square",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ap", "alevel", "ebau"]
+    },
     difficulty: 1,
     title: {
       en: "A function inside a function",

@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "cx-z-plus-modulus",
     category: "complex",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao"]
+    },
     difficulty: 3,
     title: {
       en: "A number plus its length",

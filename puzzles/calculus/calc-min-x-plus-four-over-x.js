@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "calc-min-x-plus-four-over-x",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "ap"]
+    },
     difficulty: 1,
     title: {
       en: "A number plus four over it",

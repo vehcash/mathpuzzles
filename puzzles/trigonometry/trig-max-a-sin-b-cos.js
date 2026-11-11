@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "trig-max-a-sin-b-cos",
     category: "trigonometry",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "kyotsu", "alevel"]
+    },
     difficulty: 1,
     title: {
       en: "The highest wave",

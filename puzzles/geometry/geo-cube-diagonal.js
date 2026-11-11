@@ -14,7 +14,11 @@
       es: 'La diagonal del cubo',
       ja: '立方体の対角線',
       zh: '正方体的对角线'
-    }, difficulty: 2,
+    }, source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "ebau"]
+    },
+    difficulty: 2,
     statement: {
       en: 'Cube $ABCD\\text{-}A_1B_1C_1D_1$ has edge $2$. Let $\\theta$ be the angle between the space diagonal $AC_1$ and the base $ABCD$. <b>Which of the following are true?</b>',
       fr: 'Le cube $ABCD\\text{-}A_1B_1C_1D_1$ a une arête de $2$. Soit $\\theta$ l\'angle entre la grande diagonale $AC_1$ et la base $ABCD$. <b>Lesquelles des affirmations suivantes sont vraies ?</b>',

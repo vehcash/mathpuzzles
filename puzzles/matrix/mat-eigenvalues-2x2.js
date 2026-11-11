@@ -9,6 +9,10 @@
   PuzzleBank.define({
     id: 'mat-eigenvalues-2x2',
     category: 'matrix',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["uni"]
+    },
     difficulty: 2,
     title: { en: 'Directions that do not turn', fr: 'Les directions qui ne tournent pas', es: 'Direcciones que no giran', ja: '向きが変わらない方向', zh: '不会转向的方向' },
     statement: {

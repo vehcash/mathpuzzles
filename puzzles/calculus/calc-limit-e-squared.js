@@ -8,6 +8,17 @@
   PuzzleBank.define({
     id: "calc-limit-e-squared",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "classic",
+      note: {
+        en: "Jacob Bernoulli’s compound-interest question (1683), which led to the number $e$.",
+        fr: "La question des intérêts composés de Jacques Bernoulli (1683), à l’origine du nombre $e$.",
+        es: "La pregunta del interés compuesto de Jakob Bernoulli (1683), que dio origen al número $e$.",
+        ja: "ヤコブ・ベルヌーイの複利の問題（1683年）。ここから数 $e$ が生まれた。",
+        zh: "雅各布·伯努利的复利问题（1683年），常数 $e$ 由此而来。"
+      },
+      exams: ["ebau"]
+    },
     difficulty: 2,
     title: {
       en: "One to the power infinity",

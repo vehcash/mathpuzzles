@@ -11,6 +11,7 @@
 
   // ---------- geometry helpers ----------
   const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+  const UY = a => a.uy || a.unit;   // pixels per unit on y (tutorial plots may stretch y; the board keeps both equal)
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const ease = t => 1 - Math.pow(1 - t, 3);
   function bbox(pts) {
@@ -171,6 +172,10 @@
           const hit = this.hitTest(p); if (hit) { this.pushHistory(); this.drawing = { mode: 'move', obj: hit, last: p }; } return;
         }
         if (this.tool.startsWith('g-')) { this.geoDown(p, e); return; }
+        if (this.opts.panAxes) {   // tutorial boards: dragging inside a graph moves the view
+          const ax = this.objects.find(o => o.type === 'axes' && !o.hidden && p.x > o.x0 && p.x < o.x1 && p.y > o.y0 && p.y < o.y1);
+          if (ax) { this.drawing = { mode: 'pan', ax, last: p }; this.live.style.cursor = 'grabbing'; return; }
+        }
         // with the chalk tools, grabbing an equation, an axes origin or a geometry point moves it
         const grab = this.grabbable(p);
         if (grab) {
@@ -191,6 +196,7 @@
           else if (d.mode === 'erase') { d.pts.push(q); this.eraseAt(q); }
           else if (d.mode === 'move') { this.translate(d.obj, q.x - d.last.x, q.y - d.last.y); d.last = q; this.implicitCache.clear(); this.render(); }
           else if (d.mode === 'geodrag') this.geoMove(q);
+          else if (d.mode === 'pan') { d.ax.ox += q.x - d.last.x; d.ax.oy += q.y - d.last.y; d.last = q; this.implicitCache.clear(); this.render(); if (this.opts.onView) this.opts.onView(d.ax); }
         });
         this.drawLive();
       });
@@ -201,13 +207,19 @@
         const d = this.drawing; this.drawing = null; this.lctx.clearRect(0, 0, this.W, this.H);
         if (!d) return;
         if (d.mode === 'ink' && d.pts.length) {
+          // a click or a tiny dot on its own is not drawing: keep a dot only next to other chalk (the dot of an i, a decimal point, ÷)
+          const bb = bbox(d.pts);
+          if (Math.max(bb.w, bb.h) < 5) {
+            const near = this.objects.some(o => o.type === 'ink' && !o.hidden && o.pts.some(q => dist(q, { x: bb.cx, y: bb.cy }) < 46));
+            if (!near) { this.render(); return; }
+          }
           if (d.pts.length === 1) d.pts.push({ x: d.pts[0].x + 0.6, y: d.pts[0].y + 0.6 });
           this.pushHistory();
           this.objects.push({ type: 'ink', id: uid++, pts: d.pts, color: this.color, w: this.width, idx: this.strokeIdx++, pending: this.tool === 'smart' });
           this.render();
           if (this.tool === 'smart') this.timer = setTimeout(() => this.processPending(), SMART_DELAY);
         }
-        if (d.mode === 'erase' || d.mode === 'move') { this.implicitCache.clear(); this.render(); }
+        if (d.mode === 'erase' || d.mode === 'move' || d.mode === 'pan') { this.implicitCache.clear(); this.render(); this.live.style.cursor = ''; }
       };
       el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
       el.addEventListener('pointerleave', () => { if (!this.drawing) { this.hover = null; this.drawLive(); } });
@@ -218,7 +230,7 @@
       });
       el.addEventListener('wheel', e => {
         const p = this._pos(e); const ax = this.objects.find(o => o.type === 'axes' && p.x > o.x0 && p.x < o.x1 && p.y > o.y0 && p.y < o.y1);
-        if (!ax) return; e.preventDefault(); this.zoomAxes(ax, e.deltaY < 0 ? 1.15 : 1 / 1.15);
+        if (!ax) return; e.preventDefault(); this.zoomAxes(ax, e.deltaY < 0 ? 1.15 : 1 / 1.15, this.opts.panAxes ? p : null);
       }, { passive: false });
       document.addEventListener('keydown', e => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -638,8 +650,8 @@
 
     // =========================================================== axes & graphs
     axesAt(bb) { return this.objects.find(o => o.type === 'axes' && !o.hidden && bb.cx > o.x0 - 10 && bb.cx < o.x1 + 10 && bb.cy > o.y0 - 10 && bb.cy < o.y1 + 10); }
-    toMath(ax, p) { return { x: (p.x - ax.ox) / ax.unit, y: (ax.oy - p.y) / ax.unit }; }
-    toPx(ax, m) { return { x: ax.ox + m.x * ax.unit, y: ax.oy - m.y * ax.unit }; }
+    toMath(ax, p) { return { x: (p.x - ax.ox) / ax.unit, y: (ax.oy - p.y) / UY(ax) }; }
+    toPx(ax, m) { return { x: ax.ox + m.x * ax.unit, y: ax.oy - m.y * UY(ax) }; }
     newAxes(o = {}) {
       const hw = o.hw || Math.min(this.W * 0.34, 300), hh = o.hh || Math.min(this.H * 0.4, 230);
       const cx = clamp(o.cx !== undefined ? o.cx : this.W * 0.6, hw + 12, this.W - hw - 12), cy = clamp(o.cy !== undefined ? o.cy : this.H * 0.52, hh + 12, this.H - hh - 12);
@@ -651,7 +663,12 @@
       const ax = this.newAxes(); ax.anim = { start: performance.now(), dur: 500 }; this.objects.push(ax); return ax;
     }
     insertAxes() { this.pushHistory(); const ax = this.newAxes(); ax.anim = { start: performance.now(), dur: 500 }; this.objects.push(ax); this.render(); }
-    zoomAxes(ax, f) { ax.unit = clamp(ax.unit * f, 4, 240); this.implicitCache.clear(); this.render(); }
+    zoomAxes(ax, f, at) {   // at: keep this board point fixed (the cursor); default the origin
+      const u0 = ax.unit, u = clamp(u0 * f, 4, ax.uy ? 4000 : 240), k = u / u0;
+      if (at) { ax.ox = at.x - (at.x - ax.ox) * k; ax.oy = at.y - (at.y - ax.oy) * k; }
+      ax.unit = u; if (ax.uy) ax.uy = clamp(ax.uy * k, 0.5, 40000);
+      this.implicitCache.clear(); this.render();
+    }
     fitGraph(pts, ax) {
       const r = resample(pts, 80).map(p => this.toMath(ax, p));
       let back = 0; const dir = Math.sign(r[r.length - 1].x - r[0].x) || 1;
@@ -755,7 +772,7 @@
       if (gr.mode === 'explicit') {
         const ff = this.compile(gr.rhs);
         for (let px = ax.x1 - 16; px > ax.x0; px -= 4) {
-          const y = ff((px - ax.ox) / ax.unit), py = ax.oy - y * ax.unit;
+          const y = ff((px - ax.ox) / ax.unit), py = ax.oy - y * UY(ax);
           if (isFinite(py) && py > ax.y0 + 16 && py < ax.y1 - 16) { if (px + 150 < this.W && px > ax.ox) { lx = px + 14; ly = py; right = false; } else { lx = px - 14; ly = py - 18; } break; }
         }
       } else {
@@ -779,11 +796,11 @@
       cache.set(eq, F); return F;
     }
     implicitSegments(gr, ax) {
-      const key = gr.id + '|' + ax.ox + '|' + ax.oy + '|' + ax.unit + '|' + ax.x0 + '|' + ax.x1 + '|' + ax.y0 + '|' + ax.y1;
+      const key = gr.id + '|' + ax.ox + '|' + ax.oy + '|' + ax.unit + '|' + UY(ax) + '|' + ax.x0 + '|' + ax.x1 + '|' + ax.y0 + '|' + ax.y1;
       if (this.implicitCache.has(key)) return this.implicitCache.get(key);
       const F = this.compileImplicit(gr.eq), step = 4, segs = [];
       const nx = Math.ceil((ax.x1 - ax.x0) / step), ny = Math.ceil((ax.y1 - ax.y0) / step);
-      const val = []; for (let j = 0; j <= ny; j++) { val.push([]); for (let i = 0; i <= nx; i++) { const px = ax.x0 + i * step, py = ax.y0 + j * step; val[j].push(F((px - ax.ox) / ax.unit, (ax.oy - py) / ax.unit)); } }
+      const val = []; for (let j = 0; j <= ny; j++) { val.push([]); for (let i = 0; i <= nx; i++) { const px = ax.x0 + i * step, py = ax.y0 + j * step; val[j].push(F((px - ax.ox) / ax.unit, (ax.oy - py) / UY(ax))); } }
       const lerp = (a, b, va, vb) => a + (b - a) * (va / (va - vb));
       for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
         const x0 = ax.x0 + i * step, y0 = ax.y0 + j * step, x1 = x0 + step, y1 = y0 + step;
@@ -803,12 +820,12 @@
       if (gr.mode !== 'explicit') return [];
       const f = this.compile(gr.rhs), out = [];
       const xa = (ax.x0 - ax.ox) / ax.unit, xb = (ax.x1 - ax.ox) / ax.unit, N = 600, h = (xb - xa) / N;
-      const inY = y => { const py = ax.oy - y * ax.unit; return py > ax.y0 && py < ax.y1; };
+      const inY = y => { const py = ax.oy - y * UY(ax); return py > ax.y0 && py < ax.y1; };
       const y0 = f(0); if (isFinite(y0) && 0 > xa && 0 < xb && inY(y0)) out.push({ x: 0, y: y0, kind: 'y-intercept' });
       let px = xa, py = f(xa), pd = null;
       for (let i = 1; i <= N; i++) {
         const x = xa + i * h, y = f(x);
-        if (isFinite(py) && isFinite(y) && Math.abs(y - py) < (ax.y1 - ax.y0) / ax.unit) {
+        if (isFinite(py) && isFinite(y) && Math.abs(y - py) < (ax.y1 - ax.y0) / UY(ax)) {
           if (py === 0 || py * y < 0) { let a = px, b = x, fa = py; for (let k = 0; k < 50; k++) { const m = (a + b) / 2, fm = f(m); if (fa * fm <= 0) b = m; else { a = m; fa = fm; } } const r = (a + b) / 2; if (Math.abs(f(r)) < 1e-6 && !out.some(q => Math.abs(q.x - r) < 1e-4 && q.y === 0)) out.push({ x: r, y: 0, kind: 'root' }); }
           const d = y - py;
           if (pd !== null && pd * d < 0 && Math.abs(d) > 1e-12) { // extremum between
@@ -856,8 +873,51 @@
       this.startPlacing({ ascii, plot }); this.finishPlacing({ x: 34, y });
     }
 
+    // =========================================================== scripted drawing (cheat-sheet tutorials, js/tutor.js)
+    // positions and sizes are fractions of the board (0–1), so a script looks the same at any size; d = delay in ms
+    sWrite(tex, o = {}) {
+      const m = { type: 'math', id: uid++, x: (o.x !== undefined ? o.x : 0.05) * this.W, y: (o.y !== undefined ? o.y : 0.12) * this.H, size: o.s || 26, color: o.c || COLORS.chalk,
+        ascii: '', tex, fixed: true, alignRight: !!o.right, anim: { start: performance.now() + (o.d || 0), dur: o.dur || 500 } };
+      this.objects.push(m); this.requestFrame(); return m;
+    }
+    /** axes filling the box (bx0, by0)–(bx1, by1) (board fractions) and showing exactly xw = [x0, x1], yw = [y0, y1] */
+    sWindow(box, xw, yw, o = {}) {
+      const X0 = box[0] * this.W, Y0 = box[1] * this.H, X1 = box[2] * this.W, Y1 = box[3] * this.H;
+      const ux = (X1 - X0) / (xw[1] - xw[0]), uy = (Y1 - Y0) / (yw[1] - yw[0]);
+      const ax = { type: 'axes', id: uid++, x0: X0, x1: X1, y0: Y0, y1: Y1, ox: X0 - xw[0] * ux, oy: Y0 + yw[1] * uy, unit: ux, uy, color: COLORS.chalk, anim: { start: performance.now() + (o.d || 0), dur: 500 } };
+      this.objects.push(ax); this.requestFrame(); return ax;
+    }
+    /** axes centred at (x, y) with half-sizes (w, h); xr = how many units fit from the centre to the right edge */
+    sAxes(o = {}) {
+      const hw = (o.w || 0.3) * this.W, hh = (o.h || 0.32) * this.H;
+      const ax = this.newAxes({ cx: (o.x !== undefined ? o.x : 0.66) * this.W, cy: (o.y !== undefined ? o.y : 0.55) * this.H, hw, hh, unit: o.xr ? hw / o.xr : (o.unit || 30) });
+      if (o.ox !== undefined) ax.ox = ax.x0 + o.ox * 2 * hw;            // where the origin sits inside the box: 0 = left edge, 0.5 = centre
+      if (o.oy !== undefined) ax.oy = ax.y1 - o.oy * 2 * hh;            // 0 = bottom edge, 0.5 = centre
+      ax.anim = { start: performance.now() + (o.d || 0), dur: 500 };
+      this.objects.push(ax); this.requestFrame(); return ax;
+    }
+    sPlot(ax, ascii, o = {}) {
+      const gr = this.plotEquation(ascii, { axes: ax, noHistory: true, noLabel: o.lab !== true, color: o.c });   // a script labels its curves itself
+      const t = performance.now() + (o.d || 0);
+      gr.anim = { start: t, dur: o.dur || 900 }; if (o.dash) gr.dashed = true;
+      this.objects.filter(l => l.labelOf === gr.id).forEach(l => { l.anim = { start: t + 600, dur: 400 }; });
+      return gr;
+    }
+    sShade(gr, a, b) { gr.shade = { a, b, value: global.MathCore.snapValue(global.MathCore.integrate(this.compile(gr.rhs), a, b)) }; this.requestFrame(); return gr.shade.value; }
+    sPoint(ax, x, y, label, o = {}) { const pt = { type: 'point', id: uid++, axes: ax.id, x, y, color: o.c || COLORS.chalk, hollow: !!o.hollow, label: label || '', anim: { start: performance.now() + (o.d || 0), dur: 400 } }; this.objects.push(pt); this.requestFrame(); return pt; }
+    /** a straight chalk line between board fractions, or between maths points of an axes (o.ax) */
+    sLine(x1, y1, x2, y2, o = {}) {
+      const P = (x, y) => o.ax ? this.toPx(o.ax, { x, y }) : { x: x * this.W, y: y * this.H };
+      const ln = { type: 'line', id: uid++, a: P(x1, y1), b: P(x2, y2), color: o.c || COLORS.chalk, w: o.w || 2.4, anim: { start: performance.now() + (o.d || 0), dur: o.dur || 500 } };
+      this.objects.push(ln); this.requestFrame(); return ln;
+    }
+    sTangent(gr, a) { const st = global.MathCore.calcSteps('tangent(' + gr.rhs + ', ' + a + ')'); return this.plotTangent(st, { axes: this.objects.find(x => x.id === gr.axes), noHistory: true }); }
+    /** finish every animation now (used when a tutorial jumps to a step) */
+    sSettle() { this.objects.forEach(o => { delete o.anim; }); this.render(); }
+
     // =========================================================== math overlays
     mathContent(m) {
+      if (m.fixed) return { tex: m.tex, actions: [] };          // written by a script (cheat-sheet tutorials): shown as given
       if (m.system) {
         let tex = casesOf(m.system); const actions = [];
         let sol = null; try { sol = global.MathCore.solveSystem(m.system); } catch (e) { return { tex: '\\text{' + texEsc(m.ascii) + '}\\;?', actions }; }
@@ -892,7 +952,7 @@
         alive.add(m.id);
         let el = this.mathEls.get(m.id);
         const canChange = m.gid && this.objects.some(o => o.type === 'ink' && o.hidden && o.gid === m.gid);
-        const key = [m.ascii, m.solved, m.plotted, m.size, m.color, m.error, canChange, global.I18N ? global.I18N.lang : ''].join('|');
+        const key = [m.ascii, m.tex, m.solved, m.plotted, m.size, m.color, m.error, canChange, global.I18N ? global.I18N.lang : ''].join('|');
         if (!el) { el = document.createElement('div'); el.className = 'ink-math'; this.overlay.appendChild(el); this.mathEls.set(m.id, el); }
         if (el._key !== key) {
           el._key = key;
@@ -901,7 +961,7 @@
           try { global.katex.render(global.I18N ? global.I18N.tex(tex) : tex, el.firstChild, { throwOnError: false, displayMode: false, trust: true, strict: false }); } catch (e) { el.firstChild.textContent = m.ascii; }
           const bar = document.createElement('span'); bar.className = 'ink-math-actions';
           actions.forEach(([label, fn]) => { const b = document.createElement('button'); b.textContent = label; b.onclick = ev => { ev.stopPropagation(); fn(); }; bar.appendChild(b); });
-          if (!m.isLabel) {
+          if (!m.isLabel && !m.fixed) {
             if (canChange) { const c = document.createElement('button'); c.className = 'edit'; c.title = 'Not an equation? Choose what it is'; c.textContent = '⇄'; c.onclick = ev => { ev.stopPropagation(); this.changeIntent(m.gid); }; bar.appendChild(c); }
             const ed = document.createElement('button'); ed.className = 'edit'; ed.title = 'Edit (or double-click)'; ed.textContent = '✎'; ed.onclick = ev => { ev.stopPropagation(); this.editMath(m); }; bar.appendChild(ed);
           }
@@ -922,6 +982,7 @@
       return p.x >= r.left - c.left - 6 && p.x <= r.right - c.left + 6 && p.y >= r.top - c.top - 6 && p.y <= r.bottom - c.top + 6;
     }
     editMath(m) {
+      if (m.fixed) return;
       if (m.system) { this.opts.onEditSystem && this.opts.onEditSystem(m); return; }
       const el = this.mathEls.get(m.id); if (!el || el.querySelector('input')) return;
       const inp = document.createElement('input'); inp.className = 'ink-math-input'; inp.value = m.ascii; inp.spellcheck = false;
@@ -948,7 +1009,7 @@
         case 'poly': { const n = o.pts.length, m = o.closed ? n : n - 1; for (let i = 0; i < m; i++) if (segDist(p, o.pts[i], o.pts[(i + 1) % n]) < r) return true; return false; }
         case 'axes': return segDist(p, { x: o.x0, y: o.oy }, { x: o.x1, y: o.oy }) < r || segDist(p, { x: o.ox, y: o.y0 }, { x: o.ox, y: o.y1 }) < r;
         case 'graph': { const ax = this.objects.find(a => a.id === o.axes); if (!ax) return false;
-          if (o.mode === 'explicit') { const y = this.compile(o.rhs)((p.x - ax.ox) / ax.unit); return Math.abs(ax.oy - y * ax.unit - p.y) < r + 2; }
+          if (o.mode === 'explicit') { const y = this.compile(o.rhs)((p.x - ax.ox) / ax.unit); return Math.abs(ax.oy - y * UY(ax) - p.y) < r + 2; }
           const F = this.compileImplicit(o.eq), m = this.toMath(ax, p), e = 1e-4; const v = F(m.x, m.y), gx = (F(m.x + e, m.y) - v) / e, gy = (F(m.x, m.y + e) - v) / e; return Math.abs(v) / (Math.hypot(gx, gy) || 1) * ax.unit < r + 2; }
         case 'point': { const ax = this.objects.find(a => a.id === o.axes); return ax && dist(p, this.toPx(ax, o)) < r; }
         case 'math': return this.hitMath(o, p);
@@ -991,7 +1052,7 @@
         for (const gr of this.graphs()) {
           if (gr.hidden || gr.mode !== 'explicit') continue;
           const ax = this.objects.find(a => a.id === gr.axes); if (!ax || p.x < ax.x0 || p.x > ax.x1) continue;
-          const x = (p.x - ax.ox) / ax.unit, y = this.compile(gr.rhs)(x), py = ax.oy - y * ax.unit;
+          const x = (p.x - ax.ox) / ax.unit, y = this.compile(gr.rhs)(x), py = ax.oy - y * UY(ax);
           if (isFinite(py) && Math.abs(py - p.y) < 10 && py > ax.y0 && py < ax.y1) { this.hover = { x: p.x, y: py, label: '(' + niceNum(x) + ', ' + niceNum(y) + ')', color: gr.color }; break; }
         }
       }
@@ -1053,13 +1114,20 @@
       }
     }
     drawAxes(c, a, p) {
+      const ux = a.unit, uy = UY(a);
+      // tick and label steps: whole numbers on the normal board, decimals too when a tutorial zooms in
+      const NICE = [0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000];
+      const steps = u => {
+        if (u >= 10 && u <= 60 && !a.uy) return { tick: 1, lab: [1, 2, 5, 10].find(s => s * u >= 26) || 10, grid: 1 };
+        const lab = NICE.find(s => s * u >= 34) || 5000, tick = NICE.find(s => s * u >= 12 && Math.abs(lab / s - Math.round(lab / s)) < 1e-9) || lab;
+        return { tick, lab, grid: NICE.find(s => s * u >= 14) || lab };
+      };
+      const SX = steps(ux), SY = steps(uy), fmt = v => String(+v.toFixed(4));
       c.lineWidth = 2.2; c.globalAlpha *= 0.9;
       // light grid
-      c.save(); c.globalAlpha *= 0.12 * p; c.lineWidth = 1;
-      const gstep = a.unit < 14 ? Math.ceil(14 / a.unit) * a.unit : a.unit;
-      c.beginPath();
-      for (let x = a.ox + Math.ceil((a.x0 - a.ox) / gstep) * gstep; x <= a.x1; x += gstep) { c.moveTo(x, a.y0); c.lineTo(x, a.y1); }
-      for (let y = a.oy + Math.ceil((a.y0 - a.oy) / gstep) * gstep; y <= a.y1; y += gstep) { c.moveTo(a.x0, y); c.lineTo(a.x1, y); }
+      c.save(); c.globalAlpha *= 0.12 * p; c.lineWidth = 1; c.beginPath();
+      for (let k = Math.ceil((a.x0 - a.ox) / ux / SX.grid); a.ox + k * SX.grid * ux <= a.x1; k++) { const x = a.ox + k * SX.grid * ux; c.moveTo(x, a.y0); c.lineTo(x, a.y1); }
+      for (let k = Math.ceil((a.oy - a.y1) / uy / SY.grid); a.oy - k * SY.grid * uy >= a.y0; k++) { const y = a.oy - k * SY.grid * uy; c.moveTo(a.x0, y); c.lineTo(a.x1, y); }
       c.stroke(); c.restore();
       const xl = a.x0 + (a.x1 - a.x0) * p, yl = a.y1 - (a.y1 - a.y0) * p;
       const oy = clamp(a.oy, a.y0, a.y1), ox = clamp(a.ox, a.x0, a.x1);
@@ -1067,15 +1135,15 @@
       if (p < 1) return;
       c.beginPath(); c.moveTo(a.x1 - 10, oy - 6); c.lineTo(a.x1, oy); c.lineTo(a.x1 - 10, oy + 6); c.moveTo(ox - 6, a.y0 + 10); c.lineTo(ox, a.y0); c.lineTo(ox + 6, a.y0 + 10); c.stroke();
       c.lineWidth = 1.5; c.font = '13px Kalam, cursive'; c.textAlign = 'center'; c.textBaseline = 'top';
-      const nice = [1, 2, 5, 10, 20, 50, 100]; const lab = nice.find(s => s * a.unit >= 26) || 100; const tick = a.unit >= 10 ? 1 : lab;
-      for (let i = Math.ceil((a.x0 - a.ox) / a.unit); i <= Math.floor((a.x1 - 14 - a.ox) / a.unit); i++) {
-        if (!i || i % tick) continue; const x = a.ox + i * a.unit; c.beginPath(); c.moveTo(x, oy - 3); c.lineTo(x, oy + 3); c.stroke();
-        if (i % lab === 0) { c.globalAlpha = 0.65; c.fillText(i, x, oy + 6); c.globalAlpha = 0.9; }
+      const on = (v, s) => Math.abs(v / s - Math.round(v / s)) < 1e-6;
+      for (let k = Math.ceil((a.x0 - a.ox) / ux / SX.tick); a.ox + k * SX.tick * ux <= a.x1 - 14; k++) {
+        const v = k * SX.tick; if (Math.abs(v) < 1e-12) continue; const x = a.ox + v * ux; c.beginPath(); c.moveTo(x, oy - 3); c.lineTo(x, oy + 3); c.stroke();
+        if (on(v, SX.lab)) { c.globalAlpha = 0.65; c.fillText(fmt(v), x, oy + 6); c.globalAlpha = 0.9; }
       }
       c.textAlign = 'right'; c.textBaseline = 'middle';
-      for (let j = Math.ceil((a.oy - a.y1) / a.unit); j <= Math.floor((a.oy - a.y0 - 14) / a.unit); j++) {
-        if (!j || j % tick) continue; const y = a.oy - j * a.unit; c.beginPath(); c.moveTo(ox - 3, y); c.lineTo(ox + 3, y); c.stroke();
-        if (j % lab === 0) { c.globalAlpha = 0.65; c.fillText(j, ox - 7, y); c.globalAlpha = 0.9; }
+      for (let k = Math.ceil((a.oy - a.y1) / uy / SY.tick); a.oy - k * SY.tick * uy >= a.y0 + 14; k++) {
+        const v = k * SY.tick; if (Math.abs(v) < 1e-12) continue; const y = a.oy - v * uy; c.beginPath(); c.moveTo(ox - 3, y); c.lineTo(ox + 3, y); c.stroke();
+        if (on(v, SY.lab)) { c.globalAlpha = 0.65; c.fillText(fmt(v), ox - 7, y); c.globalAlpha = 0.9; }
       }
       c.font = 'italic 18px "Times New Roman", serif'; c.textAlign = 'left'; c.fillText('x', a.x1 + 4, oy + 12); c.fillText('y', ox + 10, a.y0 + 4);
     }
@@ -1087,12 +1155,12 @@
         const f = this.compile(o.rhs), sa = Math.min(o.shade.a, o.shade.b), sb = Math.max(o.shade.a, o.shade.b);
         const pa = Math.max(a.x0, a.ox + sa * a.unit), pb = Math.min(a.x1, a.ox + sb * a.unit);
         if (pb > pa) {
-          c.save(); c.beginPath(); c.moveTo(pa, a.oy);
-          for (let px = pa; px <= pb; px += 1) { const y = f((px - a.ox) / a.unit); c.lineTo(px, clamp(a.oy - (isFinite(y) ? y : 0) * a.unit, a.y0, a.y1)); }
-          c.lineTo(pb, a.oy); c.closePath(); c.globalAlpha *= 0.28; c.fillStyle = o.color; c.fill(); c.restore();
-          c.save(); c.setLineDash([3, 4]); c.lineWidth = 1.3; c.beginPath(); [pa, pb].forEach(px => { const y = f((px - a.ox) / a.unit); c.moveTo(px, a.oy); c.lineTo(px, clamp(a.oy - y * a.unit, a.y0, a.y1)); }); c.stroke(); c.restore();
+          const zy = clamp(a.oy, a.y0, a.y1); c.save(); c.beginPath(); c.moveTo(pa, zy);
+          for (let px = pa; px <= pb; px += 1) { const y = f((px - a.ox) / a.unit); c.lineTo(px, clamp(a.oy - (isFinite(y) ? y : 0) * UY(a), a.y0, a.y1)); }
+          c.lineTo(pb, zy); c.closePath(); c.globalAlpha *= 0.28; c.fillStyle = o.color; c.fill(); c.restore();
+          c.save(); c.setLineDash([3, 4]); c.lineWidth = 1.3; c.beginPath(); [pa, pb].forEach(px => { const y = f((px - a.ox) / a.unit); c.moveTo(px, a.oy); c.lineTo(px, clamp(a.oy - y * UY(a), a.y0, a.y1)); }); c.stroke(); c.restore();
           c.save(); c.font = '16px Kalam, cursive'; c.fillStyle = o.color; c.textAlign = 'center';
-          const mid = (pa + pb) / 2, ym = f((mid - a.ox) / a.unit), ty = clamp(a.oy - (isFinite(ym) ? ym : 0) * a.unit / 2, a.y0 + 16, a.y1 - 8);
+          const mid = (pa + pb) / 2, ym = f((mid - a.ox) / a.unit), ty = clamp(a.oy - (isFinite(ym) ? ym : 0) * UY(a) / 2, a.y0 + 16, a.y1 - 8);
           c.fillText('∫ = ' + niceNum(o.shade.value), mid, ty); c.restore();
         }
       }
@@ -1100,7 +1168,7 @@
         const f = this.compile(o.rhs); c.beginPath();
         let pen = false, prevY = null;
         for (let px = a.x0; px <= a.x1; px += 1) {
-          const y = f((px - a.ox) / a.unit), py = a.oy - y * a.unit;
+          const y = f((px - a.ox) / a.unit), py = a.oy - y * UY(a);
           if (!isFinite(py) || py < a.y0 - 2000 || py > a.y1 + 2000 || (prevY !== null && Math.abs(py - prevY) > (a.y1 - a.y0))) { pen = false; prevY = null; continue; }
           if (!pen) { c.moveTo(px, py); pen = true; } else c.lineTo(px, py);
           prevY = py;

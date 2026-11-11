@@ -9,6 +9,10 @@
   PuzzleBank.define({
     id: 'mat-rotation-cube',
     category: 'matrix',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["alevelfm"]
+    },
     difficulty: 2,
     title: { en: 'Three turns of 60°', fr: 'Trois rotations de 60°', es: 'Tres giros de 60°', ja: '60° の回転を3回', zh: '转三次 60°' },
     statement: {

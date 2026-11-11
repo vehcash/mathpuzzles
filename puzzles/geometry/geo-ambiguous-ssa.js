@@ -12,7 +12,11 @@
       es: 'Dos triángulos, un mismo conjunto de datos',
       ja: '2つの三角形、1組のデータ',
       zh: '一组条件，两个三角形'
-    }, difficulty: 2,
+    }, source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "alevel", "ib"]
+    },
+    difficulty: 2,
     statement: {
       en: 'In triangle $ABC$, $a = \\sqrt3$, $b = \\sqrt2$ and $B = 45^\\circ$ (side $a$ is opposite $A$, side $b$ opposite $B$). <b>Which of the following can be the angle $A$?</b>',
       fr: 'Dans le triangle $ABC$, $a = \\sqrt3$, $b = \\sqrt2$ et $B = 45^\\circ$ (le côté $a$ est opposé à $A$, le côté $b$ à $B$). <b>Lesquelles des valeurs suivantes peuvent être l\'angle $A$ ?</b>',

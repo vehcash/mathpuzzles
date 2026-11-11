@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: 'cx-power-of-i',
     category: 'complex',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao"]
+    },
     difficulty: 1,
     title: { en: 'i to a large power', fr: 'i à une grande puissance', es: 'i elevado a una gran potencia', ja: 'i の大きなべき乗', zh: 'i 的高次幂' },
     statement: {

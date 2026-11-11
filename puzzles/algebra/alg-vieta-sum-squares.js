@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "alg-vieta-sum-squares",
     category: "algebra",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["zhongkao", "alevelfm"]
+    },
     difficulty: 1,
     title: {
       en: "Squares of the roots",

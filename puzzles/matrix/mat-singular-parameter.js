@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: 'mat-singular-parameter',
     category: 'matrix',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ebau"]
+    },
     difficulty: 3,
     title: { en: 'When does the inverse disappear?', fr: 'Quand l’inverse disparaît-il ?', es: '¿Cuándo desaparece la inversa?', ja: '逆行列が消えるのはいつ？', zh: '逆矩阵何时消失？' },
     statement: {

@@ -16,6 +16,10 @@
       ja: '壁沿いの最大の囲い',
       zh: '靠墙的最大围栏'
     },
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ap", "alevel"]
+    },
     difficulty: 2,
     statement: {
       en: 'A farmer has $40$ m of fencing to build a rectangular pen against a long straight wall, so only three sides need fencing. <b>What is the largest area the pen can have?</b>',

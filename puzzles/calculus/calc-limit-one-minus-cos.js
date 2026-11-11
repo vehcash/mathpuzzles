@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "calc-limit-one-minus-cos",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ap", "ebau"]
+    },
     difficulty: 2,
     title: {
       en: "A classic limit at zero",

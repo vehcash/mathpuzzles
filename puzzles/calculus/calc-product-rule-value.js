@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "calc-product-rule-value",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "ap", "alevel"]
+    },
     difficulty: 1,
     title: {
       en: "A product at x = 1",

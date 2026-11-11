@@ -13,7 +13,11 @@
       es: 'La hoja dentro del cuadrado',
       ja: '正方形の中の葉',
       zh: '正方形中的叶形'
-    }, difficulty: 1,
+    }, source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["zhongkao", "amc"]
+    },
+    difficulty: 1,
     statement: {
       en: 'In square $ABCD$ with side $4$, two quarter circles of radius $4$ are drawn: one centred at $A$ and one centred at $C$, both from $B$ to $D$. <b>Which of the following equal the area of the shaded “leaf” between them?</b>',
       fr: 'Dans le carré $ABCD$ de côté $4$, on trace deux quarts de cercle de rayon $4$ : l\'un centré en $A$, l\'autre centré en $C$, tous deux de $B$ à $D$. <b>Lesquelles des valeurs suivantes sont égales à l\'aire de la « feuille » grisée entre eux ?</b>',

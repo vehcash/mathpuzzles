@@ -15,6 +15,17 @@
       ja: '2回見上げた塔',
       zh: '两次仰望的塔'
     },
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "classic",
+      note: {
+        en: "Measuring a height from two sightings is the method of Liu Hui’s <i>Sea Island Mathematical Manual</i> (China, 263).",
+        fr: "Mesurer une hauteur à partir de deux visées est la méthode du <i>Manuel mathématique de l’île maritime</i> de Liu Hui (Chine, 263).",
+        es: "Medir una altura con dos visuales es el método del <i>Manual matemático de la isla marina</i> de Liu Hui (China, 263).",
+        ja: "2か所からの観測で高さを求めるのは、劉徽『海島算経』（中国、263年）の方法。",
+        zh: "由两处观测求高，正是刘徽《海岛算经》（263年）“重差术”的方法。"
+      },
+      exams: ["zhongkao", "gcse"]
+    },
     difficulty: 2,
     statement: {
       en: 'From a point $P$ on flat ground, the top $T$ of a vertical tower is seen at an angle of elevation of $30^\\circ$. After walking $20$ m straight towards the tower, to $Q$, the angle of elevation is $60^\\circ$. <b>Which of the following equal the height $h$ of the tower (in metres)?</b>',

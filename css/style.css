@@ -63,7 +63,7 @@ button:disabled { cursor: not-allowed; }
   background-image: linear-gradient(transparent 31px, rgba(47,111,143,.06) 32px); background-size: 100% 32px;
 }
 .paper.enter > * { animation: rise .5s ease both; }
-.paper.enter > :nth-child(2) { animation-delay: .04s; } .paper.enter > :nth-child(3) { animation-delay: .08s; } .paper.enter > :nth-child(4) { animation-delay: .12s; } .paper.enter > :nth-child(6) { animation-delay: .16s; }
+.paper.enter > :nth-child(2) { animation-delay: .04s; } .paper.enter > :nth-child(3) { animation-delay: .08s; } .paper.enter > :nth-child(4) { animation-delay: .12s; } .paper.enter > :nth-child(6) { animation-delay: .16s; } .paper.enter > :nth-child(7) { animation-delay: .16s; }
 .meta { display: flex; align-items: center; justify-content: space-between; }
 .chip { font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700; color: var(--accent-2); }
 .diff { color: var(--accent); letter-spacing: 2px; font-size: 12px; } .diff i { color: var(--line); font-style: normal; }
@@ -97,6 +97,11 @@ h1 { font-family: var(--serif); font-weight: 800; font-size: 26px; line-height: 
 .link { background: none; border: 0; color: var(--accent-2); text-decoration: underline; text-underline-offset: 3px; padding: 0; font-weight: 600; }
 .hint p { display: none; margin: 6px 0 0; padding: 10px 12px; background: #fff8df; border-left: 3px solid var(--chalk-y); border-radius: 6px; font-size: 15px; }
 .hint.open p { display: block; animation: rise .3s ease; }
+.source { font-size: 13px; line-height: 1.5; color: var(--ink-soft); margin: 0 0 12px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.source .src-k { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.1px; color: var(--accent-2); margin-right: 3px; }
+.source .src-ex { display: block; margin-top: 4px; }
+.source .src-chip { display: inline-block; padding: 0 8px; margin: 2px 2px 0 0; border-radius: 10px; background: rgba(47,111,143,.1); color: var(--accent-2); font-weight: 600; white-space: nowrap; }
+.source a { color: var(--accent-2); }
 
 .opts-head { display: flex; align-items: baseline; justify-content: space-between; margin: 12px 0 8px; border-top: 1px dashed var(--line); padding-top: 14px; }
 h2 { font-family: var(--serif); font-size: 18px; margin: 0; }
@@ -608,3 +613,11 @@ html[data-lang="ja"] h1, html[data-lang="zh"] h1, html[data-lang="ja"] .pcard h3
 a.brand { color: inherit; text-decoration: none; }
 .noscript { max-width: 760px; margin: 30px auto; padding: 20px 24px; background: var(--paper); color: var(--ink); border-radius: 14px; }
 .noscript a { color: var(--accent-2); }
+
+/* header buttons: one colour each (Puzzle of the day keeps its yellow) */
+.top .btn.hb { opacity: 1; border-width: 1.5px; color: var(--hb); border-color: color-mix(in srgb, var(--hb) 70%, transparent); background: color-mix(in srgb, var(--hb) 13%, transparent); }
+.top .btn.hb:hover { background: color-mix(in srgb, var(--hb) 24%, transparent); border-color: var(--hb); }
+.hb-list { --hb: #93d3f5; }     /* blue: all puzzles */
+.hb-cheats { --hb: #a6e39f; }   /* green: cheat sheets */
+.hb-ai { --hb: #d4b5ff; }       /* violet: AI lesson */
+.hb-random { --hb: #f7b267; }   /* orange: random puzzle */

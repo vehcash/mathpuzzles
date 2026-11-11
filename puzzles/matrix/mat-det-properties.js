@@ -16,6 +16,10 @@
   PuzzleBank.define({
     id: 'mat-det-properties',
     category: 'matrix',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ebau"]
+    },
     difficulty: 2,
     title: { en: 'Scaling a 3×3 matrix', fr: 'Multiplier une matrice 3×3', es: 'Escalar una matriz 3×3', ja: '3×3 行列の拡大', zh: '缩放一个 3×3 矩阵' },
     statement: {

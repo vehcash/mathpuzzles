@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "prob-committee-at-least-one",
     category: "probability",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "amc"]
+    },
     difficulty: 2,
     title: {
       en: "At least one woman",

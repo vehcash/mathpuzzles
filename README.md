@@ -37,7 +37,26 @@ puzzles/
 - Puzzle files are small scripts (`PuzzleBank.define({...})`), not `.json`, so the site still works opened straight from disk — browsers block reading `.json` from `file://`. Their content is JSON-shaped data plus the figure/animation functions.
 - Every text field is `{ en, fr, es, ja, zh }` (a plain English string also works; missing languages fall back to English): `title`, `statement`, `hint`, `figureText`, `aiHint`, each option's `why`, each step's `title` and `note`. `words` translates labels drawn in the figure and `\text{…}` words inside formulas.
 - Each puzzle needs eight `options` (0–2 with `correct: true`), `figure(svg)` and `steps` (`lines` in LaTeX, optional `fig(F)` animation). Shared drawing helpers come from `PuzzleBank.kit` (`Figure`, `mid`, `unit`, `lerp`, `S2`, `S3`).
-- **After adding or editing a puzzle run `node tools/build-index.js`** (needs Node.js). It rebuilds `index.js` and the search files, checks the puzzle (8 options, at most 2 correct, steps present, unique id) and lists any missing translations.
+- Every puzzle has a **`source`** (shown under the hint on the board and as tags on the list cards):
+  ```js
+  source: {
+    kind: 'standard',              // 'standard' = original exercise of a common type · 'classic' = a famous old problem
+    note: { en: '…', fr: '…', … },  // optional: the classic it is based on (e.g. Montmort 1708, Nine Chapters)
+    exams: ['gaokao', 'ap'],       // exams where this KIND of question is typical (keys: EXAMS in js/puzzles.js)
+    from: { en: 'Gaokao 2023, New Curriculum Paper I, Q7', zh: '2023 新高考 I 卷 第 7 题' },   // only for a real past-paper question
+    url: 'https://…'               // optional link for `from`
+  },
+  ```
+  All current puzzles were written for the site, so they say "Original puzzle"; `exams` only says the type of question is standard there, never that the exact question was set there. Use `from` (shown instead of "Original puzzle", tagged "Exam question" in the list) only when the puzzle really is a past exam question. Exam keys: `gaokao`, `zhongkao`, `kyotsu`, `ebau`, `bac`, `alevel`, `alevelfm`, `gcse`, `ib`, `ap`, `amc`, `uni` — add new ones to `EXAMS`. Exam names and notes are searchable ("gaokao", "高考", "Montmort").
+- **After adding or editing a puzzle run `node tools/build-index.js`** (needs Node.js). It rebuilds `index.js` and the search files, checks the puzzle (8 options, at most 2 correct, steps present, unique id, a `source` with known exam keys) and lists any missing translations.
+
+## AI assistants on the blackboard (MCP) — live lessons
+AI assistants can teach on the blackboard: they draw an explanation step by step and the student watches it appear live.
+- **`api/mcp.php`** — the MCP server (Streamable HTTP, JSON-RPC, stateless, no sign-in). URL: `https://dailymathpuzzle.com/api/mcp.php`. Tools: `board_guide`, `create_board` (returns `board_id`, `edit_key`, `view_url`), `draw` (a list of commands), `get_board` (what is drawn + what the viewer could not draw). Also the resource `board://guide` and the prompt `explain_on_board`.
+- **`board-guide.md`** — the guide for AIs (every command, the maths syntax, layout, an example). The `board_guide` tool returns this file, so editing it updates what assistants learn. `mcp.html` is the page for people (how to connect Claude, ChatGPT, Claude Code, Cursor…), `llms.txt` points AIs to both.
+- **`live.html?b=<id>`** + `js/live.js` + `css/live.css` — the viewer: the real smart board plays the commands (polling `api/board.php` every 2 s), with the step captions beside it, Back / Next / Replay, Copy link; the viewer can draw too. What it cannot draw is reported back and shown by `get_board`.
+- **`api/boards-lib.php`** — storage and checks shared by both endpoints: boards are `data/boards/<id>.json` (under the protected `data/`), deleted 30 days after their last change; limits 600 commands per board, 80 per call, 30 new boards per hour per address, 40 draw calls per minute per board. Every command is validated (types, numbers, references to axes/graphs/points) and errors are returned to the AI with the command number.
+- Deploying: upload `api/`, `live.html`, `mcp.html`, `board-guide.md`, `llms.txt`, `js/live.js`, `css/live.css` (and, as always, not `data/`). PHP must be able to create `data/boards/`. Test with `npx @modelcontextprotocol/inspector` (Streamable HTTP, the URL above).
 
 ## Languages and cookies
 - English, Français, Español, 日本語, 简体中文. Click a flag to switch (the page reloads in the new language, on the same puzzle); the first visit follows the browser's language settings.
@@ -58,6 +77,7 @@ puzzles/
 - `js/recognizer.js` — offline handwriting recogniser ($P point clouds + layout analysis for fractions, roots, exponents, sin/cos/tan/log/ln, degrees).
 - `js/mathcore.js` — parser, evaluator, solver, LaTeX printer and curve fitting.
 - `js/app.js` — UI glue: categories, answers, confirmation, step-by-step solution.
+- `js/live.js` — live lessons: plays an AI's board commands on the smart board (see the MCP section).
 
 ## Board tips
 - Draw, pause: pick what it is in the menu (Enter = best guess). ⚙ chooses Always ask / Ask until learned / Never ask.

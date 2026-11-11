@@ -13,7 +13,11 @@
       es: 'El tetraedro regular y su esfera',
       ja: '正四面体とその外接球',
       zh: '正四面体及其外接球'
-    }, difficulty: 3,
+    }, source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao"]
+    },
+    difficulty: 3,
     statement: {
       en: 'A regular tetrahedron $ABCD$ has all edges equal to $2$. <b>Which of the following are true?</b> ($V$ is its volume and $R$ the radius of its circumscribed sphere.)',
       fr: 'Un tétraèdre régulier $ABCD$ a toutes ses arêtes égales à $2$. <b>Lesquelles des affirmations suivantes sont vraies ?</b> ($V$ est son volume et $R$ le rayon de sa sphère circonscrite.)',

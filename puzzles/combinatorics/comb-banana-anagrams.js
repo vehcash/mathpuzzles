@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "comb-banana-anagrams",
     category: "combinatorics",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["amc"]
+    },
     difficulty: 1,
     title: {
       en: "Rearranging BANANA",

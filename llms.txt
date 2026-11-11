@@ -1,0 +1,19 @@
+# Daily Math Puzzle
+
+> A free maths site: a new puzzle every day, a smart blackboard that reads handwriting, plots, solves and does geometry, and formula cheat sheets. In English, French, Spanish, Japanese and Simplified Chinese.
+
+AI assistants can teach on the blackboard through MCP: create a board, give the student its link, and draw the explanation step by step while they watch live.
+
+- MCP server (Streamable HTTP, no sign-in): https://dailymathpuzzle.com/api/mcp.php
+- Tools: board_guide, create_board, draw, get_board
+
+## Docs
+
+- [Blackboard guide for AI assistants](https://dailymathpuzzle.com/board-guide.md): every drawing command, the maths syntax, layout and a full example
+- [Connecting an assistant](https://dailymathpuzzle.com/mcp.html): Claude, ChatGPT, Claude Code, Cursor and other MCP clients
+
+## Site
+
+- [Today's puzzle and the blackboard](https://dailymathpuzzle.com/)
+- [All puzzles](https://dailymathpuzzle.com/list.html)
+- [Cheat sheets](https://dailymathpuzzle.com/cheatsheets.html)

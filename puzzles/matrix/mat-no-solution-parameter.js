@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "mat-no-solution-parameter",
     category: "matrix",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ebau"]
+    },
     difficulty: 2,
     title: {
       en: "Parallel lines never meet",

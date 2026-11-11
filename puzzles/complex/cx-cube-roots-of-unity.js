@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "cx-cube-roots-of-unity",
     category: "complex",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["alevelfm", "ib"]
+    },
     difficulty: 2,
     title: {
       en: "A cube root of one",

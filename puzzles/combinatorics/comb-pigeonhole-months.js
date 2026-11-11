@@ -7,6 +7,17 @@
   PuzzleBank.define({
     id: "comb-pigeonhole-months",
     category: "combinatorics",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "classic",
+      note: {
+        en: "The pigeonhole (drawer) principle, made famous by Dirichlet (1834).",
+        fr: "Le principe des tiroirs, rendu célèbre par Dirichlet (1834).",
+        es: "El principio del palomar (de los cajones), popularizado por Dirichlet (1834).",
+        ja: "鳩の巣原理（引き出し論法）。ディリクレ（1834年）によって有名になった。",
+        zh: "抽屉原理（鸽巢原理），因狄利克雷（1834年）而闻名。"
+      },
+      exams: ["amc"]
+    },
     difficulty: 1,
     title: {
       en: "Same birth month",

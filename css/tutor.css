@@ -1,0 +1,70 @@
+/* cheat-sheet tutorials (js/tutor.js): a blackboard player over the page */
+.cs-item { position: relative; cursor: pointer; border-radius: 8px; transition: background .15s; }
+.cs-item:hover { background: var(--cbg); }
+.cs-item:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+.cs-tex { cursor: pointer; }
+.cs-tex:hover { background: transparent; }
+.cs-copy { position: absolute; top: 4px; right: 0; z-index: 2; border: 1px solid var(--line); background: #fffdf6; color: var(--ink-soft); border-radius: 7px; font-size: 13px; line-height: 1; padding: 4px 6px; cursor: copy; opacity: 0; transition: opacity .15s; }
+.cs-item:hover .cs-copy, .cs-item:focus-within .cs-copy { opacity: 1; }
+@media (hover: none) { .cs-copy { opacity: .7; } }
+.cs-tblwrap .cs-copy { top: -2px; }
+
+.tu { position: fixed; inset: 0; z-index: 80; background: rgba(10,14,12,.72); backdrop-filter: blur(3px); display: grid; place-items: center; padding: 18px; animation: rise .2s ease; }
+.tu[hidden] { display: none; }
+body.tu-open { overflow: hidden; }
+.tu-box { width: min(1180px, 100%); height: min(720px, calc(100vh - 36px)); display: flex; flex-direction: column; background: linear-gradient(#7a5535, #5c3d23); border-radius: 18px; padding: 10px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+.tu-head { display: flex; align-items: center; gap: 12px; padding: 4px 8px 10px; color: var(--chalk); }
+.tu-ico { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: var(--cbg); color: var(--c); font: 700 19px var(--serif); flex: none; }
+.tu-ttl { display: flex; flex-direction: column; min-width: 0; }
+.tu-ttl small { font: 700 11px var(--sans); letter-spacing: 1.2px; text-transform: uppercase; opacity: .7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tu-ttl b { font: 800 20px/1.2 var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tu-x { margin-left: auto; border: 0; background: rgba(0,0,0,.25); color: var(--chalk); width: 36px; height: 36px; border-radius: 10px; font-size: 16px; cursor: pointer; flex: none; }
+.tu-x:hover { background: rgba(0,0,0,.4); }
+.tu-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 10px; }
+.tu-boardwrap { position: relative; min-height: 0; display: flex; }
+.tu-board { min-height: 0; flex: 1; }
+.tu-status { position: absolute; left: 14px; bottom: 10px; z-index: 6; color: rgba(244,241,232,.75); font: 600 13px var(--sans); pointer-events: none; }
+.tu-side { background: var(--paper); color: var(--ink); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; min-height: 0; overflow: auto; }
+.tu-count { font: 700 11px var(--sans); letter-spacing: 1.3px; text-transform: uppercase; color: var(--c); }
+.tu-st { font: 800 20px/1.25 var(--serif); margin: 4px 0 8px; }
+.tu-text { font-size: 15.5px; line-height: 1.55; }
+.tu-text .katex { font-size: 1.05em; }
+.tu-extra .cf { margin-top: 12px; }
+.tu-dots { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 12px; }
+.tu-dots button { width: 10px; height: 10px; border-radius: 50%; border: 0; padding: 0; background: var(--line); cursor: pointer; }
+.tu-dots button.past { background: color-mix(in srgb, var(--c) 45%, var(--line)); }
+.tu-dots button.on { background: var(--c); transform: scale(1.25); }
+.tu-nav { display: flex; gap: 8px; margin-top: auto; }
+.tu-nav button { flex: 1; border: 0; border-radius: 10px; padding: 11px 12px; font: 700 15px var(--sans); cursor: pointer; }
+.tu-prev { background: transparent; color: var(--ink); border: 1px solid var(--line) !important; }
+.tu-prev:disabled { opacity: .4; cursor: default; }
+.tu-next { background: var(--ink); color: var(--paper); }
+.tu-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.tu-tools button, .tu-tools a { border: 1px solid var(--line); background: #fffdf6; color: var(--ink); border-radius: 999px; padding: 5px 11px; font: 600 12.5px var(--sans); cursor: pointer; text-decoration: none; }
+.tu-tools a { color: var(--c); border-color: currentColor; }
+.tu-tools a[hidden] { display: none; }
+.tu-hint { margin: 10px 0 0; font-size: 12.5px; color: var(--ink-soft); }
+.tu-board .ink-math { text-shadow: 0 0 1px rgba(255,255,255,.3); }
+@media (max-width: 860px) {
+  .tu { padding: 0; }
+  .tu-box { height: 100vh; border-radius: 0; }
+  .tu-body { grid-template-columns: 1fr; grid-template-rows: minmax(260px, 48vh) auto; overflow: auto; }
+  .tu-board { min-height: 260px; }
+}
+/* graph view tools on the board */
+.tu-view { position: absolute; right: 14px; bottom: 12px; z-index: 6; display: flex; gap: 6px; }
+.tu-view[hidden] { display: none; }
+.tu-view button { width: 34px; height: 34px; border-radius: 9px; border: 1px solid rgba(244,241,232,.25); background: rgba(0,0,0,.35); color: var(--chalk); font: 700 17px var(--sans); cursor: pointer; }
+.tu-view button:hover { background: rgba(0,0,0,.55); }
+/* exercise in the side panel */
+.tu-ex { margin-top: 14px; padding: 12px 12px 10px; border-radius: 12px; background: var(--cbg); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); }
+.tu-ex-h { font: 700 11px var(--sans); letter-spacing: 1.2px; text-transform: uppercase; color: var(--c); margin-bottom: 4px; }
+.tu-ex-q { font-size: 15px; line-height: 1.5; margin-bottom: 8px; }
+.tu-ex-row { display: flex; gap: 6px; }
+.tu-ex-in { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; font: 15px ui-monospace, monospace; background: #fffdf6; }
+.tu-ex-go { border: 0; border-radius: 9px; padding: 8px 14px; background: var(--c); color: #fff; font: 700 14px var(--sans); cursor: pointer; }
+.tu-ex-help { font-size: 12px; color: var(--ink-soft); margin-top: 5px; }
+.tu-ex-msg { min-height: 1.3em; margin-top: 6px; font-weight: 700; font-size: 14px; }
+.tu-ex-msg.ok { color: #2e7d4f; } .tu-ex-msg.no { color: #b2472a; } .tu-ex-msg.bad { color: #8a6d1e; }
+.tu-ex-more { display: flex; gap: 6px; flex-wrap: wrap; }
+.tu-ex-more button { border: 1px solid var(--line); background: #fffdf6; border-radius: 999px; padding: 4px 11px; font: 600 12.5px var(--sans); cursor: pointer; color: var(--ink); }

@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: 'cx-quadratic-roots',
     category: 'complex',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["bac", "alevelfm", "ib"]
+    },
     difficulty: 1,
     title: { en: 'A quadratic with no real roots', fr: 'Une équation du second degré sans racine réelle', es: 'Una ecuación de segundo grado sin raíces reales', ja: '実数解をもたない2次方程式', zh: '没有实根的二次方程' },
     statement: {

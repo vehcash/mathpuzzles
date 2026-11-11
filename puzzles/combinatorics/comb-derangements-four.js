@@ -7,6 +7,17 @@
   PuzzleBank.define({
     id: "comb-derangements-four",
     category: "combinatorics",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "classic",
+      note: {
+        en: "Montmort’s <i>problème des rencontres</i> (1708); letters in the wrong envelopes is its classic textbook form.",
+        fr: "Le <i>problème des rencontres</i> de Montmort (1708) ; les lettres dans les mauvaises enveloppes en sont la forme classique des manuels.",
+        es: "El <i>problème des rencontres</i> de Montmort (1708); las cartas en sobres equivocados son su forma clásica de libro de texto.",
+        ja: "モンモールの「出会いの問題」（1708年）。手紙を間違った封筒に入れる形は教科書の定番。",
+        zh: "蒙莫尔的“配对问题”（1708年）；“信装错信封”是它在教科书中的经典形式。"
+      },
+      exams: ["amc"]
+    },
     difficulty: 2,
     title: {
       en: "Every letter in the wrong envelope",

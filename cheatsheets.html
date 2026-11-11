@@ -26,6 +26,7 @@
 <link rel="stylesheet" href="lib/katex/katex.min.css">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/cheats.css">
+<link rel="stylesheet" href="css/tutor.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%E2%88%91%3C/text%3E%3C/svg%3E">
 </head>
 <body class="cheat-page">
@@ -45,7 +46,7 @@
   <nav class="cs-side" aria-label="Topics">
     <div class="cs-side-h">Topics</div>
     <div id="cs-topics" data-no-i18n></div>
-    <p class="cs-tip">Click a formula to copy its LaTeX</p>
+    <p class="cs-tip">Click a formula for a step-by-step explanation on the blackboard · ⧉ copies its LaTeX</p>
   </nav>
   <main id="cs-main" class="cs-main" data-no-i18n></main>
 </div>
@@ -62,7 +63,7 @@
 <script>I18N.start();</script>
 <script src="js/consent-ui.js"></script>
 <script src="js/cheat-figs.js"></script>
-<script>window.Cheats = { topics: [], topic(t) { this.topics.push(t); } };</script>
+<script>window.Cheats = { topics: [], topic(t) { this.topics.push(t); }, tutorials: {}, tutor(id, map) { this.tutorials[id] = map; } };</script>
 <script src="cheats/algebra.js"></script>
 <script src="cheats/functions.js"></script>
 <script src="cheats/geometry.js"></script>
@@ -79,6 +80,7 @@
 <script src="cheats/statistics.js"></script>
 <script src="cheats/number.js"></script>
 <script src="cheats/logic.js"></script>
+<script src="js/tutor.js"></script>
 <script src="js/cheats.js"></script>
 <script>I18N.flags(document.getElementById('lang-host')); CookieUI.init();</script>
 </body>

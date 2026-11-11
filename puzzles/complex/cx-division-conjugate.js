@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: 'cx-division-conjugate',
     category: 'complex',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "bac"]
+    },
     difficulty: 1,
     title: { en: 'Dividing by a complex number', fr: 'Diviser par un nombre complexe', es: 'Dividir entre un número complejo', ja: '複素数で割る', zh: '除以一个复数' },
     statement: {

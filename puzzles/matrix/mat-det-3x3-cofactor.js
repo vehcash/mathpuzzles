@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: 'mat-det-3x3-cofactor',
     category: 'matrix',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ebau", "alevelfm"]
+    },
     difficulty: 2,
     title: { en: 'A 3×3 determinant', fr: 'Un déterminant 3×3', es: 'Un determinante 3×3', ja: '3×3 の行列式', zh: '一个 3×3 行列式' },
     statement: {

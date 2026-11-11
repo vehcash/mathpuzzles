@@ -7,6 +7,17 @@
   PuzzleBank.define({
     id: "prob-two-children-boy",
     category: "probability",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "classic",
+      note: {
+        en: "Martin Gardner’s “boy or girl” paradox, <i>Scientific American</i> (1959).",
+        fr: "Le paradoxe « garçon ou fille » de Martin Gardner, <i>Scientific American</i> (1959).",
+        es: "La paradoja «niño o niña» de Martin Gardner, <i>Scientific American</i> (1959).",
+        ja: "マーティン・ガードナーの「男の子か女の子か」のパラドックス（『サイエンティフィック・アメリカン』1959年）。",
+        zh: "马丁·加德纳的“男孩还是女孩”悖论（《科学美国人》，1959年）。"
+      },
+      exams: []
+    },
     difficulty: 2,
     title: {
       en: "At least one boy",

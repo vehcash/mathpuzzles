@@ -13,7 +13,11 @@
       es: 'Una cuerda por el foco',
       ja: '焦点を通る弦',
       zh: '过焦点的弦'
-    }, difficulty: 3,
+    }, source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao"]
+    },
+    difficulty: 3,
     statement: {
       en: 'A line through the focus $F$ of the parabola $y^2 = 4x$ with slope $1$ meets the parabola at $A$ and $B$. <b>What is $|AB|$?</b>',
       fr: 'Une droite passant par le foyer $F$ de la parabole $y^2 = 4x$, de pente $1$, coupe la parabole en $A$ et $B$. <b>Que vaut $|AB|$ ?</b>',

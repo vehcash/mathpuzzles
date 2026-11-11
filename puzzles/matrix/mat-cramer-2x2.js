@@ -10,6 +10,10 @@
   PuzzleBank.define({
     id: 'mat-cramer-2x2',
     category: 'matrix',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ebau"]
+    },
     difficulty: 2,
     title: { en: 'Cramer’s rule', fr: 'La règle de Cramer', es: 'La regla de Cramer', ja: 'クラメルの公式', zh: '克拉默法则' },
     statement: {

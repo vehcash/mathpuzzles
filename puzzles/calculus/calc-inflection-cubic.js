@@ -8,6 +8,10 @@
   PuzzleBank.define({
     id: "calc-inflection-cubic",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ap", "bac", "ebau"]
+    },
     difficulty: 2,
     title: {
       en: "Where the curve changes its bend",

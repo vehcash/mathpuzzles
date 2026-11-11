@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "comb-even-four-digit",
     category: "combinatorics",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao"]
+    },
     difficulty: 2,
     title: {
       en: "Even numbers with distinct digits",

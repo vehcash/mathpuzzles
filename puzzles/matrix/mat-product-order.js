@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: 'mat-product-order',
     category: 'matrix',
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ebau", "alevelfm"]
+    },
     difficulty: 1,
     title: { en: 'Order matters', fr: 'L’ordre compte', es: 'El orden importa', ja: '順番が大事', zh: '顺序很重要' },
     statement: {

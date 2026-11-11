@@ -55,3 +55,10 @@
    Rows are 4px tall; list.js gives every card a row span that matches its height. */
 .grid.masonry { grid-auto-rows: 4px; row-gap: 0; align-items: start; }
 .grid.masonry .pcard { margin-bottom: 16px; }
+
+/* source line on each card */
+.pc-src { margin: 4px 0 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 12px; }
+.pc-src-k { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-soft); margin-right: 2px; }
+.pc-tag { padding: 0 7px; border-radius: 9px; background: rgba(47,111,143,.1); color: var(--accent-2); font-weight: 600; white-space: nowrap; }
+.pc-tag.classic { background: rgba(226,173,26,.22); color: #8a6400; }
+.pc-tag.exam { background: rgba(214,90,133,.16); color: #a73a63; }

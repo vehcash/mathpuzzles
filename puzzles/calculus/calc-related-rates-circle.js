@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "calc-related-rates-circle",
     category: "calculus",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["ap"]
+    },
     difficulty: 2,
     title: {
       en: "A spreading ripple",

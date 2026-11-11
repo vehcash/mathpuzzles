@@ -1,0 +1,33 @@
+/* live.html — a lesson an AI draws on the blackboard (js/live.js) */
+.live-page { display: flex; flex-direction: column; min-height: 100vh; }
+.lv-title { font-family: var(--serif); font-weight: 700; font-size: 19px; margin: 0; color: var(--chalk); flex: 1; min-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lv-live { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #a6e39f; }
+.lv-live i { width: 9px; height: 9px; border-radius: 50%; background: #a6e39f; box-shadow: 0 0 0 0 rgba(166,227,159,.6); animation: lv-pulse 1.8s infinite; }
+.lv-live.idle { color: rgba(244,241,232,.55); } .lv-live.idle i { background: rgba(244,241,232,.45); animation: none; }
+@keyframes lv-pulse { 0% { box-shadow: 0 0 0 0 rgba(166,227,159,.6); } 70% { box-shadow: 0 0 0 9px rgba(166,227,159,0); } 100% { box-shadow: 0 0 0 0 rgba(166,227,159,0); } }
+
+.lv-layout { flex: 1; display: grid; grid-template-columns: 1fr minmax(280px, 360px); gap: 20px; padding: 6px 22px 22px; min-height: 0; }
+.lv-layout .board-wrap { min-height: 0; }
+.lv-layout .board { flex: 1; min-height: 460px; }
+
+.lv-panel { display: flex; flex-direction: column; gap: 10px; padding: 18px 18px 16px; }
+.lv-head { display: flex; align-items: baseline; justify-content: space-between; }
+.lv-head h2 { font-family: var(--serif); font-size: 20px; margin: 0; }
+.lv-head .sub { font-size: 13px; color: var(--ink-soft); }
+.lv-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; overflow: auto; flex: 1; min-height: 80px; counter-reset: lv; }
+.lv-steps li { counter-increment: lv; position: relative; padding: 9px 12px 9px 40px; border-radius: 10px; background: rgba(255,255,255,.55); border: 1px solid var(--line); cursor: pointer; font-size: 15px; line-height: 1.5; transition: background .2s, border-color .2s, opacity .2s; }
+.lv-steps li::before { content: counter(lv); position: absolute; left: 11px; top: 9px; width: 21px; height: 21px; border-radius: 50%; display: grid; place-content: center; font-size: 12px; font-weight: 700; background: var(--line); color: var(--ink); }
+.lv-steps li b { display: block; font-size: 13px; letter-spacing: .3px; color: var(--accent-2); }
+.lv-steps li.todo { opacity: .45; }
+.lv-steps li.on { background: #fff8df; border-color: var(--chalk-y); box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+.lv-steps li.on::before { background: var(--accent); color: #fff; }
+.lv-steps li.empty { cursor: default; color: var(--ink-soft); font-style: italic; padding-left: 12px; } .lv-steps li.empty::before { display: none; }
+.lv-ctl { display: flex; gap: 6px; flex-wrap: wrap; }
+.lv-note { margin: 0; font-size: 12.5px; color: var(--ink-soft); }
+.lv-error { color: #a73a63; }
+
+@media (max-width: 900px) {
+  .lv-layout { grid-template-columns: 1fr; padding: 6px 10px 14px; }
+  .lv-layout .board { min-height: 420px; }
+  .lv-steps { max-height: 260px; }
+}

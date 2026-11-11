@@ -7,6 +7,10 @@
   PuzzleBank.define({
     id: "comb-committee-with-chair",
     category: "combinatorics",
+    source: {   // where the problem comes from (see README: Sources)
+      kind: "standard",
+      exams: ["gaokao", "amc"]
+    },
     difficulty: 2,
     title: {
       en: "A committee with a chair",

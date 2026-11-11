@@ -64,11 +64,19 @@
   grid.classList.add('masonry');
   const fit = el => { el.style.gridRowEnd = 'span ' + Math.ceil((el.getBoundingClientRect().height + GAP) / ROW); };
   const sizer = new ResizeObserver(list => list.forEach(en => fit(en.target)));
+  // source line: real exam question, classic problem, and the exams where this kind of question is typical
+  function srcLine(p) {
+    const ex = (p.ex || []).map(k => PuzzleBank.exams[k] ? PuzzleBank.text(PuzzleBank.exams[k]) : k);
+    const tags = (p.src === 'exam' ? ['<span class="pc-tag exam">' + tr('Exam question') + '</span>'] : p.src === 'classic' ? ['<span class="pc-tag classic">' + tr('Classic problem') + '</span>'] : [])
+      .concat(ex.map(x => '<span class="pc-tag">' + escH(x) + '</span>'));
+    return tags.length ? '<p class="pc-src"><span class="pc-src-k">' + tr('Source') + '</span>' + tags.join('') + '</p>' : '';
+  }
   function card(e) {
     const p = e.e, a = document.createElement('a');
     a.className = 'pcard'; a.href = /^https?:$/.test(location.protocol) ? 'puzzle/' + encodeURIComponent(p.id) + '.html' : 'index.html?p=' + encodeURIComponent(p.id); a.dataset.cat = p.cat; a.dataset.idx = e.i;   // online: the real puzzle pages (tools/build-pages.js)
     a.innerHTML = '<div class="meta"><span class="cat-badge"><span class="ico">' + e.cat.icon + '</span>' + tr(e.cat.name) + '</span><span class="diff" title="Difficulty">' + '●'.repeat(p.diff) + '<i>' + '●'.repeat(3 - p.diff) + '</i></span></div>' +
       '<h3></h3><p class="statement"></p><figure class="figure"><svg role="img" aria-label="Figure"></svg></figure>' +
+      srcLine(p) +
       '<div class="pc-foot"><span>' + tr('{n} options · {m} solution steps', { n: p.options, m: p.steps }) + '</span><span class="go">' + tr('Solve →') + '</span></div>';
     a.querySelector('h3').innerHTML = mark(escH(e.t), words);
     const st = a.querySelector('.statement'); mathText(st, e.s); st.innerHTML = mark(st.innerHTML, words);
