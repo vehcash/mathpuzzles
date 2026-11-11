@@ -35,11 +35,11 @@
       zh: "<b>下列哪些等于 $\\displaystyle\\lim_{x\\to\\infty}\\left(1 + \\frac{2}{x}\\right)^{x}$？</b>"
     },
     figureText: {
-      en: "The graph of (1 + 2/x)^x rising towards a dashed horizontal line at about 7.39.",
-      fr: "Le graphe de (1 + 2/x)^x qui monte vers une droite pointillée à environ 7,39.",
-      es: "La gráfica de (1 + 2/x)^x subiendo hacia una recta discontinua en torno a 7,39.",
-      ja: "(1 + 2/x)^x のグラフが、約 7.39 の破線に近づいていきます。",
-      zh: "(1 + 2/x)^x 的图像逐渐上升趋近约 7.39 处的虚线。"
+      en: "The graph of the expression as x grows. The level it approaches is marked in the solution.",
+      fr: "La courbe de l’expression quand x grandit. Le niveau atteint à la limite est marqué dans la solution.",
+      es: "La gráfica de la expresión cuando x crece. El nivel al que tiende se marca en la solución.",
+      ja: "x が大きくなるときの式のグラフ。近づく値は解答で示します。",
+      zh: "x 增大时该式的图像。趋近的值在解答中标出。"
     },
     hint: {
       en: "Take logarithms: $x\\ln\\left(1 + \\tfrac2x\\right) \\to ?$",
@@ -59,9 +59,11 @@
       const F = Figure(svg, { w: 6.6, h: 4.4, scale: 40, pad: 18 });
       const T = F.T = axes(F, -0.4, 6.2, -0.4, 4);
       const g = x => f(3 * x) / 2;   // horizontal unit 3, vertical unit 2
-      F.seg(T([0, Math.E * Math.E / 2]), T([6, Math.E * Math.E / 2]), 'seg thin');
       plot(F, T, g, 0.08, 6, 'graph');
-      F.text(T([0, Math.E * Math.E / 2]), 'e²', 'len small', -14, 0);
+      F.reveal = () => {
+        F.seg(T([0, Math.E * Math.E / 2]), T([6, Math.E * Math.E / 2]), 'seg thin');
+        F.text(T([0, Math.E * Math.E / 2]), 'e²', 'len small', -14, 0);
+      };
       return F;
     },
     options: [
@@ -156,7 +158,7 @@
           ja: "一般に $\\left(1 + \\tfrac{a}{x}\\right)^x \\to e^a$。",
           zh: "一般地 $\\left(1 + \\tfrac{a}{x}\\right)^x \\to e^a$。"
         },
-        fig(F) { F.draw(F.seg(F.T([0, Math.E * Math.E / 2]), F.T([6, Math.E * Math.E / 2]), 'hl yellow', 'over'), 700); }
+        fig(F) { if (F.reveal) F.reveal(); F.draw(F.seg(F.T([0, Math.E * Math.E / 2]), F.T([6, Math.E * Math.E / 2]), 'hl yellow', 'over'), 700); }
       },
       {
         title: {

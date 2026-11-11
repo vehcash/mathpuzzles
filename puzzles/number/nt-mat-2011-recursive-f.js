@@ -34,11 +34,11 @@
       zh: "定义在正整数上的函数满足 $f(1)=1$，$f(2n)=f(n)$，$f(2n+1)=f(n)^2-2$。<b>下列哪些等于 $f(1)+f(2)+\\dots+f(100)$？</b>"
     },
     figureText: {
-      en: "A row of boxes for n = 1 to 16 with the value f(n) written inside: 1 for n = 1, 2, 4, 8, 16 (highlighted) and −1 for every other n.",
-      fr: "Une rangée de cases pour n = 1 à 16 avec la valeur f(n) : 1 pour n = 1, 2, 4, 8, 16 (mises en évidence) et −1 pour tous les autres n.",
-      es: "Una fila de casillas para n = 1 a 16 con el valor f(n): 1 para n = 1, 2, 4, 8, 16 (resaltadas) y −1 para el resto.",
-      ja: "n = 1〜16 の箱に f(n) の値：n = 1, 2, 4, 8, 16（強調）では 1、それ以外はすべて −1。",
-      zh: "n = 1 到 16 的一排方格，内写 f(n)：n = 1, 2, 4, 8, 16（突出显示）为 1，其余都为 −1。"
+      en: "A row of empty boxes for n = 1 to 16. The values f(n) are filled in during the solution.",
+      fr: "Une rangée de cases vides pour n = 1 à 16. Les valeurs f(n) sont remplies dans la solution.",
+      es: "Una fila de casillas vacías para n = 1 a 16. Los valores f(n) se rellenan en la solución.",
+      ja: "n = 1〜16 の空の箱。f(n) の値は解答で書き込みます。",
+      zh: "n = 1 到 16 的空方框。f(n) 的值在解答中填入。"
     },
     hint: {
       en: "Compute $f(1),\\dots,f(8)$. Which values can appear?",
@@ -56,11 +56,13 @@
     },
     figure(svg) {
       const F = Figure(svg, { w: 8.2, h: 1.6, scale: 44, pad: 10 });
-      for (let n = 1; n <= 16; n++) {
-        const i = n - 1, x = (i % 8) * 1.02 + 0.05, y = i < 8 ? 0.85 : 0.05, pow = (n & (n - 1)) === 0;
-        F.rect(x, y, 0.92, 0.7, pow ? 'tri fill-yellow' : 'tri');
-        F.text([x + 0.2, y + 0.55], String(n), 'tick', 0, 0); F.text([x + 0.5, y + 0.28], pow ? '1' : '−1', 'len', 4, 0);
+      const B = []; for (let n = 1; n <= 16; n++) {
+        const i = n - 1, x = (i % 8) * 1.02 + 0.05, y = i < 8 ? 0.85 : 0.05; B.push([n, x, y]);
+        F.rect(x, y, 0.92, 0.7, 'tri'); F.text([x + 0.2, y + 0.55], String(n), 'tick', 0, 0);
       }
+      F.reveal = () => {
+      B.forEach(([n, x, y]) => { const pow = (n & (n - 1)) === 0; if (pow) F.rect(x, y, 0.92, 0.7, 'fill-yellow', 'fills'); F.text([x + 0.5, y + 0.28], pow ? '1' : '−1', 'len', 4, 0); });
+      };
       return F;
     },
     options: [
@@ -148,6 +150,9 @@
           zh: "f(n) = 1 恰好对应 2 的幂"
         },
         lines: ["f(n)=1 \\iff n\\in\\{1,2,4,8,16,32,64\\}\\quad(\\le 100)", "\\sum_{n=1}^{100} f(n) = 7\\cdot1 + 93\\cdot(-1) = \\boxed{-86}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Halving an even number keeps the value; any odd $n>1$ gives $-1$. So $f(n)=1$ only when halving reaches $1$ without passing an odd number.",
           fr: "Diviser un nombre pair par $2$ garde la valeur ; tout impair $n>1$ donne $-1$. Donc $f(n)=1$ seulement si l’on atteint $1$ par divisions par $2$ sans rencontrer d’impair.",

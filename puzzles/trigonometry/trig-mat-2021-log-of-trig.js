@@ -34,11 +34,11 @@
       zh: "设 $y=\\log_2\\!\\left(9-8\\sin x-6\\cos^2x\\right)$，$0^\\circ\\le x\\le360^\\circ$。<b>下列哪些正确？</b>"
     },
     figureText: {
-      en: "The graph of y over one turn: it dips below zero twice, near the top of the sine wave, and peaks at x = 270°.",
-      fr: "La courbe de y sur un tour : elle passe deux fois sous zéro, près du sommet de la sinusoïde, et culmine en x = 270°.",
-      es: "La gráfica de y en una vuelta: baja de cero dos veces, cerca del máximo del seno, y alcanza su máximo en x = 270°.",
-      ja: "1周での y のグラフ：sin の山の近くで2回 0 より下がり、x = 270° で最大。",
-      zh: "y 在一周内的图像：在正弦峰值附近两次低于零，并在 x = 270° 处取最大值。"
+      en: "Axes from 0° to 360° with 90°, 270° and 360° marked. The graph of y is drawn in the solution.",
+      fr: "Axes de 0° à 360° avec 90°, 270° et 360°. La courbe de y est tracée dans la solution.",
+      es: "Ejes de 0° a 360° con 90°, 270° y 360°. La gráfica de y se dibuja en la solución.",
+      ja: "0° から 360° の座標軸（90°, 270°, 360°）。y のグラフは解答で描きます。",
+      zh: "0° 到 360° 的坐标轴，标出 90°、270°、360°。y 的图像在解答中画出。"
     },
     hint: {
       en: "Write $\\cos^2x=1-\\sin^2x$: the inside becomes a quadratic in $s=\\sin x\\in[-1,1]$.",
@@ -58,10 +58,12 @@
       const F = Figure(svg, { w: 7.3, h: 6.7, scale: 44, pad: 20 });
       const T = F.T = axes(F, -0.3, 7.0, -1.9, 4.8);
       const y = x => Math.log2(6 * Math.sin(x) ** 2 - 8 * Math.sin(x) + 3);
+      F.text(T([Math.PI / 2, 0]), '90°', 'tick', 0, -12); F.text(T([1.5 * Math.PI, 0]), '270°', 'tick', 0, 14); F.text(T([2 * Math.PI, 0]), '360°', 'tick', 0, 14);
+      F.reveal = () => {
       plot(F, T, y, 0, 2 * Math.PI, 'graph');
       F.dot(T([1.5 * Math.PI, Math.log2(17)])); F.text(T([1.5 * Math.PI, Math.log2(17)]), 'log₂17', 'len small', 0, -16);
       const xm = Math.asin(2 / 3); F.dot(T([xm, -Math.log2(3)])); F.text(T([xm, -Math.log2(3)]), '−log₂3', 'len small', 14, 16);
-      F.text(T([Math.PI / 2, 0]), '90°', 'tick', 0, -12); F.text(T([1.5 * Math.PI, 0]), '270°', 'tick', 0, 14); F.text(T([2 * Math.PI, 0]), '360°', 'tick', 0, 14);
+      };
       return F;
     },
     options: [
@@ -166,6 +168,9 @@
           zh: "取以 2 为底的对数"
         },
         lines: ["-\\log_2 3\\le y\\le\\log_2 17"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "$\\log_2$ is increasing, so it keeps the order.",
           fr: "$\\log_2$ est croissant : il conserve l’ordre.",

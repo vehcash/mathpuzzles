@@ -28,11 +28,11 @@
       zh: "<b>下列哪些等于 $\\displaystyle\\lim_{n\\to\\infty}\\left(\\sqrt{n^2 + n} - n\\right)$？</b>"
     },
     figureText: {
-      en: "Dots for the values of √(n² + n) − n for n = 1 to 12, climbing towards a dashed line at height one half.",
-      fr: "Des points pour les valeurs de √(n² + n) − n pour n = 1 à 12, qui montent vers une droite pointillée à la hauteur un demi.",
-      es: "Puntos con los valores de √(n² + n) − n para n = 1 a 12, que suben hacia una recta discontinua a altura un medio.",
-      ja: "n = 1〜12 の √(n² + n) − n の値の点が、高さ 1/2 の破線に近づいていきます。",
-      zh: "n = 1 到 12 时 √(n² + n) − n 的值的点，向高度二分之一的虚线攀升。"
+      en: "The first terms of the sequence as dots. The level they approach is marked in the solution.",
+      fr: "Les premiers termes de la suite en points. Le niveau dont ils s’approchent est marqué dans la solution.",
+      es: "Los primeros términos de la sucesión como puntos. El nivel al que se acercan se marca en la solución.",
+      ja: "数列の最初の項を点で表示。近づく値は解答で示します。",
+      zh: "数列前几项以点表示。趋近的值在解答中标出。"
     },
     hint: {
       en: "Multiply and divide by $\\sqrt{n^2 + n} + n$.",
@@ -51,9 +51,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 7, h: 3, scale: 44, pad: 18 });
       const T = F.T = axes(F, -0.4, 6.6, -0.3, 2.7, { xl: 'n' });
-      F.seg(T([0, 2]), T([6.4, 2]), 'seg thin');
       for (let n = 1; n <= 12; n++) F.dot(T([n / 2, 4 * a(n)]));
-      F.text(T([0, 2]), '1/2', 'len small', -16, 0);
+      F.reveal = () => {
+        F.seg(T([0, 2]), T([6.4, 2]), 'seg thin');
+        F.text(T([0, 2]), '1/2', 'len small', -16, 0);
+      };
       return F;
     },
     options: [
@@ -148,7 +150,7 @@
           ja: "図の点は $\\tfrac12$ に近づいていきます。",
           zh: "图中的点逐渐逼近 $\\tfrac12$。"
         },
-        fig(F) { F.draw(F.seg(F.T([0, 2]), F.T([6.4, 2]), 'hl yellow', 'over'), 700); }
+        fig(F) { if (F.reveal) F.reveal(); F.draw(F.seg(F.T([0, 2]), F.T([6.4, 2]), 'hl yellow', 'over'), 700); }
       },
       {
         title: {

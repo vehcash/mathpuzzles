@@ -22,11 +22,11 @@
       zh: '<b>下列哪些等于 $(1 + i)^8$？</b>'
     },
     figureText: {
-      en: 'The complex plane with 1 + i and its powers (1 + i)² = 2i, (1 + i)³ = −2 + 2i and (1 + i)⁴ = −4: each step turns 45° and stretches by √2.',
-      fr: 'Le plan complexe avec 1 + i et ses puissances (1 + i)² = 2i, (1 + i)³ = −2 + 2i et (1 + i)⁴ = −4 : chaque étape tourne de 45° et dilate d’un facteur √2.',
-      es: 'El plano complejo con 1 + i y sus potencias (1 + i)² = 2i, (1 + i)³ = −2 + 2i y (1 + i)⁴ = −4: cada paso gira 45° y estira por √2.',
-      ja: '複素平面上の 1 + i と、そのべき (1 + i)² = 2i、(1 + i)³ = −2 + 2i、(1 + i)⁴ = −4。各段階で 45° 回転し √2 倍に伸びます。',
-      zh: '复平面上的 1 + i 及其幂 (1 + i)² = 2i、(1 + i)³ = −2 + 2i、(1 + i)⁴ = −4：每一步旋转 45° 并放大 √2 倍。'
+      en: "The vector 1 + i in the complex plane. Its powers are drawn in the solution.",
+      fr: "Le vecteur 1 + i dans le plan complexe. Ses puissances sont tracées dans la solution.",
+      es: "El vector 1 + i en el plano complejo. Sus potencias se dibujan en la solución.",
+      ja: "複素平面のベクトル 1 + i。累乗は解答で描きます。",
+      zh: "复平面上的向量 1 + i。它的幂在解答中画出。"
     },
     hint: {
       en: 'Write $1 + i$ in polar form: modulus $\\sqrt2$, argument $45^\\circ$. Raising to a power multiplies the angle.',
@@ -45,9 +45,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 7, h: 4.6, scale: 40, pad: 18 });
       const T = F.T = argand(F, -5, 2, -1.2, 3.4);
-      POW.forEach((p, k) => arrow(F, T([0, 0]), T(p), k ? 'vec two' : 'vec'));
-      F.text(T([1, 1]), '1 + i', 'len', 26, -6); F.text(T([0, 2]), '(1+i)²', 'len small', 28, -6);
-      F.text(T([-2, 2]), '(1+i)³', 'len small', -10, -12); F.text(T([-4, 0]), '(1+i)⁴', 'len small', 0, -14);
+      arrow(F, T([0, 0]), T(POW[0]), 'vec');
+      F.text(T([1, 1]), '1 + i', 'len', 26, -6); 
+      F.reveal = () => {
+        POW.forEach((p, k) => { if (k) arrow(F, T([0, 0]), T(p), 'vec two'); }); F.text(T([0, 2]), '(1+i)²', 'len small', 28, -6); F.text(T([-2, 2]), '(1+i)³', 'len small', -10, -12); F.text(T([-4, 0]), '(1+i)⁴', 'len small', 0, -14);
+      };
       return F;
     },
     options: [
@@ -134,6 +136,7 @@
         fig(F) { POW.forEach((p, k) => F.fadeIn(F.circle(F.T(p), 0.16, 'halo', 'over'), 300, 250 * k)); }
       },
       {
+        fig(F) { if (F.reveal) F.reveal(); },
         title: { en: 'Check with squares', fr: 'Vérifier avec les carrés', es: 'Comprobar con cuadrados', ja: '2乗で確認', zh: '用平方验证' },
         lines: ['(1 + i)^2 = 1 + 2i + i^2 = 2i', '(1 + i)^8 = (2i)^4 = 16\\,i^4 = 16\\ \\checkmark'],
         note: {

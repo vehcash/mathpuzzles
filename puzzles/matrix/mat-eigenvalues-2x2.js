@@ -23,11 +23,11 @@
       zh: '设 $A = \\begin{pmatrix} 4 & 1 \\\\ 2 & 3 \\end{pmatrix}$。<b>下列哪些是 $A$ 的特征值？</b>'
     },
     figureText: {
-      en: 'Coordinate axes. The vector v = (1, 1) and its image Av = (5, 5) lie on the same line; the vector w = (1, −2) and its image Aw = (2, −4) also lie on one line.',
-      fr: 'Des axes de coordonnées. Le vecteur v = (1, 1) et son image Av = (5, 5) sont sur la même droite ; le vecteur w = (1, −2) et son image Aw = (2, −4) aussi.',
-      es: 'Ejes de coordenadas. El vector v = (1, 1) y su imagen Av = (5, 5) están en la misma recta; el vector w = (1, −2) y su imagen Aw = (2, −4) también.',
-      ja: '座標軸。ベクトル v = (1, 1) とその像 Av = (5, 5) は同じ直線上にあり、ベクトル w = (1, −2) とその像 Aw = (2, −4) も同じ直線上にあります。',
-      zh: '坐标轴。向量 v = (1, 1) 与它的像 Av = (5, 5) 在同一直线上；向量 w = (1, −2) 与它的像 Aw = (2, −4) 也在同一直线上。'
+      en: "A grid with axes. The eigenvectors and their images under A are drawn in the solution.",
+      fr: "Une grille avec des axes. Les vecteurs propres et leurs images par A sont tracés dans la solution.",
+      es: "Una cuadrícula con ejes. Los vectores propios y sus imágenes por A se dibujan en la solución.",
+      ja: "座標軸つきの方眼。固有ベクトルと A による像は解答で描きます。",
+      zh: "带坐标轴的网格。特征向量及其在 A 下的像在解答中画出。"
     },
     hint: {
       en: 'Solve $\\det(A - \\lambda I) = 0$, a quadratic equation in $\\lambda$.',
@@ -47,11 +47,13 @@
       const F = Figure(svg, { w: X1 - X0, h: Y1 - Y0, scale: 26, pad: 18 });
       grid(F, 0, 0, X1 - X0, Y1 - Y0);
       F.seg(T([X0, 0]), T([X1, 0]), 'axis'); F.seg(T([0, Y0]), T([0, Y1]), 'axis');
-      F.seg(T([-1, -1]), T([6, 6]), 'seg thin'); F.seg(T([-0.5, 1]), T([2.6, -5.2]), 'seg thin');
-      arrow(F, T([0, 0]), T([5, 5]), 'vec two'); arrow(F, T([0, 0]), T([1, 1]), 'vec');
-      arrow(F, T([0, 0]), T([2, -4]), 'vec two'); arrow(F, T([0, 0]), T([1, -2]), 'vec');
-      F.text(T([1, 1]), 'v', 'pt', 12, 4); F.text(T([5, 5]), 'Av', 'pt', 16, 6);
-      F.text(T([1, -2]), 'w', 'pt', 12, 0); F.text(T([2, -4]), 'Aw', 'pt', 18, 4);
+      F.reveal = () => {
+        F.seg(T([-1, -1]), T([6, 6]), 'seg thin'); F.seg(T([-0.5, 1]), T([2.6, -5.2]), 'seg thin');
+        arrow(F, T([0, 0]), T([5, 5]), 'vec two'); arrow(F, T([0, 0]), T([1, 1]), 'vec');
+        arrow(F, T([0, 0]), T([2, -4]), 'vec two'); arrow(F, T([0, 0]), T([1, -2]), 'vec');
+        F.text(T([1, 1]), 'v', 'pt', 12, 4); F.text(T([5, 5]), 'Av', 'pt', 16, 6);
+        F.text(T([1, -2]), 'w', 'pt', 12, 0); F.text(T([2, -4]), 'Aw', 'pt', 18, 4);
+      };
       return F;
     },
     options: [
@@ -148,6 +150,7 @@
         fig(F) { F.draw(F.seg(T([0, 0]), T([5, 5]), 'hl yellow', 'fills'), 800); F.draw(F.seg(T([0, 0]), T([2, -4]), 'hl pink', 'fills'), 800, 400); F.fadeIn(F.text(T([3, 3]), '×5', 'len', -18, -6), 400, 800); F.fadeIn(F.text(T([1.5, -3]), '×2', 'len', 18, 0), 400, 1100); }
       },
       {
+        fig(F) { if (F.reveal) F.reveal(); },
         title: { en: 'Check with trace and determinant', fr: 'Vérifier avec la trace et le déterminant', es: 'Comprobar con la traza y el determinante', ja: 'トレースと行列式で確認', zh: '用迹和行列式验证' },
         lines: ['2 + 5 = 7 = 4 + 3 = \\operatorname{tr} A', '2\\cdot 5 = 10 = 4\\cdot3 - 1\\cdot2 = \\det A'],
         note: {

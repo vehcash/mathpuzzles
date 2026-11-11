@@ -34,11 +34,11 @@
       zh: "<b>下列哪些等于 $3\\cos^2x+2\\sin x+1$（$x$ 为实数）的最大值？</b>"
     },
     figureText: {
-      en: "The parabola 4 + 2s − 3s² drawn for s = sin x between −1 and 1, with its top at s = 1/3.",
-      fr: "La parabole 4 + 2s − 3s² tracée pour s = sin x entre −1 et 1, avec son sommet en s = 1/3.",
-      es: "La parábola 4 + 2s − 3s² dibujada para s = sen x entre −1 y 1, con su vértice en s = 1/3.",
-      ja: "s = sin x として −1 から 1 で描いた放物線 4 + 2s − 3s²。頂点は s = 1/3。",
-      zh: "令 s = sin x，在 −1 到 1 上画出抛物线 4 + 2s − 3s²，顶点在 s = 1/3。"
+      en: "Axes in s = sin x with the allowed strip −1 ≤ s ≤ 1 marked.",
+      fr: "Axes en s = sin x avec la bande permise −1 ≤ s ≤ 1.",
+      es: "Ejes en s = sen x con la franja permitida −1 ≤ s ≤ 1.",
+      ja: "s = sin x の座標軸と、許される範囲 −1 ≤ s ≤ 1。",
+      zh: "以 s = sin x 为横轴，标出允许范围 −1 ≤ s ≤ 1。"
     },
     hint: {
       en: "Replace $\\cos^2x$ by $1-\\sin^2x$ and call $\\sin x=s$.",
@@ -58,10 +58,12 @@
       const F = Figure(svg, { w: 3.0, h: 3.6, scale: 60, pad: 18 });
       const T = F.T = axes(F, -1.4, 1.6, -0.8, 2.8, { xl: 's' });
       const g = s => (4 + 2 * s - 3 * s * s) / 2;
-      plot(F, T, g, -1, 1, 'graph');
-      F.seg(T([-1, 0]), T([-1, g(-1)]), 'seg thin'); F.seg(T([1, 0]), T([1, g(1)]), 'seg thin');
+      F.seg(T([-1, 0]), T([-1, 2.6]), 'seg thin dashc'); F.seg(T([1, 0]), T([1, 2.6]), 'seg thin dashc');
       F.text(T([-1, 0]), '−1', 'tick', -12, -10); F.text(T([1, 0]), '1', 'tick', 10, 12);
+      F.reveal = () => {
+      plot(F, T, g, -1, 1, 'graph');
       F.dot(T([1 / 3, g(1 / 3)])); F.text(T([1 / 3, g(1 / 3)]), '13/3', 'len small', 0, -14);
+      };
       return F;
     },
     options: [
@@ -149,6 +151,9 @@
           zh: "配方"
         },
         lines: ["4+2s-3s^2=\\tfrac{13}{3}-3\\left(s-\\tfrac13\\right)^2\\le\\boxed{\\tfrac{13}{3}}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Equality when $\\sin x=\\tfrac13$, which happens for some $x$.",
           fr: "Égalité quand $\\sin x=\\tfrac13$, ce qui arrive pour un certain $x$.",

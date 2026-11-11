@@ -25,11 +25,11 @@
       zh: '在三角形 $ABC$ 中，$a = \\sqrt3$，$b = \\sqrt2$，$B = 45^\\circ$（边 $a$ 对角 $A$，边 $b$ 对角 $B$）。<b>角 $A$ 可能是下列哪些？</b>'
     },
     figureText: {
-      en: 'Side BC = a = √3 is horizontal with B on the left. A ray from B makes 45° with BC. A circle around C with radius b = √2 cuts the ray in two points, giving two possible positions A1 and A2 of vertex A.',
-      fr: 'Le côté BC = a = √3 est horizontal avec B à gauche. Une demi-droite issue de B fait 45° avec BC. Un cercle autour de C de rayon b = √2 coupe la demi-droite en deux points, ce qui donne deux positions possibles A1 et A2 du sommet A.',
-      es: 'El lado BC = a = √3 es horizontal con B a la izquierda. Una semirrecta desde B forma 45° con BC. Una circunferencia alrededor de C con radio b = √2 corta la semirrecta en dos puntos, dando dos posiciones posibles A1 y A2 del vértice A.',
-      ja: '辺 BC = a = √3 は水平で、B が左。B からの半直線が BC と 45° をなします。C を中心とする半径 b = √2 の円が半直線と2点で交わり、頂点 A の位置 A1 と A2 の2通りが得られます。',
-      zh: '边 BC = a = √3 水平，B 在左侧。从 B 出发的射线与 BC 成 45°。以 C 为圆心、b = √2 为半径的圆与射线交于两点，得到顶点 A 的两个可能位置 A1 和 A2。'
+      en: "Side BC = √3 with the 45° angle at B and the ray on which A must lie. Where A can be is found in the solution.",
+      fr: "Le côté BC = √3, l’angle de 45° en B et la demi-droite où doit se trouver A. Les positions de A sont trouvées dans la solution.",
+      es: "El lado BC = √3, el ángulo de 45° en B y la semirrecta donde debe estar A. Dónde puede estar A se halla en la solución.",
+      ja: "辺 BC = √3、B の 45° の角と A が乗る半直線。A の位置は解答で求めます。",
+      zh: "边 BC = √3、B 处 45° 角以及 A 所在的射线。A 的位置在解答中求出。"
     },
     hint: {
       en: 'The law of sines gives $\\sin A$ — and a sine value belongs to two angles.',
@@ -48,12 +48,18 @@
     figure(svg) {
       const F = Figure(svg, { w: 2.25, h: 1.75, scale: 150, pad: 22 });
       F.seg(aB, [aB[0] + 1.6, aB[1] + 1.6], 'sight');
-      F.seg(aB, aC); F.seg(aC, aA1); F.seg(aC, aA2, 'thin');
-      F.arc(aC, S2, 82, 192, 'dashc', 'base');
+      F.seg(aB, aC); 
       F.arc(aB, 0.5, 0, 45); F.text([aB[0] + 0.64, aB[1] + 0.12], '45°', 'len small');
-      [aB, aC, aA1, aA2].forEach(p => F.dot(p));
-      F.text(aB, 'B', 'pt', -10, 12); F.text(aC, 'C', 'pt', 10, 12); F.text(aA1, 'A₁', 'pt', -10, -10); F.text(aA2, 'A₂', 'pt', -14, -6);
-      F.text(mid(aB, aC), 'a = √3', 'len small', 0, 16); F.text(mid(aC, aA1), 'b', 'len it', 10, -4); F.text(mid(aC, aA2), 'b', 'len it', 2, -10);
+      F.text(aB, 'B', 'pt', -10, 12); F.text(aC, 'C', 'pt', 10, 12); 
+      F.text(mid(aB, aC), 'a = √3', 'len small', 0, 16); 
+      F.dot(aB); F.dot(aC);
+      F.reveal = () => {
+        F.seg(aC, aA1); F.seg(aC, aA2, 'thin');
+        F.arc(aC, S2, 82, 192, 'dashc', 'base');
+        [aB, aC, aA1, aA2].forEach(p => F.dot(p));
+        F.text(aA1, 'A₁', 'pt', -10, -10); F.text(aA2, 'A₂', 'pt', -14, -6);
+        F.text(mid(aC, aA1), 'b', 'len it', 10, -4); F.text(mid(aC, aA2), 'b', 'len it', 2, -10);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -135,7 +141,7 @@
         zh: '从几何上看：以 $C$ 为圆心、$b$ 为半径的圆与从 $B$ 出发的射线有两个交点。'
       },
         fig(F) { F.draw(F.arc(aC, S2, 82, 192, 'strong', 'over'), 900); F.fadeIn(F.path([aB, aC, aA1], 'fill-yellow', 'fills'), 600, 500); F.fadeIn(F.path([aB, aC, aA2], 'fill-pink', 'fills'), 600, 900); } },
-      { title: { en: 'The two triangles', fr: 'Les deux triangles', es: 'Los dos triángulos', ja: '2つの三角形', zh: '两个三角形' }, lines: ['A_1:\\ A = 60^\\circ,\\ C = 75^\\circ \\qquad A_2:\\ A = 120^\\circ,\\ C = 15^\\circ'] },
+      { fig(F) { if (F.reveal) F.reveal(); }, title: { en: 'The two triangles', fr: 'Les deux triangles', es: 'Los dos triángulos', ja: '2つの三角形', zh: '两个三角形' }, lines: ['A_1:\\ A = 60^\\circ,\\ C = 75^\\circ \\qquad A_2:\\ A = 120^\\circ,\\ C = 15^\\circ'] },
       { title: {
         en: 'Check every option',
         fr: 'Vérifier chaque option',

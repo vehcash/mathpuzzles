@@ -34,11 +34,11 @@
       zh: "$A$ 是 $2\\times2$ 矩阵，$\\operatorname{tr}A = 5$，$\\det A = 6$，$I$ 为单位矩阵。<b>下列哪些一定成立？</b>"
     },
     figureText: {
-      en: "The graph of the characteristic polynomial λ² − 5λ + 6, crossing the axis at the eigenvalues 2 and 3.",
-      fr: "Le graphe du polynôme caractéristique λ² − 5λ + 6, qui coupe l’axe aux valeurs propres 2 et 3.",
-      es: "La gráfica del polinomio característico λ² − 5λ + 6, que corta el eje en los valores propios 2 y 3.",
-      ja: "固有多項式 λ² − 5λ + 6 のグラフ。固有値 2 と 3 で軸と交わります。",
-      zh: "特征多项式 λ² − 5λ + 6 的图像，在特征值 2 和 3 处与轴相交。"
+      en: "Axes for the characteristic polynomial p(λ). Its graph is drawn in the solution.",
+      fr: "Axes pour le polynôme caractéristique p(λ). Sa courbe est tracée dans la solution.",
+      es: "Ejes para el polinomio característico p(λ). Su gráfica se dibuja en la solución.",
+      ja: "固有多項式 p(λ) の座標軸。グラフは解答で描きます。",
+      zh: "特征多项式 p(λ) 的坐标轴。图像在解答中画出。"
     },
     hint: {
       en: "The characteristic polynomial is $\\lambda^2 - 5\\lambda + 6$, and $A$ itself satisfies it.",
@@ -57,8 +57,10 @@
     figure(svg) {
       const F = Figure(svg, { w: 5, h: 3.4, scale: 50, pad: 18 });
       const T = F.T = axes(F, -0.5, 4.5, -0.8, 2.6, { xl: 'λ', yl: 'p(λ)' });
-      plot(F, T, l => l * l - 5 * l + 6, 0.6, 4.4, 'graph', 'base', -0.8, 2.6);
-      F.dot(T([2, 0])); F.dot(T([3, 0])); F.text(T([2, 0]), '2', 'len', -6, 16); F.text(T([3, 0]), '3', 'len', 6, 16);
+      F.reveal = () => {
+        plot(F, T, l => l * l - 5 * l + 6, 0.6, 4.4, 'graph', 'base', -0.8, 2.6);
+        F.dot(T([2, 0])); F.dot(T([3, 0])); F.text(T([2, 0]), '2', 'len', -6, 16); F.text(T([3, 0]), '3', 'len', 6, 16);
+      };
       return F;
     },
     options: [
@@ -139,6 +141,7 @@
         fig(F) { F.fadeIn(F.circle(F.T([2, 0]), 0.14, 'halo', 'over'), 300); F.fadeIn(F.circle(F.T([3, 0]), 0.14, 'halo', 'over'), 300, 200); }
       },
       {
+        fig(F) { if (F.reveal) F.reveal(); },
         title: {
           en: "Cayley–Hamilton",
           fr: "Cayley–Hamilton",

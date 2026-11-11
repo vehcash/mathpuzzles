@@ -28,11 +28,11 @@
       zh: "<b>$\\displaystyle\\lim_{x\\to0}\\frac{e^x - 1 - x}{x^2}$ 等于多少？</b>"
     },
     figureText: {
-      en: "The graph of (eˣ − 1 − x)/x² near 0, with a hole at x = 0 where the curve approaches the height 1/2.",
-      fr: "Le graphe de (eˣ − 1 − x)/x² près de 0, avec un trou en x = 0 où la courbe tend vers la hauteur 1/2.",
-      es: "La gráfica de (eˣ − 1 − x)/x² cerca de 0, con un hueco en x = 0 donde la curva se acerca a la altura 1/2.",
-      ja: "0 付近の (eˣ − 1 − x)/x² のグラフ。x = 0 に穴があり、曲線は高さ 1/2 に近づきます。",
-      zh: "(eˣ − 1 − x)/x² 在 0 附近的图像，x = 0 处有一个空心点，曲线趋近于高度 1/2。"
+      en: "A grid around x = 0. The graph of the expression is drawn in the solution.",
+      fr: "Une grille autour de x = 0. La courbe de l’expression est tracée dans la solution.",
+      es: "Una cuadrícula alrededor de x = 0. La gráfica de la expresión se dibuja en la solución.",
+      ja: "x = 0 付近の方眼。式のグラフは解答で描きます。",
+      zh: "x = 0 附近的网格。该式的图像在解答中画出。"
     },
     hint: {
       en: "$e^x = 1 + x + \\dfrac{x^2}{2} + \\dfrac{x^3}{6} + \\dots$",
@@ -51,9 +51,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 6, h: 3.4, scale: 46, pad: 18 });
       const T = F.T = axes(F, -3, 3, -0.3, 3.1, { grid: true });
-      plot(F, T, f, -2.9, -0.02, 'graph', 'base', -0.3, 3.1); plot(F, T, f, 0.02, 1.8, 'graph', 'base', -0.3, 3.1);
-      F.seg(T([-3, 0.5]), T([3, 0.5]), 'seg thin');
-      F.circle(T([0, 0.5]), 0.08, 'halo'); F.text(T([0, 0.5]), '1/2', 'len small', -18, -8);
+      F.reveal = () => {
+        plot(F, T, f, -2.9, -0.02, 'graph', 'base', -0.3, 3.1); plot(F, T, f, 0.02, 1.8, 'graph', 'base', -0.3, 3.1);
+        F.seg(T([-3, 0.5]), T([3, 0.5]), 'seg thin');
+        F.circle(T([0, 0.5]), 0.08, 'halo'); F.text(T([0, 0.5]), '1/2', 'len small', -18, -8);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -151,7 +153,7 @@
           ja: "ロピタルを2回使っても同じ：$\\frac{e^x - 1}{2x} \\to \\frac{e^x}{2} \\to \\frac12$。",
           zh: "两次用洛必达也一样：$\\frac{e^x - 1}{2x} \\to \\frac{e^x}{2} \\to \\frac12$。"
         },
-        fig(F) { F.draw(F.seg(F.T([-3, 0.5]), F.T([3, 0.5]), 'hl yellow', 'over'), 700); }
+        fig(F) { if (F.reveal) F.reveal(); F.draw(F.seg(F.T([-3, 0.5]), F.T([3, 0.5]), 'hl yellow', 'over'), 700); }
       },
       {
         title: {

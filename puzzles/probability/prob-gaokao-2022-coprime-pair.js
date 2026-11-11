@@ -34,11 +34,11 @@
       zh: "从 $2, 3, 4, 5, 6, 7, 8$ 中随机取两个不同的整数。<b>下列哪些等于它们互质（公约数只有 $1$）的概率？</b>"
     },
     figureText: {
-      en: "The seven numbers as points on a circle, with a line joining every pair that shares a factor: only the 7 pairs among the even numbers and 3–6 are joined.",
-      fr: "Les sept nombres placés sur un cercle, avec un trait entre chaque paire ayant un facteur commun : seules les 7 paires de nombres pairs et 3–6 sont reliées.",
-      es: "Los siete números sobre un círculo, con una línea entre cada par con un factor común: solo los 7 pares de números pares y 3–6 están unidos.",
-      ja: "円周上の7つの数。共通因数をもつ組を線で結ぶ：偶数どうしと 3–6 の7組だけ。",
-      zh: "七个数放在圆周上，有公因数的每对之间连线：只有偶数之间和 3–6 共 7 对相连。"
+      en: "The seven numbers 2 to 8 as points on a circle. The pairs that share a factor are joined in the solution.",
+      fr: "Les sept nombres de 2 à 8 sur un cercle. Les paires ayant un facteur commun sont reliées dans la solution.",
+      es: "Los siete números del 2 al 8 en una circunferencia. Los pares con un factor común se unen en la solución.",
+      ja: "円周上の 2〜8 の7つの数。公約数をもつ組は解答で結びます。",
+      zh: "圆上的 2 到 8 七个数。有公因数的数对在解答中连线。"
     },
     hint: {
       en: "It is easier to count the pairs that are <i>not</i> coprime.",
@@ -57,9 +57,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 3.6, h: 3.6, scale: 66, pad: 20 });
       const N = [2, 3, 4, 5, 6, 7, 8], P = {}; N.forEach((n, k) => { const t = Math.PI / 2 - 2 * Math.PI * k / 7; P[n] = [1.8 + 1.45 * Math.cos(t), 1.8 + 1.45 * Math.sin(t)]; });
-      const g = (a, b) => b ? g(b, a % b) : a;
-      for (let i = 0; i < 7; i++) for (let j = i + 1; j < 7; j++) if (g(N[i], N[j]) > 1) { const A = P[N[i]], B = P[N[j]], d = Math.hypot(B[0] - A[0], B[1] - A[1]), t = 0.3 / d; F.seg(lerp(A, B, t), lerp(A, B, 1 - t), 'seg'); }
       N.forEach(n => { F.circle(P[n], 0.22, 'tri fill-yellow'); F.text(P[n], String(n), 'len', 0, 1); });
+      F.reveal = () => {
+      const g = (a, b) => b ? g(b, a % b) : a;
+      for (let i = 0; i < 7; i++) for (let j = i + 1; j < 7; j++) if (g(N[i], N[j]) > 1) { const A = P[N[i]], B = P[N[j]], d = Math.hypot(B[0] - A[0], B[1] - A[1]), t = 0.3 / d; F.seg(lerp(A, B, t), lerp(A, B, 1 - t), 'seg', 'fills'); }
+      };
       return F;
     },
     options: [
@@ -147,6 +149,9 @@
           zh: "有公因数的对"
         },
         lines: ["\\{2,4\\},\\{2,6\\},\\{2,8\\},\\{4,6\\},\\{4,8\\},\\{6,8\\},\\{3,6\\}:\\ 7", "P=1-\\tfrac{7}{21}=\\boxed{\\tfrac23}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Any two of the four even numbers, plus $3$ and $6$.",
           fr: "Deux des quatre nombres pairs, plus $3$ et $6$.",

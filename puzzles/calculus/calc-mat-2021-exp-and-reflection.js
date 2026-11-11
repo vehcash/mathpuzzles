@@ -34,11 +34,11 @@
       zh: "<b>下列哪些等于由 $y=e^x$、$y=1-e^x$ 与 $y$ 轴围成区域的面积？</b>"
     },
     figureText: {
-      en: "The curves y = eˣ and y = 1 − eˣ crossing at height 1/2, at x = −ln 2; the thin region between them and the y-axis is shaded.",
-      fr: "Les courbes y = eˣ et y = 1 − eˣ se coupent à la hauteur 1/2, en x = −ln 2 ; la région entre elles et l’axe des y est grisée.",
-      es: "Las curvas y = eˣ e y = 1 − eˣ se cortan a altura 1/2, en x = −ln 2; la región entre ellas y el eje y está sombreada.",
-      ja: "曲線 y = eˣ と y = 1 − eˣ は高さ 1/2、x = −ln 2 で交わる。2曲線と y 軸の間に色付け。",
-      zh: "曲线 y = eˣ 与 y = 1 − eˣ 在高度 1/2、x = −ln 2 处相交；它们与 y 轴之间的区域涂色。"
+      en: "The curves y = eˣ and y = 1 − eˣ, with the region between them and the y-axis shaded.",
+      fr: "Les courbes y = eˣ et y = 1 − eˣ, avec la région entre elles et l’axe des y grisée.",
+      es: "Las curvas y = eˣ e y = 1 − eˣ, con la región entre ellas y el eje y sombreada.",
+      ja: "曲線 y = eˣ と y = 1 − eˣ、それらと y 軸の間に色付け。",
+      zh: "曲线 y = eˣ 与 y = 1 − eˣ，它们与 y 轴之间的区域涂色。"
     },
     hint: {
       en: "They meet where $e^x=\\tfrac12$. Between there and $x=0$, which curve is on top?",
@@ -63,8 +63,10 @@
       F.path(q, 'fill-yellow', 'fills');
       plot(F, T, Math.exp, -2.5, 0.75, 'graph');
       plot(F, T, x => 1 - Math.exp(x), -2.5, 0.6, 'graph');
-      F.dot(T([x0, 0.5])); F.text(T([x0, 0.5]), '−ln 2', 'len small', 0, 24);
       F.text(T([0.75, Math.exp(0.75)]), 'eˣ', 'len small', 12, 0); F.text(T([0.6, 1 - Math.exp(0.6)]), '1 − eˣ', 'len small', 26, 0);
+      F.reveal = () => {
+      F.dot(T([x0, 0.5])); F.text(T([x0, 0.5]), '−ln 2', 'len small', 0, 24);
+      };
       return F;
     },
     options: [
@@ -152,6 +154,9 @@
           zh: "对差积分"
         },
         lines: ["\\int_{-\\ln2}^{0}\\big(e^x-(1-e^x)\\big)dx=\\Big[2e^x-x\\Big]_{-\\ln2}^{0}=2-\\left(1+\\ln2\\right)=\\boxed{1-\\ln2}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "About $0.31$: a thin sliver, as the picture shows.",
           fr: "Environ $0{,}31$ : une fine bande, comme sur la figure.",

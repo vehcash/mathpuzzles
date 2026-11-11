@@ -28,6 +28,7 @@
     onGeo() { ui.geo && ui.geo.sync(); ui.tools && ui.tools.sync(); },
     onSteps(list) { ui.sys.openSteps(list); },
     onEditSystem(m) { ui.sys.open(m.system, m); },
+    onEditMath(m) { ui.eq && ui.eq.edit(m); },
     onCalcSteps(src) { ui.steps.open(src); },
     onModeChange() { ui.ask && ui.ask.render(); }
   });
@@ -47,7 +48,7 @@
     const mb = $('#eq-matrix'); if (mb) { mb.hidden = !ui.mat; mb.onclick = () => ui.mat && ui.mat.toggle(); }
   };
   if (window.BoardMatrix) initMatrix();
-  else { const s = document.createElement('script'); s.src = 'js/matrix.js?v=20261111d'; s.onload = initMatrix; document.head.appendChild(s); }
+  else { const s = document.createElement('script'); s.src = 'js/matrix.js?v=20261111e'; s.onload = initMatrix; document.head.appendChild(s); }
   ui.tools = BoardUI.Toolbox(board, $('#toolbox'), ui.eq, ui.sys);
   ui.graphs.sync(); ui.geo.sync(); ui.tools.sync();
   I18N.onChange(() => { board.render(); ui.graphs.sync(); ui.geo.sync(); ui.tools.sync(); if (!$('#ask-panel').hidden) ui.ask.render(); ui.eq.set && ui.eq.refresh && ui.eq.refresh(); });

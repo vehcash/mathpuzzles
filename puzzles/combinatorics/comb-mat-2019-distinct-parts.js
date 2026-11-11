@@ -34,11 +34,11 @@
       zh: "展开 $p(x)=(1+x)(1+x^2)(1+x^3)(1+x^4)(1+x^5)(1+x^6)$。<b>下列哪些等于 $x^{10}$ 的系数？</b>"
     },
     figureText: {
-      en: "A bar chart of all 22 coefficients of p, from x⁰ to x²¹. It is symmetric, and the tallest bars, of height 5, are at x⁹, x¹⁰, x¹¹ and x¹².",
-      fr: "Un diagramme en barres des 22 coefficients de p, de x⁰ à x²¹. Il est symétrique et les plus hautes barres, de hauteur 5, sont en x⁹, x¹⁰, x¹¹ et x¹².",
-      es: "Un diagrama de barras de los 22 coeficientes de p, de x⁰ a x²¹. Es simétrico y las barras más altas, de altura 5, están en x⁹, x¹⁰, x¹¹ y x¹².",
-      ja: "p の22個の係数（x⁰〜x²¹）の棒グラフ。左右対称で、最も高い棒（高さ 5）は x⁹、x¹⁰、x¹¹、x¹²。",
-      zh: "p 的 22 个系数（x⁰ 到 x²¹）的条形图。它左右对称，最高的条（高 5）在 x⁹、x¹⁰、x¹¹、x¹²。"
+      en: "The product written out above an axis of powers of x from 0 to 21. The coefficients are drawn as bars in the solution.",
+      fr: "Le produit écrit au-dessus d’un axe des puissances de x de 0 à 21. Les coefficients sont dessinés en barres dans la solution.",
+      es: "El producto escrito sobre un eje de potencias de x de 0 a 21. Los coeficientes se dibujan como barras en la solución.",
+      ja: "0 から 21 までの x のべきの軸と積の式。係数は解答で棒グラフにします。",
+      zh: "0 到 21 的 x 幂次轴上方写出乘积。系数在解答中画成条形。"
     },
     hint: {
       en: "Each bracket contributes either $1$ or $x^k$: a term $x^{10}$ is a choice of distinct numbers from $1$ to $6$ adding up to $10$.",
@@ -58,9 +58,12 @@
       const F = Figure(svg, { w: 6.0, h: 2.8, scale: 54, pad: 18 });
       const co = [1, 1, 1, 2, 2, 3, 4, 4, 4, 5, 5, 5, 5, 4, 4, 4, 3, 2, 2, 1, 1, 1];
       F.seg([0.1, 0.3], [5.9, 0.3], 'axis');
-      co.forEach((c, n) => F.rect(0.2 + n * 0.26, 0.3, 0.2, c * 0.42, n === 10 ? 'tri fill-yellow' : 'tri fill-blue'));
       F.text([0.3, 0.3], '0', 'tick', 0, 12); F.text([0.3 + 10 * 0.26, 0.3], '10', 'tick', 0, 12); F.text([0.3 + 21 * 0.26, 0.3], '21', 'tick', 0, 12);
+      F.text([3.0, 1.6], '(1+x)(1+x²)(1+x³)(1+x⁴)(1+x⁵)(1+x⁶)', 'len small', 0, 0);
+      F.reveal = () => {
+      co.forEach((c, n) => F.rect(0.2 + n * 0.26, 0.3, 0.2, c * 0.42, n === 10 ? 'tri fill-yellow' : 'tri fill-blue'));
       F.text([0.3 + 10 * 0.26, 0.3 + 5 * 0.42], '5', 'len small', 0, -10);
+      };
       return F;
     },
     options: [
@@ -148,6 +151,9 @@
           zh: "列举"
         },
         lines: ["\\{4,6\\},\\ \\{1,3,6\\},\\ \\{1,4,5\\},\\ \\{2,3,5\\},\\ \\{1,2,3,4\\} \\;\\Rightarrow\\; \\boxed{5}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Taking complements ($1+\\dots+6=21$) pairs sum $10$ with sum $11$.",
           fr: "Le complémentaire ($1+\\dots+6=21$) associe la somme $10$ à la somme $11$.",

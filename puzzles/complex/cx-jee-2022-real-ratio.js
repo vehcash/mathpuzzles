@@ -34,11 +34,11 @@
       zh: "$z$ 是虚部非零的复数，且 $\\dfrac{2+3z+4z^2}{2-3z+4z^2}$ 为实数。<b>下列哪些正确？</b>"
     },
     figureText: {
-      en: "The Argand plane with the circle |z| = 1/√2: every valid z lies on it, off the real axis.",
-      fr: "Le plan complexe avec le cercle |z| = 1/√2 : tout z valable s’y trouve, hors de l’axe réel.",
-      es: "El plano complejo con la circunferencia |z| = 1/√2: todo z válido está en ella, fuera del eje real.",
-      ja: "複素平面上の円 |z| = 1/√2。条件を満たす z はすべて実軸以外のこの円上。",
-      zh: "复平面上的圆 |z| = 1/√2：所有满足条件的 z 都在圆上（实轴除外）。"
+      en: "The complex plane with a point z off the real axis. The set of valid z is drawn in the solution.",
+      fr: "Le plan complexe avec un point z hors de l’axe réel. L’ensemble des z valables est tracé dans la solution.",
+      es: "El plano complejo con un punto z fuera del eje real. El conjunto de z válidos se dibuja en la solución.",
+      ja: "実軸外の点 z を記した複素平面。条件を満たす z の集合は解答で描きます。",
+      zh: "复平面上实轴外的一点 z。满足条件的 z 的集合在解答中画出。"
     },
     hint: {
       en: "Divide top and bottom by $z$: the ratio is real exactly when $u=\\tfrac{2}{z}+4z$ is real.",
@@ -57,9 +57,12 @@
     figure(svg) {
       const F = Figure(svg, { w: 3.4, h: 3.4, scale: 80, pad: 18 });
       const T = F.T = argand(F, -1.6, 1.6, -1.6, 1.6);
+      const t = 1.0, Z = [0.7071 * Math.cos(t), 0.7071 * Math.sin(t)];
+      F.dot(T(Z)); F.text(T(Z), 'z', 'pt', 10, -8);
+      F.reveal = () => {
       F.circle(T([0, 0]), 0.7071, 'conic');
-      const t = 1.0; F.dot(T([0.7071 * Math.cos(t), 0.7071 * Math.sin(t)])); F.text(T([0.7071 * Math.cos(t), 0.7071 * Math.sin(t)]), 'z', 'pt', 10, -8);
       F.text(T([0.5, -0.5]), '1/√2', 'len small', 22, 10);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -167,6 +170,9 @@
           zh: "用 y ≠ 0"
         },
         lines: ["4-\\frac{2}{|z|^2}=0\\iff|z|^2=\\boxed{\\tfrac12}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Every point of that circle off the real axis works.",
           fr: "Tout point de ce cercle hors de l’axe réel convient.",

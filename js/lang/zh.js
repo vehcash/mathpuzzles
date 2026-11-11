@@ -516,3 +516,5 @@ I18N.add("zh", {
 "{n} swap(s): sign": "交换 {n} 次：符号",
 "Matrices: determinant, inverse, rank, systems": "矩阵：行列式、逆矩阵、秩、方程组"
 });
+// editing board formulas
+I18N.add("zh", {"Editing the formula on the board": "正在编辑黑板上的公式", "✓ Update": "✓ 更新", "✕ Cancel": "✕ 取消", "Formula updated": "公式已更新", "Formula removed": "公式已删除"});

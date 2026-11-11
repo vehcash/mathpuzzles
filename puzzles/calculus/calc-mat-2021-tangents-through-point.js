@@ -34,11 +34,11 @@
       zh: "有多少个实数 $a$，使 $y=x^3-3x$ 在点 $(a,\\,a^3-3a)$ 处的切线经过 $(2,\\,0)$？<b>下列哪些等于这个个数？</b>"
     },
     figureText: {
-      en: "The cubic y = x³ − 3x with the point (2, 0) marked and the tangent lines drawn from it to the curve.",
-      fr: "La cubique y = x³ − 3x avec le point (2, 0) et les tangentes à la courbe qui en partent.",
-      es: "La cúbica y = x³ − 3x con el punto (2, 0) marcado y las tangentes a la curva que pasan por él.",
-      ja: "3次曲線 y = x³ − 3x と点 (2, 0)、そこを通る接線。",
-      zh: "三次曲线 y = x³ − 3x，标出点 (2, 0) 以及过该点的切线。"
+      en: "The cubic y = x³ − 3x and the point (2, 0). The tangents through that point are drawn in the solution.",
+      fr: "La cubique y = x³ − 3x et le point (2, 0). Les tangentes passant par ce point sont tracées dans la solution.",
+      es: "La cúbica y = x³ − 3x y el punto (2, 0). Las tangentes que pasan por él se dibujan en la solución.",
+      ja: "3次曲線 y = x³ − 3x と点 (2, 0)。その点を通る接線は解答で描きます。",
+      zh: "三次曲线 y = x³ − 3x 与点 (2, 0)。过该点的切线在解答中画出。"
     },
     hint: {
       en: "Write the tangent at $a$, put $(2,0)$ into it and count the real roots of the cubic in $a$.",
@@ -58,12 +58,14 @@
       const F = Figure(svg, { w: 5.4, h: 5.0, scale: 44, pad: 18 });
       const T = F.T = axes(F, -2.4, 3.0, -2.6, 2.4);
       plot(F, T, x => x ** 3 - 3 * x, -2.2, 2.2, 'graph', 'base', -2.6, 2.4);
+      F.dot(T([2, 0])); F.text(T([2, 0]), '(2, 0)', 'len small', 22, 36);
+      F.reveal = () => {
       [-0.879385, 1.347296, 2.532089].forEach(a => {
         const m = 3 * a * a - 3, c = a ** 3 - 3 * a;
         plot(F, T, x => m * (x - a) + c, -2.4, 2.6, 'seg thin', 'base', -2.6, 2.4);
         if (Math.abs(c) < 2.4) F.dot(T([a, c]));
       });
-      F.dot(T([2, 0])); F.text(T([2, 0]), '(2, 0)', 'len small', 22, 36);
+      };
       return F;
     },
     options: [
@@ -168,6 +170,9 @@
           zh: "数实根"
         },
         lines: ["g(-1)=-1<0,\\; g(0)=3>0,\\; g(2)=-1<0,\\; g(3)=3>0\\;\\Rightarrow\\;\\boxed{3}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Three sign changes give three real roots.",
           fr: "Trois changements de signe : trois racines réelles.",

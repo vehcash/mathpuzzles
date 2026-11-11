@@ -28,11 +28,11 @@
       zh: "设 $f(x) = 2\\sin\\!\\left(2x + \\tfrac{\\pi}{3}\\right)$。<b>下列说法中正确的是？</b>"
     },
     figureText: {
-      en: "The graph of 2 sin(2x + π/3) over two periods; its first maximum is at x = π/12.",
-      fr: "Le graphe de 2 sin(2x + π/3) sur deux périodes ; son premier maximum est en x = π/12.",
-      es: "La gráfica de 2 sen(2x + π/3) en dos períodos; su primer máximo está en x = π/12.",
-      ja: "2 sin(2x + π/3) の2周期分のグラフ。最初の最大は x = π/12。",
-      zh: "2 sin(2x + π/3) 两个周期的图像；第一个最大值在 x = π/12 处。"
+      en: "The graph of f(x) = 2 sin(2x + π/3). Key values are marked in the solution.",
+      fr: "La courbe de f(x) = 2 sin(2x + π/3). Les valeurs clés sont marquées dans la solution.",
+      es: "La gráfica de f(x) = 2 sen(2x + π/3). Los valores clave se marcan en la solución.",
+      ja: "f(x) = 2 sin(2x + π/3) のグラフ。主な値は解答で示します。",
+      zh: "f(x) = 2 sin(2x + π/3) 的图像。关键值在解答中标出。"
     },
     hint: {
       en: "For $A\\sin(\\omega x + \\varphi)$: period $\\tfrac{2\\pi}{\\omega}$, amplitude $A$, shift $-\\tfrac{\\varphi}{\\omega}$.",
@@ -52,8 +52,10 @@
       const F = Figure(svg, { w: 7.4, h: 5.4, scale: 40, pad: 18 });
       const T = F.T = axes(F, -0.6, 6.8, -2.7, 2.7);
       plot(F, T, f, -0.5, 6.6);
-      F.seg(T([Math.PI / 12, 0]), T([Math.PI / 12, 2]), 'seg thin');
-      F.text(T([0, 2]), '2', 'len small', -10, 0); F.text(T([Math.PI / 12, 0]), 'π/12', 'len small', 6, 14);
+      F.reveal = () => {
+        F.seg(T([Math.PI / 12, 0]), T([Math.PI / 12, 2]), 'seg thin');
+        F.text(T([0, 2]), '2', 'len small', -10, 0); F.text(T([Math.PI / 12, 0]), 'π/12', 'len small', 6, 14);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -142,6 +144,7 @@
         fig(F) { F.draw(F.seg(F.T([Math.PI / 12, 2]), F.T([Math.PI / 12 + Math.PI, 2]), 'hl yellow', 'over'), 800); }
       },
       {
+        fig(F) { if (F.reveal) F.reveal(); },
         title: {
           en: "Phase shift and maximum",
           fr: "Déphasage et maximum",

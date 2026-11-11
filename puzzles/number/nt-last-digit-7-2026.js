@@ -29,11 +29,11 @@
       zh: '$7^{2026}$ 有 1700 多位数字。<b>它的个位数字是下列哪一个？</b>'
     },
     figureText: {
-      en: 'A cycle diagram of the last digits of the powers of 7: 7¹ ends in 7, 7² in 9, 7³ in 3, 7⁴ in 1, then the pattern repeats.',
-      fr: 'Un diagramme du cycle des derniers chiffres des puissances de 7 : 7¹ se termine par 7, 7² par 9, 7³ par 3, 7⁴ par 1, puis le motif se répète.',
-      es: 'Un diagrama del ciclo de las últimas cifras de las potencias de 7: 7¹ termina en 7, 7² en 9, 7³ en 3, 7⁴ en 1, y luego el patrón se repite.',
-      ja: '7 のべき乗の一の位の周期図：7¹ は 7、7² は 9、7³ は 3、7⁴ は 1 で終わり、その後は繰り返します。',
-      zh: '7 的幂的个位数字循环图：7¹ 个位是 7，7² 是 9，7³ 是 3，7⁴ 是 1，然后循环重复。'
+      en: "A cycle of four nodes for the last digit of 7, 7², 7³, 7⁴, with only the first, 7, filled in. The rest are found in the solution.",
+      fr: "Un cycle de quatre nœuds pour le dernier chiffre de 7, 7², 7³, 7⁴, seul le premier (7) est rempli. Les autres sont trouvés dans la solution.",
+      es: "Un ciclo de cuatro nodos para la última cifra de 7, 7², 7³, 7⁴, con solo la primera (7). Las demás se hallan en la solución.",
+      ja: "7, 7², 7³, 7⁴ の一の位の4つの輪。最初の 7 だけ記入。残りは解答で。",
+      zh: "7、7²、7³、7⁴ 个位数的四节点循环，只填出第一个 7。其余在解答中求出。"
     },
     hint: {
       en: 'Write the last digits of $7, 7^2, 7^3, \\dots$ and look for a pattern.',
@@ -58,12 +58,15 @@
         const a0 = 90 - k * 90 - 20, a1 = 90 - k * 90 - 70;
         const arc = F.arc(nc, nR, a0, a1, 'cyc', 'base'); arc.setAttribute('marker-end', 'url(#arrowhead)');
         const p = node(k); const c = F.circle(p, 0.52, 'node'); c.dataset.k = k;
-        F.text(p, digits[k], 'nodenum');
+        F.text(p, k ? '?' : digits[k], 'nodenum');
         const out = [nc[0] + (nR + 0.95) * Math.cos((90 - k * 90) * Math.PI / 180), nc[1] + (nR + 0.95) * Math.sin((90 - k * 90) * Math.PI / 180)];
         F.text(out, pw[k], 'tick');
       }
       F.text(nc, 'last digit', 'tick');
       F.text([nc[0], nc[1] - 0.45], 'of 7ⁿ', 'tick');
+      F.reveal = () => {
+        for (let k = 1; k < 4; k++) { F.circle(node(k), 0.46, 'fill-yellow', 'over'); F.text(node(k), digits[k], 'nodenum', 0, 0, 'over'); }
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -182,7 +185,7 @@
           ja: '余り 2 → 周期の2番目の数字。',
           zh: '余数为 2 → 周期中的第二个数字。'
         },
-        fig(F) { const c = F.svg.querySelector('.node[data-k="1"]'); c.classList.add('hit'); F.fadeIn(F.circle(node(1), 0.78, 'halo', 'over'), 500, 200); }
+        fig(F) { if (F.reveal) F.reveal(); const c = F.svg.querySelector('.node[data-k="1"]'); c.classList.add('hit'); F.fadeIn(F.circle(node(1), 0.78, 'halo', 'over'), 500, 200); }
       },
       {
         title: {

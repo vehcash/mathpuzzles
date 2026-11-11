@@ -47,8 +47,28 @@
     const remember = v => { recent = [v].concat(recent.filter(r => r !== v)).slice(0, 8); Store.setJSON('chalkproof.recent', recent); api.onRecent && api.onRecent(); };
     const plot = () => { const v = inp.value.trim(); if (!v) return inp.focus(); try { board.plotEquation(v); remember(v); board.onStatus(tr('Plotted {x} — scroll on the axes to zoom, hover the curve to trace', { x: v })); inp.select(); } catch (e) { board.onStatus(e.message); } };
     const place = (opts = {}) => { const v = inp.value.trim(); if (!v) return inp.focus(); if (!describe(v).ok) { board.onStatus('Check the equation first'); return; } board.startPlacing(Object.assign({ ascii: v }, opts)); remember(v); inp.blur(); };
+    // ---- editing a formula that is already on the board (double-click / ✎): it is loaded into this field
+    let editing = null, saved = '';
+    const banner = document.createElement('div'); banner.className = 'eq-editing'; banner.hidden = true;
+    banner.innerHTML = '<span class="lbl">Editing the formula on the board</span><button type="button" class="ok">✓ Update</button><button type="button" class="no">✕ Cancel</button>';
+    root.querySelector('.eq-field').appendChild(banner);
+    banner.onmousedown = e => { if (e.target.closest('button')) e.preventDefault(); };
+    const endEdit = () => { editing = null; banner.hidden = true; root.classList.remove('is-editing'); inp.value = saved; update(); };
+    const commitEdit = () => { const m = editing; if (!m) return; const v = inp.value.trim(); if (v && !describe(v).ok) { board.onStatus('Check the equation first'); inp.focus(); return; } board.commitMath(m, v); endEdit(); board.onStatus(v ? tr('Formula updated') : tr('Formula removed')); };
+    const cancelEdit = () => { if (!editing) return; board.cancelEditMath(); endEdit(); };
+    banner.querySelector('.ok').onclick = commitEdit;
+    banner.querySelector('.no').onclick = cancelEdit;
+    const startEdit = m => {
+      if (!editing) saved = inp.value;
+      editing = m; banner.hidden = false; root.classList.add('is-editing');
+      inp.value = m.ascii || ''; update(); inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length);
+    };
+    inp.addEventListener('keydown', e => {
+      if (editing && (e.key === 'Enter' || e.key === 'Escape')) { e.stopPropagation(); e.preventDefault(); if (e.key === 'Enter') commitEdit(); else cancelEdit(); return; }
+    }, true);
     inp.addEventListener('keydown', e => {
       e.stopPropagation();
+      if (editing) return;
       if (e.key === 'Enter') { e.preventDefault(); const d = describe(inp.value.trim()); if (e.shiftKey || !d.ok || !d.plottable) place(); else plot(); }
       if (e.key === 'Escape') inp.blur();
     });
@@ -66,7 +86,8 @@
       clear: () => { inp.value = ''; update(); inp.focus(); },
       left: () => { const a = Math.max(0, (inp.selectionStart ?? 0) - 1); inp.focus(); inp.setSelectionRange(a, a); },
       right: () => { const a = Math.min(inp.value.length, (inp.selectionEnd ?? 0) + 1); inp.focus(); inp.setSelectionRange(a, a); },
-      refresh: update, plot, place: () => place(), solve, steps, recent: () => recent, onRecent: null, onSteps: null
+      refresh: update, plot, place: () => place(), solve, steps, recent: () => recent, onRecent: null, onSteps: null,
+      edit: startEdit, commitEdit, cancelEdit, isEditing: () => !!editing
     };
     return api;
   }

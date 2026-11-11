@@ -34,11 +34,11 @@
       zh: "$p(x)=x^3-mx^2+x+5+n$，其中 $m$、$n$ 是给定实数。$p$ 的每个根 $z=a+bi$ 都满足 $a=mb^2+nb-1$。<b>下列哪些等于 $p$ 的各根的平方和？</b>"
     },
     figureText: {
-      en: "The three roots in the complex plane: −1 on the real axis and the conjugate pair 2 + i and 2 − i.",
-      fr: "Les trois racines dans le plan complexe : −1 sur l’axe réel et la paire conjuguée 2 + i et 2 − i.",
-      es: "Las tres raíces en el plano complejo: −1 en el eje real y el par conjugado 2 + i y 2 − i.",
-      ja: "複素平面上の3つの解：実軸上の −1 と、共役な組 2 + i、2 − i。",
-      zh: "复平面上的三个根：实轴上的 −1，以及共轭对 2 + i 和 2 − i。"
+      en: "The complex plane where the three roots will be placed. They are plotted in the solution.",
+      fr: "Le plan complexe où seront placées les trois racines. Elles sont placées dans la solution.",
+      es: "El plano complejo donde irán las tres raíces. Se colocan en la solución.",
+      ja: "3つの解を置く複素平面。解は解答で描きます。",
+      zh: "将放置三个根的复平面。根在解答中标出。"
     },
     hint: {
       en: "The coefficients are real, so non-real roots come in conjugate pairs $a\\pm bi$ — and both must satisfy the rule.",
@@ -57,9 +57,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 4.6, h: 3.6, scale: 58, pad: 16 });
       const T = argand(F, -1.6, 3.0, -1.8, 1.8);
+      F.reveal = () => {
       [[-1, 0], [2, 1], [2, -1]].forEach(z => F.dot(T(z)));
       F.text(T([-1, 0]), '−1', 'len', -4, -14); F.text(T([2, 1]), '2 + i', 'len', 26, -6); F.text(T([2, -1]), '2 − i', 'len', 26, 6);
       F.seg(T([2, 1]), T([2, -1]), 'seg thin');
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -168,6 +170,9 @@
           zh: "平方和"
         },
         lines: ["\\sum z_k^2=\\Big(\\sum z_k\\Big)^2-2\\sum_{j<k}z_jz_k=3^2-2\\cdot1=\\boxed{7}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "$\\sum z_k=m=3$ and $\\sum z_jz_k=1$ (the coefficient of $x$).",
           fr: "$\\sum z_k=m=3$ et $\\sum z_jz_k=1$ (le coefficient de $x$).",

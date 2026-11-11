@@ -34,11 +34,11 @@
       zh: "定义在 $\\mathbb{R}$ 上的函数 $f$ 对任意 $x$ 满足 $f(x) > f(x-1)+f(x-2)$，且 $x<3$ 时 $f(x)=x$。<b>下列哪些一定成立？</b>"
     },
     figureText: {
-      en: "Bars for n = 1 to 10 showing the lower bounds of f(n): 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 — each bar is the sum of the two before.",
-      fr: "Des barres pour n = 1 à 10 montrant les minorants de f(n) : 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 — chaque barre est la somme des deux précédentes.",
-      es: "Barras para n = 1 a 10 con las cotas inferiores de f(n): 1, 2, 3, 5, 8, 13, 21, 34, 55, 89; cada barra es la suma de las dos anteriores.",
-      ja: "n = 1〜10 の棒グラフ：f(n) の下界 1, 2, 3, 5, 8, 13, 21, 34, 55, 89。各棒は前の2本の和。",
-      zh: "n = 1 到 10 的柱状图，表示 f(n) 的下界：1, 2, 3, 5, 8, 13, 21, 34, 55, 89——每根是前两根之和。"
+      en: "Bars for n = 1 to 10 with only the first two lower bounds, 1 and 2, drawn. The rest are built in the solution.",
+      fr: "Barres pour n = 1 à 10, avec seulement les deux premières bornes, 1 et 2. Les autres sont construites dans la solution.",
+      es: "Barras para n = 1 a 10 con solo las dos primeras cotas, 1 y 2. El resto se construye en la solución.",
+      ja: "n = 1〜10 の棒。最初の2つの下限 1, 2 だけを描く。残りは解答で作ります。",
+      zh: "n = 1 到 10 的竖条，只画出前两个下界 1 和 2。其余在解答中构造。"
     },
     hint: {
       en: "Look only at whole numbers: $f(1)=1$, $f(2)=2$, then $f(3)>3$, $f(4)>f(3)+f(2)>5$, …",
@@ -57,8 +57,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 6.4, h: 3.4, scale: 52, pad: 16 });
       const b = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
-      b.forEach((v, i) => { const x = 0.3 + i * 0.62, h = v / 30; F.rect(x, 0.35, 0.46, h, i === 9 ? 'tri fill-yellow' : 'tri'); F.text([x + 0.23, 0.35 + h], String(v), 'tick', 0, -8); F.text([x + 0.23, 0.35], String(i + 1), 'tick', 0, 10); });
+      b.forEach((v, i) => { const x = 0.3 + i * 0.62; F.text([x + 0.23, 0.35], String(i + 1), 'tick', 0, 10); if (i < 2) { const h = v / 30; F.rect(x, 0.35, 0.46, h, 'tri'); F.text([x + 0.23, 0.35 + h], String(v), 'tick', 0, -8); } });
       F.seg([0.1, 0.35], [6.4, 0.35], 'axis');
+      F.reveal = () => {
+      b.forEach((v, i) => { if (i < 2) return; const x = 0.3 + i * 0.62, h = v / 30; F.rect(x, 0.35, 0.46, h, i === 9 ? 'tri fill-yellow' : 'tri'); F.text([x + 0.23, 0.35 + h], String(v), 'tick', 0, -8); });
+      };
       return F;
     },
     options: [
@@ -146,6 +149,9 @@
           zh: "读出下界"
         },
         lines: ["b_{10}=89,\\qquad b_{20}=10946", "f(10)>89,\\qquad f(20)>10946>1000"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "These are the only guarantees: $f$ can stay as close to $b_n$ as we like, or be much larger.",
           fr: "Ce sont les seules garanties : $f$ peut rester aussi près de $b_n$ qu’on veut, ou être bien plus grande.",

@@ -28,11 +28,11 @@
       zh: "<b>下列哪些等于 $f(x) = 3\\sin x + 4\\cos x$ 的最大值？</b>"
     },
     figureText: {
-      en: "The graph of 3 sin x + 4 cos x over one period: a sine wave of height 5, with dashed lines at y = 5 and y = −5.",
-      fr: "Le graphe de 3 sin x + 4 cos x sur une période : une sinusoïde de hauteur 5, avec des pointillés en y = 5 et y = −5.",
-      es: "La gráfica de 3 sen x + 4 cos x en un período: una onda de altura 5, con líneas discontinuas en y = 5 e y = −5.",
-      ja: "3 sin x + 4 cos x の1周期のグラフ：高さ 5 の正弦波で、y = 5 と y = −5 に破線。",
-      zh: "3 sin x + 4 cos x 一个周期的图像：振幅为 5 的正弦波，在 y = 5 和 y = −5 处画有虚线。"
+      en: "The graph of f(x) = 3 sin x + 4 cos x over one period. Its highest and lowest levels are marked in the solution.",
+      fr: "La courbe de f(x) = 3 sin x + 4 cos x sur une période. Ses niveaux extrêmes sont marqués dans la solution.",
+      es: "La gráfica de f(x) = 3 sen x + 4 cos x en un periodo. Sus niveles máximo y mínimo se marcan en la solución.",
+      ja: "1周期分の f(x) = 3 sin x + 4 cos x のグラフ。最高・最低の値は解答で示します。",
+      zh: "f(x) = 3 sin x + 4 cos x 一个周期的图像。最高与最低值在解答中标出。"
     },
     hint: {
       en: "Write $3\\sin x + 4\\cos x = R\\sin(x + \\varphi)$ with $R = \\sqrt{3^2 + 4^2}$.",
@@ -51,9 +51,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 7, h: 12, scale: 24, pad: 18 });
       const T = F.T = axes(F, -0.4, 6.6, -5.6, 6.4);
-      F.seg(T([0, 5]), T([6.4, 5]), 'seg thin'); F.seg(T([0, -5]), T([6.4, -5]), 'seg thin');
       plot(F, T, f, 0, 6.4);
-      F.text(T([0, 5]), '5', 'len small', -10, 0); F.text(T([0, -5]), '−5', 'len small', -14, 0);
+      F.reveal = () => {
+        F.seg(T([0, 5]), T([6.4, 5]), 'seg thin'); F.seg(T([0, -5]), T([6.4, -5]), 'seg thin');
+        F.text(T([0, 5]), '5', 'len small', -10, 0); F.text(T([0, -5]), '−5', 'len small', -14, 0);
+      };
       return F;
     },
     options: [
@@ -148,7 +150,7 @@
           ja: "振幅は $\\sqrt{a^2 + b^2}$ です。",
           zh: "振幅为 $\\sqrt{a^2 + b^2}$。"
         },
-        fig(F) { F.draw(F.seg(F.T([0, 5]), F.T([6.4, 5]), 'hl yellow', 'over'), 700); }
+        fig(F) { if (F.reveal) F.reveal(); F.draw(F.seg(F.T([0, 5]), F.T([6.4, 5]), 'hl yellow', 'over'), 700); }
       },
       {
         title: {

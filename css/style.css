@@ -675,3 +675,21 @@ a.brand { color: inherit; text-decoration: none; }
 .mx-ops .act[hidden] { display: none; }
 .mat-panel .sys-steps .m { overflow-x: auto; }
 .mat-panel .sys-answer { overflow-x: auto; }
+
+/* ---- editing a board formula in the equation bar ---- */
+.eq-field { position: relative; }
+.eq-editing { position: absolute; left: 0; top: 100%; white-space: nowrap; font-family: var(--sans); margin-top: 4px; z-index: 9; display: flex; align-items: center; gap: 6px; background: #fff4cf; color: #3b2814; border-radius: 8px; padding: 4px 6px 4px 10px; font-size: 12.5px; box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+.eq-editing[hidden] { display: none; }
+.eq-editing .lbl { flex: 1; font-weight: 600; }
+.eq-editing button { border: 0; border-radius: 6px; padding: 3px 9px; font-weight: 700; font-size: 12.5px; background: #f6e9d6; color: #3b2814; }
+.eq-editing .ok { background: var(--chalk-y); }
+.eqbar.is-editing #eq-input { outline: 2px solid var(--chalk-y); outline-offset: 1px; }
+.ink-math.editing { outline: 2px dashed var(--chalk-y); outline-offset: 4px; background: rgba(243,211,107,.08); }
+
+/* phone: the past-puzzles menu opens under the Daily button as a full-width sheet, never off the left edge */
+@media (max-width: 600px) {
+  .daily-pop { left: 0; right: auto; width: calc(100vw - 24px); max-height: 58vh; border-radius: 14px; }
+  .dp-row { padding: 10px 12px; }
+  .dp-row { grid-template-columns: auto minmax(0, 1fr); }
+  .dp-title { font-size: 14.5px; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+}

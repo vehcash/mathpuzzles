@@ -34,11 +34,11 @@
       zh: "4 个盒子中各有 3 个红球和 2 个蓝球，20 个球互不相同。<b>选出 10 个球，使每个盒子至少选出一个红球和一个蓝球，方法数等于下列哪些？</b>"
     },
     figureText: {
-      en: "Four boxes, each with three red and two blue balls. Below, the number of ways to take k balls from one box with both colours: k = 2: 6, k = 3: 9, k = 4: 5, k = 5: 1.",
-      fr: "Quatre boîtes, chacune avec trois rouges et deux bleues. En dessous, le nombre de façons de prendre k boules d’une boîte avec les deux couleurs : k = 2 : 6, k = 3 : 9, k = 4 : 5, k = 5 : 1.",
-      es: "Cuatro cajas, cada una con tres rojas y dos azules. Debajo, el número de formas de tomar k bolas de una caja con los dos colores: k = 2: 6, k = 3: 9, k = 4: 5, k = 5: 1.",
-      ja: "赤3個・青2個の箱が4つ。その下に、1つの箱から両方の色を含めて k 個取る方法の数：k = 2: 6、k = 3: 9、k = 4: 5、k = 5: 1。",
-      zh: "四个盒子，各有三个红球和两个蓝球。下方为从一个盒子取 k 个且两色都有的方法数：k = 2：6，k = 3：9，k = 4：5，k = 5：1。"
+      en: "Four boxes, each with three red and two blue balls.",
+      fr: "Quatre boîtes, chacune avec trois boules rouges et deux bleues.",
+      es: "Cuatro cajas, cada una con tres bolas rojas y dos azules.",
+      ja: "赤玉3個と青玉2個の入った箱が4つ。",
+      zh: "四个盒子，各有三个红球和两个蓝球。"
     },
     hint: {
       en: "Each box gives at least 2 balls, so the 10 split as $2+2+2+4$ or $2+2+3+3$ in some order. Count one box at a time.",
@@ -59,7 +59,9 @@
       for (let b = 0; b < 4; b++) { const x = 0.3 + b * 2.05; F.rect(x, 1.3, 1.7, 1.6, 'tri');
         for (let i = 0; i < 3; i++) F.circle([x + 0.35 + i * 0.5, 2.45], 0.17, 'fill-pink');
         for (let i = 0; i < 2; i++) F.circle([x + 0.6 + i * 0.5, 1.75], 0.17, 'fill-blue'); }
+      F.reveal = () => {
       ['k=2: 6', 'k=3: 9', 'k=4: 5', 'k=5: 1'].forEach((t, i) => F.text([1.15 + i * 2.05, 0.6], t, 'len small', 0, 0));
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -167,6 +169,9 @@
           zh: "求和"
         },
         lines: ["4\\cdot5\\cdot6^3+6\\cdot9^2\\cdot6^2=4320+17496=\\boxed{21816}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "This is option (A) in the original paper.",
           fr: "C’est l’option (A) de l’épreuve originale.",

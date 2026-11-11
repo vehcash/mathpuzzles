@@ -34,11 +34,11 @@
       zh: "$y(x)$ 满足 $x\\,dy-(y^2-4y)\\,dx=0$（$x>0$），$y(1)=2$，且曲线斜率处处不为零。<b>下列哪些等于 $10\\,y(\\sqrt2)$？</b>"
     },
     figureText: {
-      en: "The solution curve y = 4/(1 + x⁴) for x > 0, through (1, 2), with the point at x = √2 marked.",
-      fr: "La courbe solution y = 4/(1 + x⁴) pour x > 0, passant par (1, 2), avec le point d’abscisse √2.",
-      es: "La curva solución y = 4/(1 + x⁴) para x > 0, que pasa por (1, 2), con el punto de abscisa √2.",
-      ja: "x > 0 での解曲線 y = 4/(1 + x⁴)。(1, 2) を通り、x = √2 の点を表示。",
-      zh: "x > 0 时的解曲线 y = 4/(1 + x⁴)，经过 (1, 2)，并标出 x = √2 处的点。"
+      en: "The starting point (1, 2) and the vertical line x = √2. The solution curve is drawn in the solution.",
+      fr: "Le point de départ (1, 2) et la droite verticale x = √2. La courbe solution est tracée dans la solution.",
+      es: "El punto inicial (1, 2) y la recta vertical x = √2. La curva solución se dibuja en la solución.",
+      ja: "初期点 (1, 2) と縦線 x = √2。解曲線は解答で描きます。",
+      zh: "初始点 (1, 2) 与竖线 x = √2。解曲线在解答中画出。"
     },
     hint: {
       en: "Separate: $\\dfrac{dy}{y(y-4)}=\\dfrac{dx}{x}$, then use partial fractions.",
@@ -58,11 +58,13 @@
       const F = Figure(svg, { w: 4.4, h: 4.6, scale: 52, pad: 18 });
       const T = F.T = axes(F, -0.3, 4.1, -0.3, 4.3);
       const k = 1.6, y = x => 4 / (1 + (x / k) ** 4);
+      F.dot(T([k, 2])); F.text(T([k, 2]), '(1, 2)', 'len small', -30, -6);
+      const r = k * Math.SQRT2; F.seg(T([r, 0]), T([r, 3.0]), 'seg thin dashc'); F.text(T([r, 0]), '√2', 'tick', 0, 14);
+      F.reveal = () => {
       plot(F, T, y, 0.05, 3.9, 'graph');
       F.seg(T([0, 4]), T([3.9, 4]), 'seg thin dashc'); F.text(T([0, 4]), '4', 'tick', -10, 0);
-      F.dot(T([k, 2])); F.text(T([k, 2]), '(1, 2)', 'len small', 26, -6);
-      const r = k * Math.SQRT2; F.dot(T([r, 0.8])); F.seg(T([r, 0]), T([r, 0.8]), 'seg thin dashc');
-      F.text(T([r, 0]), '√2', 'tick', 0, 14); F.text(T([r, 0.8]), '4/5', 'len small', 20, -8);
+      F.dot(T([r, 0.8])); F.text(T([r, 0.8]), '4/5', 'len small', 20, -8);
+      };
       return F;
     },
     options: [
@@ -167,6 +169,9 @@
           zh: "求值"
         },
         lines: ["10\\,y(\\sqrt2)=10\\cdot\\frac{4}{1+4}=\\boxed{8}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "The slope $y'=-\\tfrac{16x^3}{(1+x^4)^2}$ is never zero for $x>0$, as required.",
           fr: "La pente $y'=-\\tfrac{16x^3}{(1+x^4)^2}$ ne s’annule pas pour $x>0$.",

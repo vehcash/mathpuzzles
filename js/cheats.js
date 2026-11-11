@@ -22,6 +22,7 @@
 
   // a table cell is a formula, or translated text when it starts with '~' ('~en|fr|es|ja|zh')
   const EX = 'Example|Exemple|Ejemplo|例|例';
+  const SYM = 'Symbols:|Symboles :|Símbolos:|記号：|符号：';
   const fig = (name, cls) => name && CheatFigs[name] ? `<figure class="cf${cls ? ' ' + cls : ''}">${CheatFigs[name](I18N.lang)}</figure>` : '';
   const cell = c => String(c).startsWith('~') ? '<span class="cs-cell">' + inline(pick(String(c).slice(1))) + '</span>' : K(c, true);
   const topics = Cheats.topics;
@@ -54,10 +55,12 @@
           const o = opt && typeof opt === 'object' && !Array.isArray(opt) ? opt : {};
           const tex = Array.isArray(texs) ? (texs[LANGS.indexOf(I18N.lang)] || texs[0]) : texs;   // a formula with words may come in five versions
           el.className = 'cs-item';
+          const sym = ((Cheats.symbols || {})[tp.id] || {})[en(s.t) + '/' + en(name || '')];   // what the letters stand for (cheats/symbols.js)
           el.innerHTML = (name ? `<div class="cs-name">${esc(pick(name))}</div>` : '') + `<div class="cs-tex" title="${esc(tr('Click for a step-by-step explanation'))}">${tex.split(/\\qquad/).map(part => '<span class="cs-part">' + K(part.trim().replace(/,$/, ''), true) + '</span>').join('')}</div>` + (note ? `<div class="cs-note">${inline(pick(note))}</div>` : '') +
+            (sym ? `<div class="cs-sym"><b>${esc(pick(SYM))}</b> ${inline(pick(sym))}</div>` : '') +
             fig(o.fig, 'mini') + (o.ex ? `<div class="cs-ex"><b>${esc(pick(EX))}</b> ${inline(pick(o.ex))}</div>` : '');
           el.dataset.tex = tex;
-          text = norm(String(name || '').replace(/\|/g, ' ') + ' ' + String(note || '').replace(/\|/g, ' ') + ' ' + String(o.ex || '').replace(/\|/g, ' ') + ' ' + texWords(Array.isArray(texs) ? texs.join(' ') : tex));
+          text = norm(String(name || '').replace(/\|/g, ' ') + ' ' + String(note || '').replace(/\|/g, ' ') + ' ' + String(sym || '').replace(/\|/g, ' ') + ' ' + String(o.ex || '').replace(/\|/g, ' ') + ' ' + texWords(Array.isArray(texs) ? texs.join(' ') : tex));
         }
         el._tu = { tp, s, it };   // the card's tutorial (js/tutor.js)
         el.tabIndex = 0; el.setAttribute('role', 'button');

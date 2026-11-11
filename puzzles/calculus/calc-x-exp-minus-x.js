@@ -28,11 +28,11 @@
       zh: "设 $f(x) = x\\,e^{-x}$。<b>下列说法中正确的是？</b>"
     },
     figureText: {
-      en: "The graph of x e^(−x): it rises to a single peak and then decays towards the x-axis.",
-      fr: "Le graphe de x e^(−x) : il monte jusqu’à un unique sommet puis retombe vers l’axe des x.",
-      es: "La gráfica de x e^(−x): sube hasta un único pico y luego decae hacia el eje x.",
-      ja: "x e^(−x) のグラフ。1つの山まで上がり、その後 x 軸に近づいていきます。",
-      zh: "x e^(−x) 的图像：升到唯一的峰值后向 x 轴衰减。"
+      en: "The graph of f(x) = x e⁻ˣ. Its highest point is marked in the solution.",
+      fr: "La courbe de f(x) = x e⁻ˣ. Son point le plus haut est marqué dans la solution.",
+      es: "La gráfica de f(x) = x e⁻ˣ. Su punto más alto se marca en la solución.",
+      ja: "f(x) = x e⁻ˣ のグラフ。最高点は解答で示します。",
+      zh: "f(x) = x e⁻ˣ 的图像。最高点在解答中标出。"
     },
     hint: {
       en: "$f'(x) = e^{-x} - x e^{-x}$; $e^{-x}$ is always positive.",
@@ -53,8 +53,10 @@
       const T = F.T = axes(F, -1, 6, -1.3, 2.1);
       const g = x => 4 * f(x);   // vertical scale ×4
       plot(F, T, g, -0.3, 6, 'graph', 'base', -1.3, 2.1);
-      F.seg(T([1, 0]), T([1, 4 / Math.E]), 'seg thin'); F.dot(T([1, 4 / Math.E]));
-      F.text(T([1, 0]), '1', 'tick', 0, 14); F.text(T([1, 4 / Math.E]), '1/e', 'len small', 0, -14);
+      F.reveal = () => {
+        F.seg(T([1, 0]), T([1, 4 / Math.E]), 'seg thin'); F.dot(T([1, 4 / Math.E]));
+        F.text(T([1, 0]), '1', 'tick', 0, 14); F.text(T([1, 4 / Math.E]), '1/e', 'len small', 0, -14);
+      };
       return F;
     },
     options: [
@@ -149,7 +151,7 @@
           ja: "$x = 1$ の前で増加、後で減少：唯一の最大値。",
           zh: "$x = 1$ 前递增、后递减：唯一的最大值。"
         },
-        fig(F) { F.fadeIn(F.circle(F.T([1, 4 / Math.E]), 0.18, 'halo', 'over'), 500); }
+        fig(F) { if (F.reveal) F.reveal(); F.fadeIn(F.circle(F.T([1, 4 / Math.E]), 0.18, 'halo', 'over'), 500); }
       },
       {
         title: {

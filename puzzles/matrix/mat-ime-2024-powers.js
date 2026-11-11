@@ -34,11 +34,11 @@
       zh: "设 $M=\\begin{pmatrix}-2&1\\\\-7&3\\end{pmatrix}$，$I$ 为单位矩阵。<b>下列哪些等于 $M^{2020}+M^{2022}+M^{2024}+M^{2025}+M^{2029}$？</b>"
     },
     figureText: {
-      en: "A wheel of the powers of M: M⁰ = I, M¹ = M, M² = M − I, M³ = −I, M⁴ = −M, M⁵ = I − M, and then back to I — the powers repeat every 6.",
-      fr: "Une roue des puissances de M : M⁰ = I, M¹ = M, M² = M − I, M³ = −I, M⁴ = −M, M⁵ = I − M, puis retour à I — les puissances se répètent tous les 6.",
-      es: "Una rueda de las potencias de M: M⁰ = I, M¹ = M, M² = M − I, M³ = −I, M⁴ = −M, M⁵ = I − M, y vuelta a I: las potencias se repiten cada 6.",
-      ja: "M のべきの輪：M⁰ = I、M¹ = M、M² = M − I、M³ = −I、M⁴ = −M、M⁵ = I − M、そして I に戻る。べきは 6 ごとに繰り返す。",
-      zh: "M 的幂构成的轮：M⁰ = I，M¹ = M，M² = M − I，M³ = −I，M⁴ = −M，M⁵ = I − M，然后回到 I——每 6 次重复。"
+      en: "A wheel for the powers of M, with M⁰ = I and M¹ = M filled in. The other powers are filled in during the solution.",
+      fr: "Une roue des puissances de M, avec M⁰ = I et M¹ = M. Les autres sont remplies dans la solution.",
+      es: "Una rueda de las potencias de M, con M⁰ = I y M¹ = M. Las demás se rellenan en la solución.",
+      ja: "M の累乗の輪。M⁰ = I と M¹ = M だけ記入。残りは解答で書き込みます。",
+      zh: "M 的幂的轮盘，只填出 M⁰ = I 与 M¹ = M。其余在解答中填入。"
     },
     hint: {
       en: "Trace $1$ and determinant $1$: by Cayley–Hamilton $M^2-M+I=0$.",
@@ -58,10 +58,13 @@
       const F = Figure(svg, { w: 4.4, h: 4.0, scale: 58, pad: 14 });
       const C = [2.2, 2.0], R = 1.55, L = ['I', 'M', 'M − I', '−I', '−M', 'I − M'];
       F.arrowDefs();
-      L.forEach((t, k) => { const a = (90 - 60 * k) * Math.PI / 180, p = [C[0] + R * Math.cos(a), C[1] + R * Math.sin(a)];
-        F.circle(p, 0.42, 'tri'); F.text(p, t, 'len small', 0, 1); F.text([C[0] + 0.62 * Math.cos(a), C[1] + 0.62 * Math.sin(a)], 'M' + ['⁰', '¹', '²', '³', '⁴', '⁵'][k], 'tick', 0, 0);
+      const pos = k => { const a = (90 - 60 * k) * Math.PI / 180; return [[C[0] + R * Math.cos(a), C[1] + R * Math.sin(a)], [C[0] + 0.62 * Math.cos(a), C[1] + 0.62 * Math.sin(a)]]; };
+      L.forEach((t, k) => { const [p, q] = pos(k); F.circle(p, 0.42, 'tri'); F.text(q, 'M' + ['⁰', '¹', '²', '³', '⁴', '⁵'][k], 'tick', 0, 0); if (k < 2) F.text(p, t, 'len small', 0, 1);
         const arc = F.arc(C, R, 90 - 60 * k - 17, 90 - 60 * k - 43, 'dashc', 'marks'); arc.setAttribute('marker-end', 'url(#arrowhead)'); });
       F.text(C, '×M', 'len', 0, 0);
+      F.reveal = () => {
+      L.forEach((t, k) => { if (k >= 2) F.text(pos(k)[0], t, 'len small', 0, 1); });
+      };
       return F;
     },
     options: [
@@ -149,6 +152,9 @@
           zh: "指数模 6"
         },
         lines: ["2020\\equiv4,\\; 2022\\equiv0,\\; 2024\\equiv2,\\; 2025\\equiv3,\\; 2029\\equiv1 \\pmod 6", "(-M)+I+(M-I)+(-I)+M=\\boxed{M-I}=\\begin{pmatrix}-3&1\\\\-7&2\\end{pmatrix}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "$M^4=M^3M=-M$.",
           fr: "$M^4=M^3M=-M$.",

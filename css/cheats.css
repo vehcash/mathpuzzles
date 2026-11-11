@@ -54,6 +54,9 @@ html[data-lang="ja"] .cs-name, html[data-lang="zh"] .cs-name { letter-spacing: .
 .cs-item.copied .cs-tex, .cs-item.copied .cs-tbl { background: rgba(62,154,94,.18); }
 .cs-note { font-size: 13px; color: var(--ink-soft); line-height: 1.45; margin-top: 1px; }
 .cs-note .katex { font-size: 1em; }
+.cs-sym { font-size: 12.5px; color: var(--ink-soft); line-height: 1.45; margin-top: 3px; padding-left: 7px; border-left: 2px solid color-mix(in srgb, var(--c, #8a6) 45%, transparent); }
+.cs-sym b { font-weight: 700; color: var(--c, var(--ink-soft)); margin-right: 2px; }
+.cs-sym .katex { font-size: 1em; }
 .cs-name mark { background: rgba(243,211,107,.7); color: inherit; border-radius: 3px; padding: 0 1px; }
 
 .cs-tblwrap { overflow-x: auto; }

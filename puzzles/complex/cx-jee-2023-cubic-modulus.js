@@ -34,11 +34,11 @@
       zh: "虚部不为零的复数 $z$ 满足 $|z|^3+2z^2+4\\bar z-8=0$。<b>下列哪些正确？</b>"
     },
     figureText: {
-      en: "The two solutions 1 + i√3 and 1 − i√3 on the circle of radius 2 in the complex plane, with the point −1 used for |z + 1|.",
-      fr: "Les deux solutions 1 + i√3 et 1 − i√3 sur le cercle de rayon 2 du plan complexe, avec le point −1 utilisé pour |z + 1|.",
-      es: "Las dos soluciones 1 + i√3 y 1 − i√3 sobre la circunferencia de radio 2 del plano complejo, con el punto −1 usado para |z + 1|.",
-      ja: "複素平面上の半径 2 の円にある2つの解 1 + i√3 と 1 − i√3、および |z + 1| に使う点 −1。",
-      zh: "复平面上半径为 2 的圆上的两个解 1 + i√3 与 1 − i√3，以及用于 |z + 1| 的点 −1。"
+      en: "The complex plane with the point −1 marked. The roots z are plotted in the solution.",
+      fr: "Le plan complexe avec le point −1. Les racines z sont placées dans la solution.",
+      es: "El plano complejo con el punto −1. Las raíces z se colocan en la solución.",
+      ja: "点 −1 を記した複素平面。解 z は解答で描きます。",
+      zh: "标出 −1 的复平面。根 z 在解答中标出。"
     },
     hint: {
       en: "Conjugate the whole equation and subtract it from the original.",
@@ -57,11 +57,14 @@
     figure(svg) {
       const F = Figure(svg, { w: 5.2, h: 4.8, scale: 48, pad: 18 });
       const T = argand(F, -2.6, 2.6, -2.4, 2.4, { grid: false });
+      F.dot(T([-1, 0])); F.text(T([-1, 0]), '−1', 'len small', -10, 14);
+      F.reveal = () => {
       F.circle(T([0, 0]), 2, 'seg thin');
       const z1 = [1, Math.sqrt(3)], z2 = [1, -Math.sqrt(3)];
       F.seg(T([-1, 0]), T(z1), 'hl yellow');
-      [z1, z2].forEach(z => F.dot(T(z))); F.dot(T([-1, 0]));
-      F.text(T(z1), '1 + i√3', 'len small', 30, -6); F.text(T(z2), '1 − i√3', 'len small', 30, 6); F.text(T([-1, 0]), '−1', 'len small', -10, 14);
+      [z1, z2].forEach(z => F.dot(T(z)));
+      F.text(T(z1), '1 + i√3', 'len small', 30, -6); F.text(T(z2), '1 − i√3', 'len small', 30, 6);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -152,6 +155,9 @@
           zh: "求虚部"
         },
         lines: ["(1+y^2)^{3/2}-2(1+y^2)=0 \\;\\Rightarrow\\; 1+y^2=4,\\ y=\\pm\\sqrt3"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "So $|z|^2=4$, $|z-\\bar z|^2=12$, $|z|^2+|z+\\bar z|^2=8$, $|z+1|^2=7$.",
           fr: "Donc $|z|^2=4$, $|z-\\bar z|^2=12$, $|z|^2+|z+\\bar z|^2=8$, $|z+1|^2=7$.",

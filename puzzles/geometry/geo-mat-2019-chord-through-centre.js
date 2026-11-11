@@ -34,11 +34,11 @@
       zh: "边长为 $1$ 的正三角形中心为 $O$。过 $O$ 的直线与三角形的边交于 $P$、$Q$。<b>下列哪些正确？</b>"
     },
     figureText: {
-      en: "An equilateral triangle with its centre O, two chords through O: one parallel to the base (the shortest, 2/3) and one through a vertex (a median, √3/2).",
-      fr: "Un triangle équilatéral de centre O et deux cordes passant par O : l’une parallèle à la base (la plus courte, 2/3), l’autre par un sommet (une médiane, √3/2).",
-      es: "Un triángulo equilátero de centro O y dos cuerdas por O: una paralela a la base (la más corta, 2/3) y otra por un vértice (una mediana, √3/2).",
-      ja: "中心 O をもつ正三角形と、O を通る2本の弦：底辺に平行なもの（最短 2/3）と頂点を通るもの（中線 √3/2）。",
-      zh: "中心为 O 的正三角形，以及过 O 的两条弦：一条平行于底边（最短，2/3），一条过顶点（中线，√3/2）。"
+      en: "An equilateral triangle of side 1 with its centre O and one chord drawn through O. The shortest and longest chords are drawn in the solution.",
+      fr: "Un triangle équilatéral de côté 1 avec son centre O et une corde passant par O. Les cordes la plus courte et la plus longue sont tracées dans la solution.",
+      es: "Un triángulo equilátero de lado 1 con su centro O y una cuerda por O. Las cuerdas más corta y más larga se dibujan en la solución.",
+      ja: "1辺1の正三角形と中心 O、O を通る弦1本。最短・最長の弦は解答で描きます。",
+      zh: "边长为 1 的正三角形、中心 O 及过 O 的一条弦。最短与最长的弦在解答中画出。"
     },
     hint: {
       en: "Compare the chord parallel to a side with the chord through a vertex.",
@@ -58,10 +58,14 @@
       const F = Figure(svg, { w: 4.2, h: 3.7, scale: 70, pad: 18 });
       const s = 3.6, A = [0.3, 0.2], B = [0.3 + s, 0.2], C = [0.3 + s / 2, 0.2 + s * Math.sqrt(3) / 2], O = [0.3 + s / 2, 0.2 + s * Math.sqrt(3) / 6];
       F.path([A, B, C], 'tri');
+      F.dot(O); F.text(O, 'O', 'pt', 14, -10);
+      const R = lerp(A, C, 0.55), U = [2 * O[0] - R[0], 2 * O[1] - R[1]]; F.seg(R, lerp(R, U, 1.25), 'seg thin dashc');
+      F.reveal = () => {
       const P = lerp(A, C, 1 / 3), Q = lerp(B, C, 1 / 3); F.seg(P, Q, 'hl yellow');
       F.seg(C, [0.3 + s / 2, 0.2], 'seg thin');
-      F.dot(O); F.text(O, 'O', 'pt', 12, 12); F.dot(P); F.dot(Q); F.text(P, 'P', 'pt', -12, 0); F.text(Q, 'Q', 'pt', 12, 0);
+      F.dot(P); F.dot(Q); F.text(P, 'P', 'pt', -12, 0); F.text(Q, 'Q', 'pt', 12, 0);
       F.text(lerp(P, Q, 0.25), '2/3', 'len small', 0, -12);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -155,6 +159,9 @@
           zh: "其他方向"
         },
         lines: ["\\tfrac23 \\le PQ \\le \\tfrac{\\sqrt3}{2}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Turning the line from the parallel position to a vertex makes the chord grow steadily; by symmetry this covers all lines.",
           fr: "En tournant la droite de la position parallèle jusqu’à un sommet, la corde grandit ; par symétrie cela couvre toutes les droites.",

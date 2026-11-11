@@ -28,11 +28,11 @@
       zh: "<b>下列哪些表示满足 $|2x - 3| < 5$ 的全体实数 $x$？</b>"
     },
     figureText: {
-      en: "A number line with the open interval from −1 to 4 shaded; 3/2, the midpoint, is marked.",
-      fr: "Une droite graduée avec l’intervalle ouvert de −1 à 4 en couleur ; le milieu 3/2 est marqué.",
-      es: "Una recta numérica con el intervalo abierto de −1 a 4 sombreado; el punto medio 3/2 está marcado.",
-      ja: "数直線上で −1 から 4 までの開区間に色が付き、中点 3/2 に印があります。",
-      zh: "数轴上 −1 到 4 的开区间涂色，中点 3/2 被标出。"
+      en: "A number line from −2 to 5. The solution set is marked in the solution.",
+      fr: "Une droite graduée de −2 à 5. L’ensemble des solutions est marqué dans la solution.",
+      es: "Una recta numérica de −2 a 5. El conjunto solución se marca en la solución.",
+      ja: "−2 から 5 の数直線。解の範囲は解答で示します。",
+      zh: "从 −2 到 5 的数轴。解集在解答中标出。"
     },
     hint: {
       en: "$|u| < 5 \\iff -5 < u < 5$.",
@@ -52,9 +52,11 @@
       const F = Figure(svg, { w: 8, h: 1.6, scale: 48, pad: 16 });
       F.seg(X(-2.4), X(5.4), 'axis');
       for (let k = -2; k <= 5; k++) { F.seg([X(k)[0], 0.48], [X(k)[0], 0.72], 'axis'); F.text([X(k)[0], 0.6], String(k).replace('-', '−'), 'tick', 0, 18); }
-      F.seg(X(-1), X(4), 'hl yellow');
-      F.circle(X(-1), 0.1, 'halo'); F.circle(X(4), 0.1, 'halo');
-      F.dot(X(1.5)); F.text(X(1.5), '3/2', 'len small', 0, -14);
+      F.reveal = () => {
+        F.seg(X(-1), X(4), 'hl yellow');
+        F.circle(X(-1), 0.1, 'halo'); F.circle(X(4), 0.1, 'halo');
+        F.dot(X(1.5)); F.text(X(1.5), '3/2', 'len small', 0, -14);
+      };
       return F;
     },
     options: [
@@ -149,7 +151,7 @@
           ja: "$3$ を足して $2$ で割っても不等号の向きは変わりません。",
           zh: "加 $3$ 再除以 $2$ 不改变不等号方向。"
         },
-        fig(F) { F.draw(F.seg(X(-1), X(4), 'hl pink', 'over'), 700); }
+        fig(F) { if (F.reveal) F.reveal(); F.draw(F.seg(X(-1), X(4), 'hl pink', 'over'), 700); }
       },
       {
         title: {

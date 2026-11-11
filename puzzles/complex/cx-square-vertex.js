@@ -28,11 +28,11 @@
       zh: "$ABCD$ 是按逆时针顺序标记的正方形，$A = 1 + i$，$B = 4 + 2i$。<b>$C$ 是多少？</b>"
     },
     figureText: {
-      en: "The complex plane with A = 1 + i, B = 4 + 2i and the square ABCD drawn counter-clockwise; C = 3 + 5i and D = 4i.",
-      fr: "Le plan complexe avec A = 1 + i, B = 4 + 2i et le carré ABCD tracé dans le sens direct ; C = 3 + 5i et D = 4i.",
-      es: "El plano complejo con A = 1 + i, B = 4 + 2i y el cuadrado ABCD en sentido antihorario; C = 3 + 5i y D = 4i.",
-      ja: "複素平面上の A = 1 + i、B = 4 + 2i と、反時計回りの正方形 ABCD。C = 3 + 5i、D = 4i。",
-      zh: "复平面上的 A = 1 + i、B = 4 + 2i 以及逆时针的正方形 ABCD；C = 3 + 5i，D = 4i。"
+      en: "The points A = 1 + i and B = 4 + 2i joined by a side of the square. The rest of the square is drawn in the solution.",
+      fr: "Les points A = 1 + i et B = 4 + 2i reliés par un côté du carré. Le reste du carré est tracé dans la solution.",
+      es: "Los puntos A = 1 + i y B = 4 + 2i unidos por un lado del cuadrado. El resto se dibuja en la solución.",
+      ja: "正方形の1辺で結んだ A = 1 + i と B = 4 + 2i。残りは解答で描きます。",
+      zh: "正方形一边连接的 A = 1 + i 与 B = 4 + 2i。其余部分在解答中画出。"
     },
     hint: {
       en: "$\\overrightarrow{BC}$ is $\\overrightarrow{AB}$ turned $90^\\circ$ counter-clockwise: multiply $B - A$ by $i$.",
@@ -51,9 +51,12 @@
     figure(svg) {
       const F = Figure(svg, { w: 6, h: 6.5, scale: 34, pad: 18 });
       const T = F.T = argand(F, -1, 5, -0.5, 6);
-      F.path([T(A), T(B), T(C), T(D)], 'tri');
-      [A, B, C, D].forEach(p => F.dot(T(p)));
-      F.text(T(A), 'A', 'pt', -10, 12); F.text(T(B), 'B', 'pt', 12, 10); F.text(T(C), 'C', 'pt', 10, -10); F.text(T(D), 'D', 'pt', -12, -6);
+      F.seg(T(A), T(B)); F.dot(T(A)); F.dot(T(B)); F.text(T(A), 'A', 'pt', -10, 12); F.text(T(B), 'B', 'pt', 12, 10);
+      F.reveal = () => {
+        F.path([T(A), T(B), T(C), T(D)], 'tri');
+        [A, B, C, D].forEach(p => F.dot(T(p)));
+        F.text(T(A), 'A', 'pt', -10, 12); F.text(T(B), 'B', 'pt', 12, 10); F.text(T(C), 'C', 'pt', 10, -10); F.text(T(D), 'D', 'pt', -12, -6);
+      };
       return F;
     },
     options: [
@@ -149,7 +152,7 @@
           ja: "$i$ を掛けると長さを保ったまま反時計回りに $90^\\circ$ 回転します。",
           zh: "乘以 $i$ 使向量逆时针旋转 $90^\\circ$，长度不变。"
         },
-        fig(F) { F.draw(F.seg(F.T(B), F.T(C), 'hl pink', 'over'), 600); }
+        fig(F) { if (F.reveal) F.reveal(); F.draw(F.seg(F.T(B), F.T(C), 'hl pink', 'over'), 600); }
       },
       {
         title: {

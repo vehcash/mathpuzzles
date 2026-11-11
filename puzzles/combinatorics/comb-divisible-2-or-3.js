@@ -27,11 +27,11 @@
       zh: "<b>整数 $1, 2, \\dots, 100$ 中有多少个能被 $2$ 或 $3$ 整除？</b>"
     },
     figureText: {
-      en: "A Venn diagram: multiples of 2 (50) and multiples of 3 (33) overlapping in the multiples of 6 (16).",
-      fr: "Un diagramme de Venn : multiples de 2 (50) et de 3 (33) qui se recoupent dans les multiples de 6 (16).",
-      es: "Un diagrama de Venn: múltiplos de 2 (50) y de 3 (33) que se solapan en los múltiplos de 6 (16).",
-      ja: "ベン図：2の倍数（50）と3の倍数（33）が、6の倍数（16）で重なります。",
-      zh: "韦恩图：2 的倍数（50）与 3 的倍数（33）在 6 的倍数（16）处重叠。"
+      en: "Two overlapping circles: multiples of 2 and multiples of 3 among 1 to 100. The counts are filled in during the solution.",
+      fr: "Deux cercles qui se chevauchent : multiples de 2 et multiples de 3 entre 1 et 100. Les effectifs sont remplis dans la solution.",
+      es: "Dos círculos solapados: múltiplos de 2 y de 3 entre 1 y 100. Los recuentos se rellenan en la solución.",
+      ja: "重なる2つの円：1〜100 の 2 の倍数と 3 の倍数。個数は解答で記入。",
+      zh: "两个相交的圆：1 到 100 中 2 的倍数与 3 的倍数。个数在解答中填入。"
     },
     hint: {
       en: "Add the multiples of $2$ and of $3$, then subtract the multiples of $6$ counted twice.",
@@ -51,8 +51,10 @@
       const F = Figure(svg, { w: 5, h: 3, scale: 56, pad: 12 });
       F.circle([1.9, 1.5], 1.25, 'fill-blue'); F.circle([3.1, 1.5], 1.25, 'fill-pink');
       F.circle([1.9, 1.5], 1.25, 'seg').setAttribute('fill', 'none'); F.circle([3.1, 1.5], 1.25, 'seg').setAttribute('fill', 'none');
-      F.text([1.3, 1.5], '34', 'nodenum', 0, 1); F.text([2.5, 1.5], '16', 'nodenum', 0, 1); F.text([3.7, 1.5], '17', 'nodenum', 0, 1);
       F.text([1.2, 2.9], '2 | n', 'len', 0, 0); F.text([3.8, 2.9], '3 | n', 'len', 0, 0);
+      F.reveal = () => {
+        F.text([1.3, 1.5], '34', 'nodenum', 0, 1); F.text([2.5, 1.5], '16', 'nodenum', 0, 1); F.text([3.7, 1.5], '17', 'nodenum', 0, 1);
+      };
       return F;
     },
     options: [
@@ -132,6 +134,7 @@
         }
       },
       {
+        fig(F) { if (F.reveal) F.reveal(); },
         title: {
           en: "Inclusion–exclusion",
           fr: "Inclusion–exclusion",

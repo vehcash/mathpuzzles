@@ -29,11 +29,11 @@
       zh: "<b>$2^{100}$ 除以 $7$ 的余数是多少？</b>"
     },
     figureText: {
-      en: "A cycle of the remainders of powers of 2 modulo 7: 2 → 4 → 1 → 2 …, repeating every three steps.",
-      fr: "Un cycle des restes des puissances de 2 modulo 7 : 2 → 4 → 1 → 2 …, qui se répète tous les trois pas.",
-      es: "Un ciclo de los restos de las potencias de 2 módulo 7: 2 → 4 → 1 → 2 …, que se repite cada tres pasos.",
-      ja: "2 のべきを 7 で割った余りの周期：2 → 4 → 1 → 2 …、3つごとに繰り返します。",
-      zh: "2 的幂模 7 的余数循环：2 → 4 → 1 → 2 ……，每三步重复一次。"
+      en: "A cycle of three nodes for the remainders of powers of 2 mod 7, starting at 2 and multiplying by 2 each step. The other remainders are filled in during the solution.",
+      fr: "Un cycle de trois nœuds pour les restes des puissances de 2 modulo 7, partant de 2 et multiplié par 2 à chaque pas. Les autres restes sont remplis dans la solution.",
+      es: "Un ciclo de tres nodos para los restos de las potencias de 2 módulo 7, empezando en 2 y multiplicando por 2. Los demás restos se rellenan en la solución.",
+      ja: "2 の累乗を 7 で割った余りの3つの輪。2 から始まり毎回 ×2。残りの余りは解答で記入。",
+      zh: "2 的幂除以 7 余数的三节点循环，从 2 开始每次乘 2。其余余数在解答中填入。"
     },
     hint: {
       en: "$2^3 = 8 \\equiv 1 \\pmod 7$.",
@@ -52,8 +52,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 4, h: 3.3, scale: 64, pad: 16 });
       F.arrowDefs();
-      ang.forEach((a, k) => { F.circle(P(a), 0.32, 'tri'); F.text(P(a), VAL[k], 'nodenum', 0, 1); const a1 = a - 25, a2 = ang[(k + 1) % 3] + 25; const arc = F.arc(C, R, a1, a2 < a1 ? a2 : a2 - 360, 'dashc', 'marks'); arc.setAttribute('marker-end', 'url(#arrowhead)'); });
+      ang.forEach((a, k) => { F.circle(P(a), 0.32, 'tri'); F.text(P(a), k ? '?' : VAL[k], 'nodenum', 0, 1); const a1 = a - 25, a2 = ang[(k + 1) % 3] + 25; const arc = F.arc(C, R, a1, a2 < a1 ? a2 : a2 - 360, 'dashc', 'marks'); arc.setAttribute('marker-end', 'url(#arrowhead)'); });
       F.text(C, '×2', 'len', 0, 0);
+      F.reveal = () => {
+        ang.forEach((a, k) => { if (k) { F.circle(P(a), 0.28, 'fill-yellow', 'over'); F.text(P(a), VAL[k], 'nodenum', 0, 1, 'over'); } });
+      };
       return F;
     },
     options: [
@@ -148,7 +151,7 @@
           ja: "電卓で <code>2^100 mod 7</code> を試してみましょう。",
           zh: "可以在计算器中试试：<code>2^100 mod 7</code>。"
         },
-        fig(F) { F.fadeIn(F.circle(P(ang[0]), 0.42, 'halo', 'over'), 500); }
+        fig(F) { if (F.reveal) F.reveal(); F.fadeIn(F.circle(P(ang[0]), 0.42, 'halo', 'over'), 500); }
       },
       {
         title: {

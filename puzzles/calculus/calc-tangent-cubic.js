@@ -28,11 +28,11 @@
       zh: "<b>曲线 $y = x^3 - 3x$ 在 $x = 2$ 处的切线方程是什么？</b>"
     },
     figureText: {
-      en: "The cubic y = x³ − 3x with the point (2, 2) on it and the tangent line there.",
-      fr: "La cubique y = x³ − 3x avec le point (2, 2) et la tangente en ce point.",
-      es: "La cúbica y = x³ − 3x con el punto (2, 2) y la tangente en él.",
-      ja: "3次曲線 y = x³ − 3x と、その上の点 (2, 2) での接線。",
-      zh: "三次曲线 y = x³ − 3x、其上的点 (2, 2) 以及该点处的切线。"
+      en: "The curve y = x³ − 3x with the point (2, 2). The tangent line is drawn in the solution.",
+      fr: "La courbe y = x³ − 3x avec le point (2, 2). La tangente est tracée dans la solution.",
+      es: "La curva y = x³ − 3x con el punto (2, 2). La tangente se dibuja en la solución.",
+      ja: "曲線 y = x³ − 3x と点 (2, 2)。接線は解答で描きます。",
+      zh: "曲线 y = x³ − 3x 与点 (2, 2)。切线在解答中画出。"
     },
     hint: {
       en: "Slope $= y'(2)$; then $y - y_0 = m(x - x_0)$.",
@@ -52,8 +52,10 @@
       const F = Figure(svg, { w: 6, h: 7, scale: 30, pad: 18 });
       const T = F.T = axes(F, -2.6, 3.4, -3, 4, { grid: true });
       plot(F, T, f, -2.4, 2.35, 'graph', 'base', -3, 4);
-      const t = plot(F, T, x => 9 * x - 16, 1.3, 2.2, 'graph', 'base', -3, 4); t.style.stroke = '#3b8fbb';
       F.dot(T([2, 2])); F.text(T([2, 2]), '(2, 2)', 'len small', -28, -6);
+      F.reveal = () => {
+        const t = plot(F, T, x => 9 * x - 16, 1.3, 2.2, 'graph', 'base', -3, 4); t.style.stroke = '#3b8fbb';
+      };
       return F;
     },
     options: [
@@ -148,7 +150,7 @@
           ja: "確認：$x = 2$ で $9\\cdot2 - 16 = 2$。",
           zh: "验证：$x = 2$ 时 $9\\cdot2 - 16 = 2$。"
         },
-        fig(F) { F.draw(plot(F, F.T, x => 9 * x - 16, 1.3, 2.2, 'hl yellow', 'over', -3, 4), 600); }
+        fig(F) { if (F.reveal) F.reveal(); F.draw(plot(F, F.T, x => 9 * x - 16, 1.3, 2.2, 'hl yellow', 'over', -3, 4), 600); }
       },
       {
         title: {

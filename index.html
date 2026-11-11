@@ -2,10 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>/* puzzle URLs (/puzzle/…): relative links must resolve from the site root, and a doubled /puzzle/puzzle/ path is repaired */
+(function () { var p = location.pathname, m = p.match(/^(.*?\/)puzzle\//); if (!m) return;
+  if (/\/puzzle\/(puzzle\/)+/.test(p)) { location.replace(p.replace(/\/puzzle\/(puzzle\/)+/, '/puzzle/') + location.search + location.hash); return; }
+  if (!document.querySelector('base')) { var b = document.createElement('base'); b.href = m[1]; document.head.appendChild(b); } })();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- seo:start -->
 <title>Daily Math Puzzle — a daily math problem for students and teachers</title>
-<meta name="description" content="Daily Math Puzzle: a free daily math problem with a step-by-step solution. 131 puzzles, many from real entrance exams (Gaokao, Oxford MAT, JEE), a smart blackboard and formula sheets for students and teachers.">
+<meta name="description" content="Daily Math Puzzle: a free daily math problem with a step-by-step solution. Hundreds of puzzles, many from real entrance exams (Gaokao, Oxford MAT, JEE), a smart blackboard and formula sheets for students and teachers.">
 <link rel="canonical" href="https://dailymathpuzzle.com/">
 <link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/">
 <link rel="alternate" hreflang="fr" href="https://dailymathpuzzle.com/?lang=fr">
@@ -16,7 +20,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Daily Math Puzzle">
 <meta property="og:title" content="Daily Math Puzzle — a daily math problem for students and teachers">
-<meta property="og:description" content="Daily Math Puzzle: a free daily math problem with a step-by-step solution. 131 puzzles, many from real entrance exams (Gaokao, Oxford MAT, JEE), a smart blackboard and formula sheets for students and teachers.">
+<meta property="og:description" content="Daily Math Puzzle: a free daily math problem with a step-by-step solution. Hundreds of puzzles, many from real entrance exams (Gaokao, Oxford MAT, JEE), a smart blackboard and formula sheets for students and teachers.">
 <meta property="og:url" content="https://dailymathpuzzle.com/">
 <meta property="og:image" content="https://dailymathpuzzle.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -25,7 +29,7 @@
 <meta name="theme-color" content="#17201c">
 <link rel="stylesheet" href="lib/fonts.css">
 <link rel="stylesheet" href="lib/katex/katex.min.css">
-<link rel="stylesheet" href="css/style.css?v=20261111d">
+<link rel="stylesheet" href="css/style.css?v=20261111f">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
@@ -256,24 +260,24 @@
 </div>
 
 <script src="lib/katex/katex.min.js"></script>
-<script src="js/consent.js?v=20261111d"></script>
-<script src="js/i18n.js?v=20261111d"></script>
-<script src="js/lang/fr.js?v=20261111d"></script>
-<script src="js/lang/es.js?v=20261111d"></script>
-<script src="js/lang/ja.js?v=20261111d"></script>
-<script src="js/lang/zh.js?v=20261111d"></script>
+<script src="js/consent.js?v=20261111e"></script>
+<script src="js/i18n.js?v=20261111e"></script>
+<script src="js/lang/fr.js?v=20261111e"></script>
+<script src="js/lang/es.js?v=20261111e"></script>
+<script src="js/lang/ja.js?v=20261111e"></script>
+<script src="js/lang/zh.js?v=20261111e"></script>
 <script>I18N.start();</script>
 <script src="js/consent-ui.js"></script>
-<script src="js/mathcore.js?v=20261111d"></script>
-<script src="js/recognizer.js?v=20261111d"></script>
-<script src="js/intent.js?v=20261111d"></script>
-<script src="js/geometry.js?v=20261111d"></script>
-<script src="js/board.js?v=20261111d"></script>
-<script src="js/ui.js?v=20261111d"></script>
-<script src="js/matrix.js?v=20261111d"></script>
-<script src="js/puzzles.js?v=20261111d"></script>
+<script src="js/mathcore.js?v=20261111e"></script>
+<script src="js/recognizer.js?v=20261111e"></script>
+<script src="js/intent.js?v=20261111e"></script>
+<script src="js/geometry.js?v=20261111e"></script>
+<script src="js/board.js?v=20261111e"></script>
+<script src="js/ui.js?v=20261111e"></script>
+<script src="js/matrix.js?v=20261111e"></script>
+<script src="js/puzzles.js?v=20261111e"></script>
 <script src="puzzles/index.js"></script>
-<script src="js/app.js?v=20261111d"></script>
+<script src="js/app.js?v=20261111e"></script>
 <script>I18N.flags(document.getElementById('lang-host')); CookieUI.init();</script>
 </body>
 </html>

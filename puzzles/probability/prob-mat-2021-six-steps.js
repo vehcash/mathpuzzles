@@ -34,11 +34,11 @@
       zh: "一点从 $(0,0)$ 出发走六步，每步独立地以概率 $\\tfrac12$ 加上 $(1,1)$ 或 $(3,2)$。<b>下列哪些等于它最终到达 $(10,8)$ 的概率？</b>"
     },
     figureText: {
-      en: "A grid with one possible path of six moves from (0, 0) to (10, 8): four short (1, 1) moves and two long (3, 2) moves.",
-      fr: "Une grille avec un chemin possible de six mouvements de (0, 0) à (10, 8) : quatre courts (1, 1) et deux longs (3, 2).",
-      es: "Una cuadrícula con un camino posible de seis movimientos de (0, 0) a (10, 8): cuatro cortos (1, 1) y dos largos (3, 2).",
-      ja: "(0, 0) から (10, 8) への6回の移動の一例：短い (1, 1) が4回、長い (3, 2) が2回。",
-      zh: "网格上从 (0, 0) 到 (10, 8) 的一条六步路径：四步短的 (1, 1)，两步长的 (3, 2)。"
+      en: "A grid with the two possible moves (1, 1) and (3, 2) from the origin and the target (10, 8). A winning path is drawn in the solution.",
+      fr: "Une grille avec les deux mouvements possibles (1, 1) et (3, 2) depuis l’origine et la cible (10, 8). Un chemin gagnant est tracé dans la solution.",
+      es: "Una cuadrícula con los dos movimientos (1, 1) y (3, 2) desde el origen y el objetivo (10, 8). Un camino ganador se dibuja en la solución.",
+      ja: "原点からの2つの移動 (1, 1)、(3, 2) と目標 (10, 8) の方眼。到達する道は解答で描きます。",
+      zh: "网格上从原点出发的两种移动 (1, 1)、(3, 2) 与目标 (10, 8)。可行路径在解答中画出。"
     },
     hint: {
       en: "If $k$ of the moves are $(3,2)$, where does the point end up?",
@@ -57,9 +57,12 @@
     figure(svg) {
       const F = Figure(svg, { w: 10.8, h: 8.8, scale: 22, pad: 18 });
       const T = F.T = axes(F, -0.4, 10.4, -0.4, 8.4, { grid: true });
+      F.dot(T([0, 0])); F.dot(T([10, 8])); F.text(T([10, 8]), '(10, 8)', 'len small', -28, -10);
+      arrow(F, T([0, 0]), T([1, 1])); arrow(F, T([0, 0]), T([3, 2]));
+      F.reveal = () => {
       const mv = [[1,1],[3,2],[1,1],[1,1],[3,2],[1,1]]; let p = [0, 0];
       mv.forEach(d => { const q = [p[0] + d[0], p[1] + d[1]]; F.seg(T(p), T(q), d[0] === 3 ? 'hl pink' : 'hl yellow'); F.dot(T(q)); p = q; });
-      F.dot(T([0, 0])); F.text(T([10, 8]), '(10, 8)', 'len small', -28, -10);
+      };
       return F;
     },
     options: [
@@ -164,6 +167,9 @@
           zh: "计数"
         },
         lines: ["P=\\binom62\\left(\\tfrac12\\right)^6=\\boxed{\\tfrac{15}{64}}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "A binomial probability with $n=6$, $p=\\tfrac12$.",
           fr: "Une probabilité binomiale avec $n=6$, $p=\\tfrac12$.",

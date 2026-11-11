@@ -971,6 +971,7 @@
           el.style.fontSize = m.size + 'px'; el.style.color = m.color;
         }
         el.style.left = m.x + 'px'; el.style.top = m.y + 'px';
+        el.classList.toggle('editing', m === this.editingMath);
         el.style.transform = 'translate(' + (m.alignRight ? '-100%' : '0') + ', -50%)';
         const a = m.anim ? clamp((now - m.anim.start) / m.anim.dur, 0, 1) : 1;
         el.style.opacity = a; el.style.filter = a < 1 ? 'blur(' + (1 - a) * 3 + 'px)' : '';
@@ -985,19 +986,30 @@
     editMath(m) {
       if (m.fixed) return;
       if (m.system) { this.opts.onEditSystem && this.opts.onEditSystem(m); return; }
+      // edit in the equation bar: the formula goes into the field, the calculator keys keep working, and only
+      // Enter (or ✓) changes the board — clicking elsewhere does not lose or revert the edit
+      if (this.opts.onEditMath) { this.editingMath = m; this.render(); this.opts.onEditMath(m); return; }
       const el = this.mathEls.get(m.id); if (!el || el.querySelector('input')) return;
       const inp = document.createElement('input'); inp.className = 'ink-math-input'; inp.value = m.ascii; inp.spellcheck = false;
       el.innerHTML = ''; el.appendChild(inp); el._key = null; inp.focus(); inp.select();
-      const done = commit => {
-        if (inp._done) return; inp._done = true;
-        const v = inp.value.trim();
-        if (commit && v && v !== m.ascii) { this.pushHistory(); m.ascii = v; m.error = false; m.solved = false; try { global.MathCore.analyze(m.ascii); } catch (e) { m.error = true; } if (m.isLabel && m.labelOf) { const gr = this.objects.find(o => o.id === m.labelOf); if (gr) { gr.eq = v; gr.rhs = v.replace(/^\s*(y|f\s*\(\s*x\s*\))\s*=/, ''); this.implicitCache.clear(); } } }
-        if (commit && !v) { this.pushHistory(); this.objects = this.objects.filter(o => o !== m); }
-        this.render();
-      };
+      const done = commit => { if (inp._done) return; inp._done = true; if (commit) this.commitMath(m, inp.value); else this.render(); };
       inp.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') done(true); if (e.key === 'Escape') done(false); });
-      inp.addEventListener('blur', () => done(true));
     }
+    /** replace a formula's text (empty text removes it); one undo step */
+    commitMath(m, v) {
+      v = String(v || '').trim(); this.editingMath = null;
+      if (!this.objects.includes(m)) { this.render(); return false; }
+      if (v && v !== m.ascii) {
+        this.pushHistory(); m.ascii = v; m.error = false; m.solved = false; m.mathKey = null;
+        try { global.MathCore.analyze(m.ascii); } catch (e) { m.error = true; }
+        if (m.isLabel && m.labelOf) { const gr = this.objects.find(o => o.id === m.labelOf); if (gr) { gr.eq = v; gr.rhs = v.replace(/^\s*(y|f\s*\(\s*x\s*\))\s*=/, ''); this.implicitCache.clear(); } }
+      }
+      if (!v) { this.pushHistory(); this.objects = this.objects.filter(o => o !== m); }
+      const el = this.mathEls.get(m.id); if (el) el._key = null;
+      this.render();
+      return true;
+    }
+    cancelEditMath() { if (!this.editingMath) return; this.editingMath = null; this.render(); }
 
     // =========================================================== erase / move / hover
     hitTest(p) { for (let i = this.objects.length - 1; i >= 0; i--) { const o = this.objects[i]; if (!o.hidden && this.hits(o, p, 10)) return o; } return null; }

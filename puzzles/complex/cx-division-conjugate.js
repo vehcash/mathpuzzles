@@ -21,11 +21,11 @@
       zh: '<b>下列哪一个等于 $\\dfrac{5 + 5i}{1 + 2i}$？</b>'
     },
     figureText: {
-      en: 'The complex plane with 5 + 5i, 1 + 2i and the quotient 3 − i, each joined to the origin.',
-      fr: 'Le plan complexe avec 5 + 5i, 1 + 2i et le quotient 3 − i, chacun relié à l’origine.',
-      es: 'El plano complejo con 5 + 5i, 1 + 2i y el cociente 3 − i, cada uno unido al origen.',
-      ja: '複素平面上の 5 + 5i、1 + 2i と商 3 − i。それぞれ原点と結ばれています。',
-      zh: '复平面上的 5 + 5i、1 + 2i 以及商 3 − i，各点都与原点相连。'
+      en: "The vectors 5 + 5i and 1 + 2i. Their quotient is drawn in the solution.",
+      fr: "Les vecteurs 5 + 5i et 1 + 2i. Leur quotient est tracé dans la solution.",
+      es: "Los vectores 5 + 5i y 1 + 2i. Su cociente se dibuja en la solución.",
+      ja: "ベクトル 5 + 5i と 1 + 2i。商は解答で描きます。",
+      zh: "向量 5 + 5i 与 1 + 2i。它们的商在解答中画出。"
     },
     hint: {
       en: 'Multiply numerator and denominator by $1 - 2i$: the denominator becomes the real number $1^2 + 2^2$.',
@@ -45,8 +45,11 @@
       const F = Figure(svg, { w: 7, h: 7.5, scale: 30, pad: 18 });
       const T = F.T = argand(F, -1, 6, -1.8, 5.7);
       arrow(F, T([0, 0]), T([5, 5]), 'vec'); arrow(F, T([0, 0]), T([1, 2]), 'vec');
-      arrow(F, T([0, 0]), T([3, -1]), 'vec two');
-      F.text(T([5, 5]), '5 + 5i', 'len', -4, -14); F.text(T([1, 2]), '1 + 2i', 'len', -30, -6); F.text(T([3, -1]), '3 − i', 'len', 26, 6);
+      F.text(T([5, 5]), '5 + 5i', 'len', -4, -14); F.text(T([1, 2]), '1 + 2i', 'len', -30, -6); 
+      F.reveal = () => {
+        arrow(F, T([0, 0]), T([3, -1]), 'vec two');
+        F.text(T([3, -1]), '3 − i', 'len', 26, 6);
+      };
       return F;
     },
     options: [
@@ -132,6 +135,7 @@
         fig(F) { F.draw(F.seg(F.T([0, 0]), F.T([3, -1]), 'hl yellow', 'fills'), 700); }
       },
       {
+        fig(F) { if (F.reveal) F.reveal(); },
         title: { en: 'Check by multiplying back', fr: 'Vérifier en remultipliant', es: 'Comprobar multiplicando', ja: '掛け戻して確認', zh: '乘回去验证' },
         lines: ['(3 - i)(1 + 2i) = 3 + 6i - i - 2i^2 = 5 + 5i\\ \\checkmark'],
         note: {

@@ -28,11 +28,11 @@
       zh: "<b>方程 $\\sin 2x = \\cos x$ 在 $[0, 2\\pi)$ 内有几个解？</b>"
     },
     figureText: {
-      en: "The graphs of y = sin 2x and y = cos x on [0, 2π); they cross four times.",
-      fr: "Les graphes de y = sin 2x et y = cos x sur [0, 2π) ; ils se croisent quatre fois.",
-      es: "Las gráficas de y = sen 2x e y = cos x en [0, 2π); se cruzan cuatro veces.",
-      ja: "[0, 2π) での y = sin 2x と y = cos x のグラフ。4回交わります。",
-      zh: "[0, 2π) 上 y = sin 2x 与 y = cos x 的图像；它们相交四次。"
+      en: "The graph of y = cos x on [0, 2π) with π/2, π, 3π/2 and 2π marked. The graph of sin 2x is drawn in the solution.",
+      fr: "La courbe de y = cos x sur [0, 2π) avec π/2, π, 3π/2 et 2π marqués. La courbe de sin 2x est tracée dans la solution.",
+      es: "La gráfica de y = cos x en [0, 2π) con π/2, π, 3π/2 y 2π marcados. La gráfica de sen 2x se dibuja en la solución.",
+      ja: "[0, 2π) の y = cos x のグラフと π/2, π, 3π/2, 2π の目盛り。sin 2x のグラフは解答で描きます。",
+      zh: "[0, 2π) 上 y = cos x 的图像，标出 π/2、π、3π/2、2π。sin 2x 的图像在解答中画出。"
     },
     hint: {
       en: "$\\sin 2x = 2\\sin x\\cos x$. Move everything to one side and factor — do not divide by $\\cos x$.",
@@ -51,9 +51,9 @@
     figure(svg) {
       const F = Figure(svg, { w: 7.2, h: 3.4, scale: 46, pad: 18 });
       const T = F.T = axes(F, -0.4, 6.8, -1.5, 1.9);
-      plot(F, T, x => Math.sin(2 * x), 0, 2 * Math.PI);
       const g = plot(F, T, Math.cos, 0, 2 * Math.PI); g.style.stroke = '#3b8fbb';
-      F.text(T([6.5, Math.cos(6.5)]), 'cos x', 'len small', 6, -12); F.text(T([0.8, Math.sin(1.6)]), 'sin 2x', 'len small', 0, -14);
+      F.text(T([6.5, Math.cos(6.5)]), 'cos x', 'len small', 6, -12);
+      [[Math.PI / 2, 'π/2'], [Math.PI, 'π'], [1.5 * Math.PI, '3π/2'], [2 * Math.PI, '2π']].forEach(([x, t]) => { F.seg(T([x, -0.08]), T([x, 0.08]), 'seg thin'); F.text(T([x, 0]), t, 'tick', 0, 16); });
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -151,7 +151,7 @@
           ja: "グラフの4つの交点と一致します。",
           zh: "正好对应图像的四个交点。"
         },
-        fig(F) { PTS.forEach((x, k) => F.fadeIn(F.circle(F.T([x, Math.cos(x)]), 0.13, 'halo', 'over'), 300, 200 * k)); }
+        fig(F) { F.draw(plot(F, F.T, x => Math.sin(2 * x), 0, 2 * Math.PI, 'graph', 'over'), 900); F.fadeIn(F.text(F.T([0.8, Math.sin(1.6)]), 'sin 2x', 'len small', 0, -14, 'over'), 300, 700); PTS.forEach((x, k) => F.fadeIn(F.circle(F.T([x, Math.cos(x)]), 0.13, 'halo', 'over'), 300, 900 + 200 * k)); }
       },
       {
         title: {

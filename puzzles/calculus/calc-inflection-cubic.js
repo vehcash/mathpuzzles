@@ -28,11 +28,11 @@
       zh: "设 $f(x) = x^3 - 3x^2 + 2$。<b>下列说法中正确的是？</b>"
     },
     figureText: {
-      en: "The graph of x³ − 3x² + 2 with a local maximum at (0, 2), a local minimum at (2, −2) and the point (1, 0) between them.",
-      fr: "Le graphe de x³ − 3x² + 2 avec un maximum local en (0, 2), un minimum local en (2, −2) et le point (1, 0) entre les deux.",
-      es: "La gráfica de x³ − 3x² + 2 con un máximo local en (0, 2), un mínimo local en (2, −2) y el punto (1, 0) entre ellos.",
-      ja: "x³ − 3x² + 2 のグラフ。(0, 2) で極大、(2, −2) で極小、その間に点 (1, 0)。",
-      zh: "x³ − 3x² + 2 的图像：(0, 2) 处极大，(2, −2) 处极小，二者之间有点 (1, 0)。"
+      en: "Axes for the graph of the cubic. The curve is drawn in the solution.",
+      fr: "Axes pour la courbe de la cubique. La courbe est tracée dans la solution.",
+      es: "Ejes para la gráfica de la cúbica. La curva se dibuja en la solución.",
+      ja: "3次関数のグラフ用の座標軸。曲線は解答で描きます。",
+      zh: "三次函数图像的坐标轴。曲线在解答中画出。"
     },
     hint: {
       en: "Concavity is decided by the sign of $f''$.",
@@ -51,9 +51,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 5, h: 5.4, scale: 42, pad: 18 });
       const T = F.T = axes(F, -1.4, 3.6, -2.7, 2.7);
-      plot(F, T, f, -1.1, 3.1, 'graph', 'base', -2.7, 2.7);
-      F.dot(T([0, 2])); F.dot(T([2, -2])); F.dot(T([1, 0]));
-      F.text(T([1, 0]), '(1, 0)', 'len small', 22, -10);
+      F.reveal = () => {
+        plot(F, T, f, -1.1, 3.1, 'graph', 'base', -2.7, 2.7);
+        F.dot(T([0, 2])); F.dot(T([2, -2])); F.dot(T([1, 0]));
+        F.text(T([1, 0]), '(1, 0)', 'len small', 22, -10);
+      };
       return F;
     },
     options: [
@@ -148,7 +150,7 @@
           ja: "極大 $(0, 2)$ と極小 $(2, -2)$ の中点で、3次関数はこの点について対称です。",
           zh: "它是极大点 $(0, 2)$ 与极小点 $(2, -2)$ 的中点：三次函数关于它对称。"
         },
-        fig(F) { F.fadeIn(F.circle(F.T([1, 0]), 0.2, 'halo', 'over'), 500); }
+        fig(F) { if (F.reveal) F.reveal(); F.fadeIn(F.circle(F.T([1, 0]), 0.2, 'halo', 'over'), 500); }
       },
       {
         title: {

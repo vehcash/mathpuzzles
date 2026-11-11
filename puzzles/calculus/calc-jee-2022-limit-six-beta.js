@@ -34,11 +34,11 @@
       zh: "$\\beta=\\displaystyle\\lim_{x\\to0}\\frac{e^{x^3}-\\left(1-x^3\\right)^{1/3}+\\left(\\left(1-x^2\\right)^{1/2}-1\\right)\\sin x}{x\\sin^2x}$。<b>下列哪些等于 $6\\beta$？</b>"
     },
     figureText: {
-      en: "A bar chart of the x³ coefficients of the three pieces: +1, +1/3 and −1/2, adding to 5/6.",
-      fr: "Un diagramme en barres des coefficients de x³ des trois morceaux : +1, +1/3 et −1/2, de somme 5/6.",
-      es: "Un diagrama de barras de los coeficientes de x³ de las tres partes: +1, +1/3 y −1/2, que suman 5/6.",
-      ja: "3つの部分の x³ の係数 +1、+1/3、−1/2 の棒グラフ。和は 5/6。",
-      zh: "三部分 x³ 系数的条形图：+1、+1/3、−1/2，和为 5/6。"
+      en: "Empty slots for the x³ coefficients of the three parts of the numerator, A, B and C, and their sum. The bars are drawn in the solution.",
+      fr: "Des emplacements vides pour les coefficients de x³ des trois parties du numérateur, A, B, C, et leur somme. Les barres sont tracées dans la solution.",
+      es: "Huecos vacíos para los coeficientes de x³ de las tres partes del numerador, A, B, C, y su suma. Las barras se dibujan en la solución.",
+      ja: "分子の3つの部分 A, B, C の x³ の係数と和の空欄。棒は解答で描きます。",
+      zh: "分子三部分 A、B、C 的 x³ 系数及其和的空位。条形在解答中画出。"
     },
     hint: {
       en: "The denominator behaves like $x^3$. Expand each piece of the numerator up to $x^3$.",
@@ -57,10 +57,13 @@
     figure(svg) {
       const F = Figure(svg, { w: 5.2, h: 3.4, scale: 50, pad: 16 });
       const T = F.T = axes(F, -0.2, 5.0, -1.4, 2.0);
-      [[1, 1, 'eˣ³'], [2, 1 / 3, '−(1−x³)^⅓'], [3, -0.5, '(√(1−x²)−1)sin x'], [4.3, 5 / 6, 'sum']].forEach(([x, v, s], i) => {
+      [[1, 'A'], [2, 'B'], [3, 'C'], [4.3, 'Σ']].forEach(([x, s]) => F.text(T([x, 0]), s, 'tick', 0, 14));
+      F.reveal = () => {
+      [[1, 1], [2, 1 / 3], [3, -0.5], [4.3, 5 / 6]].forEach(([x, v], i) => {
         F.rect(T([x - 0.3, 0])[0], Math.min(T([0, 0])[1], T([0, v * 1.5])[1]), 0.6, Math.abs(v * 1.5), i === 3 ? 'fill-yellow' : 'fill-blue', 'fills');
         F.text(T([x, v * 1.5]), (v > 0 ? '+' : '') + (i === 0 ? '1' : i === 1 ? '1/3' : i === 2 ? '−1/2' : '5/6'), 'len small', 0, v > 0 ? -10 : 14);
       });
+      };
       return F;
     },
     options: [
@@ -165,6 +168,9 @@
           zh: "合并"
         },
         lines: ["\\beta=1+\\tfrac13-\\tfrac12=\\tfrac56,\\qquad6\\beta=\\boxed{5}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "",
           fr: "",

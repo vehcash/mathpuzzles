@@ -28,11 +28,11 @@
       zh: "设 $f(x) = x + \\dfrac4x$（$x > 0$）。<b>下列说法中正确的是？</b>"
     },
     figureText: {
-      en: "The graph of x + 4/x for x > 0: a valley with its lowest point at (2, 4).",
-      fr: "Le graphe de x + 4/x pour x > 0 : une vallée dont le point le plus bas est (2, 4).",
-      es: "La gráfica de x + 4/x para x > 0: un valle con su punto más bajo en (2, 4).",
-      ja: "x > 0 での x + 4/x のグラフ。最低点が (2, 4) の谷。",
-      zh: "x > 0 时 x + 4/x 的图像：最低点在 (2, 4) 的山谷。"
+      en: "The graph of x + 4/x for x > 0. Its lowest point is marked in the solution.",
+      fr: "La courbe de x + 4/x pour x > 0. Son point le plus bas est marqué dans la solution.",
+      es: "La gráfica de x + 4/x para x > 0. Su punto más bajo se marca en la solución.",
+      ja: "x > 0 での x + 4/x のグラフ。最低点は解答で示します。",
+      zh: "x > 0 时 x + 4/x 的图像。最低点在解答中标出。"
     },
     hint: {
       en: "Solve $f'(x) = 1 - \\dfrac{4}{x^2} = 0$.",
@@ -53,8 +53,10 @@
       const T = F.T = axes(F, -0.4, 6, -0.4, 4);
       const g = x => f(x) / 2.5;   // vertical scale 1/2.5
       plot(F, T, g, 0.4, 5.8, 'graph', 'base', -0.4, 4);
-      F.seg(T([2, 0]), T([2, 1.6]), 'seg thin'); F.dot(T([2, 1.6]));
-      F.text(T([2, 1.6]), '(2, 4)', 'len small', 28, 16);
+      F.reveal = () => {
+        F.seg(T([2, 0]), T([2, 1.6]), 'seg thin'); F.dot(T([2, 1.6]));
+        F.text(T([2, 1.6]), '(2, 4)', 'len small', 28, 16);
+      };
       return F;
     },
     options: [
@@ -149,7 +151,7 @@
           ja: "相加相乗平均でも：$x + \\tfrac4x \\ge 2\\sqrt{x\\cdot\\tfrac4x} = 4$。",
           zh: "均值不等式也给出：$x + \\tfrac4x \\ge 2\\sqrt{x\\cdot\\tfrac4x} = 4$。"
         },
-        fig(F) { F.fadeIn(F.circle(F.T([2, 1.6]), 0.2, 'halo', 'over'), 500); }
+        fig(F) { if (F.reveal) F.reveal(); F.fadeIn(F.circle(F.T([2, 1.6]), 0.2, 'halo', 'over'), 500); }
       },
       {
         title: {

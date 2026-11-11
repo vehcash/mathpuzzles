@@ -34,11 +34,11 @@
       zh: "每次生日蛋糕上插的蜡烛数等于新的年龄。蜡烛每盒 $12$ 支；从 1 岁生日起每年恰好买一盒，剩下的留着。<b>下列哪些等于第一次蜡烛不够时的年龄？</b>"
     },
     figureText: {
-      en: "Candles used so far, 1 + 2 + … + n (a curve), against candles bought, 12n (a straight line). They are equal at n = 23; after that the curve is above the line.",
-      fr: "Bougies utilisées jusque-là, 1 + 2 + … + n (une courbe), contre bougies achetées, 12n (une droite). Elles sont égales en n = 23 ; ensuite la courbe passe au-dessus.",
-      es: "Velas usadas hasta entonces, 1 + 2 + … + n (una curva), frente a velas compradas, 12n (una recta). Son iguales en n = 23; después la curva queda por encima.",
-      ja: "使ったろうそくの累計 1 + 2 + … + n（曲線）と買った本数 12n（直線）。n = 23 で等しく、その後は曲線が上。",
-      zh: "已用蜡烛总数 1 + 2 + … + n（曲线）与已买蜡烛 12n（直线）。在 n = 23 时相等，之后曲线在上方。"
+      en: "Candles bought after n days, 12n, as a straight line. The candles used are compared with it in the solution.",
+      fr: "Bougies achetées après n jours, 12n, en ligne droite. Les bougies utilisées sont comparées dans la solution.",
+      es: "Velas compradas tras n días, 12n, como recta. Las velas usadas se comparan en la solución.",
+      ja: "n 日後までに買ったろうそく 12n の直線。使った本数との比較は解答で。",
+      zh: "n 天后买的蜡烛数 12n（直线）。用掉的蜡烛数在解答中比较。"
     },
     hint: {
       en: "After $n$ birthdays you have used $\\tfrac{n(n+1)}{2}$ candles and bought $12n$.",
@@ -59,9 +59,12 @@
       const X = n => 0.2 + n * 0.16, Y = v => 0.15 + v / 110;
       F.seg([X(0), Y(0)], [X(27), Y(0)], 'axis'); F.seg([X(0), Y(0)], [X(0), Y(340)], 'axis');
       const l = []; for (let n = 0; n <= 27; n++) l.push([X(n), Y(12 * n)]); const ln = F.curve(l, 'graph'); ln.style.stroke = '#3b8fbb';
+      F.text([X(27), Y(324)], '12n', 'len small', 12, 14);
+      F.reveal = () => {
       const c = []; for (let n = 0; n <= 25; n++) c.push([X(n), Y(n * (n + 1) / 2)]); F.curve(c, 'graph');
       for (let n = 1; n <= 25; n++) F.dot([X(n), Y(n * (n + 1) / 2)]);
-      F.text([X(23), Y(276)], 'n = 23', 'len small', -30, -12); F.text([X(24), Y(0)], '24', 'tick', 0, 12); F.text([X(27), Y(324)], '12n', 'len small', 12, 14);
+      F.text([X(23), Y(276)], 'n = 23', 'len small', -30, -12); F.text([X(24), Y(0)], '24', 'tick', 0, 12);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -152,6 +155,9 @@
           zh: "解不等式"
         },
         lines: ["\\tfrac{n(n+1)}{2}>12n \\iff n+1>24 \\iff n>23 \\;\\Rightarrow\\; \\boxed{24}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "At $n=23$ the two totals are equal ($276$), so the shortage starts at $24$.",
           fr: "En $n=23$ les deux totaux sont égaux ($276$), donc le manque commence à $24$.",

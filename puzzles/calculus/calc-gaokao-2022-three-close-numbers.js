@@ -34,11 +34,11 @@
       zh: "设 $a=0.1\\,e^{0.1}$，$b=\\dfrac19$，$c=-\\ln0.9$。<b>下列哪些正确？</b>"
     },
     figureText: {
-      en: "The three numbers on a magnified number line between 0.104 and 0.112: c ≈ 0.1054, then a ≈ 0.1105, then b ≈ 0.1111.",
-      fr: "Les trois nombres sur une droite graduée agrandie entre 0,104 et 0,112 : c ≈ 0,1054, puis a ≈ 0,1105, puis b ≈ 0,1111.",
-      es: "Los tres números en una recta ampliada entre 0,104 y 0,112: c ≈ 0,1054, luego a ≈ 0,1105 y b ≈ 0,1111.",
-      ja: "0.104〜0.112 を拡大した数直線上の3つの数：c ≈ 0.1054、a ≈ 0.1105、b ≈ 0.1111。",
-      zh: "放大的数轴 0.104 到 0.112 上的三个数：c ≈ 0.1054，a ≈ 0.1105，b ≈ 0.1111。"
+      en: "A number line from 0.104 to 0.112. Where a, b and c fall is shown in the solution.",
+      fr: "Une droite graduée de 0,104 à 0,112. La place de a, b et c est montrée dans la solution.",
+      es: "Una recta numérica de 0,104 a 0,112. Dónde caen a, b y c se muestra en la solución.",
+      ja: "0.104 から 0.112 の数直線。a, b, c の位置は解答で示します。",
+      zh: "从 0.104 到 0.112 的数轴。a、b、c 的位置在解答中给出。"
     },
     hint: {
       en: "Write all three as functions of $x=0.1$: $a=xe^x$, $b=\\frac{x}{1-x}$, $c=-\\ln(1-x)$, and compare near $0$.",
@@ -59,7 +59,9 @@
       const X = v => 0.2 + (v - 0.104) / 0.008 * 5.6, y = 0.7;
       F.seg([X(0.104), y], [X(0.112), y], 'axis');
       [0.104, 0.108, 0.112].forEach(v => { F.seg([X(v), y - 0.08], [X(v), y + 0.08], 'axis'); F.text([X(v), y], String(v), 'tick', 0, 16); });
+      F.reveal = () => {
       [[-Math.log(0.9), 'c'], [0.1 * Math.exp(0.1), 'a'], [1 / 9, 'b']].forEach(([v, t], k) => { F.dot([X(v), y]); F.text([X(v), y], t, 'len it', k === 2 ? 8 : 0, -16); });
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -151,6 +153,9 @@
           zh: "比较 a 与 c"
         },
         lines: ["h(x)=xe^x+\\ln(1-x),\\ h(0)=0,\\ h'(x)=\\frac{(1-x^2)e^x-1}{1-x}>0\\ \\ (0<x\\le0.1)"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "So $h(0.1)>0$, i.e. $a>c$; altogether $\\boxed{c<a<b}$.",
           fr: "Donc $h(0{,}1)>0$, soit $a>c$ ; au total $\\boxed{c<a<b}$.",

@@ -34,11 +34,11 @@
       zh: "设 $a_0=2$，当 $n\\ge1$ 时 $a_n=1+a_0a_1\\cdots a_{n-1}$（前面所有项之积加一）。<b>下列哪些正确？</b>"
     },
     figureText: {
-      en: "The first terms 2, 3, 7, 43, 1807 in boxes, with arrows showing each one as 1 plus the product of the boxes before it.",
-      fr: "Les premiers termes 2, 3, 7, 43, 1807 dans des cases, avec des flèches montrant chacun comme 1 plus le produit des cases précédentes.",
-      es: "Los primeros términos 2, 3, 7, 43, 1807 en casillas, con flechas que muestran cada uno como 1 más el producto de las anteriores.",
-      ja: "最初の項 2, 3, 7, 43, 1807 を箱に入れ、それぞれが前の箱の積 + 1 であることを矢印で示した図。",
-      zh: "前几项 2, 3, 7, 43, 1807 放在方框中，箭头表示每一项等于前面各项之积加 1。"
+      en: "Boxes for a₀ to a₄ with only a₀ = 2 and a₁ = 3 filled in. The rest are filled in during the solution.",
+      fr: "Des cases pour a₀ à a₄, avec seulement a₀ = 2 et a₁ = 3. Les autres sont remplies dans la solution.",
+      es: "Casillas de a₀ a a₄ con solo a₀ = 2 y a₁ = 3. El resto se rellena en la solución.",
+      ja: "a₀〜a₄ の箱。a₀ = 2, a₁ = 3 だけ記入。残りは解答で。",
+      zh: "a₀ 到 a₄ 的方框，只填 a₀ = 2、a₁ = 3。其余在解答中填入。"
     },
     hint: {
       en: "Let $P_n=a_0\\cdots a_{n-1}$, so $a_n=P_n+1$. How is $P_{n+1}$ related to $P_n$ and $a_n$?",
@@ -57,9 +57,12 @@
     figure(svg) {
       const F = Figure(svg, { w: 9.0, h: 2.0, scale: 40, pad: 14 });
       const v = ['2', '3', '7', '43', '1807'];
-      v.forEach((t, i) => { const x = 0.2 + i * 1.8; F.rect(x, 0.6, 1.3, 0.8, i ? 'tri' : 'tri fill-yellow'); F.text([x + 0.65, 1.0], t, 'pt', 0, 0);
+      v.forEach((t, i) => { const x = 0.2 + i * 1.8; F.rect(x, 0.6, 1.3, 0.8, i ? 'tri' : 'tri fill-yellow'); F.text([x + 0.65, 1.0], i < 2 ? t : '?', 'pt', 0, 0);
         if (i) F.text([x - 0.25, 1.0], '→', 'len small', 0, 0); });
       F.text([4.5, 0.25], 'a₀  a₁  a₂  a₃  a₄', 'len small', 0, 0);
+      F.reveal = () => {
+      v.forEach((t, i) => { if (i < 2) return; const x = 0.2 + i * 1.8; F.rect(x + 0.05, 0.65, 1.2, 0.7, 'fill-yellow', 'over'); F.text([x + 0.65, 1.0], t, 'pt', 0, 0, 'over'); });
+      };
       return F;
     },
     options: [
@@ -147,6 +150,9 @@
           zh: "消去 P"
         },
         lines: ["a_n-1=(a_{n-1}-1)\\,a_{n-1}\\;\\Rightarrow\\;\\boxed{a_n=a_{n-1}^2-a_{n-1}+1}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Check: $3\\to7\\to43\\to1807$.",
           fr: "Vérification : $3\\to7\\to43\\to1807$.",

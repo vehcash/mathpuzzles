@@ -28,11 +28,11 @@
       zh: "<b>$f(x) = x^3 - 12x$ 的图像在哪些 $x$ 处有水平切线？</b>选出所有正确的值。"
     },
     figureText: {
-      en: "The graph of x³ − 12x (vertical scale reduced) with a peak at x = −2 and a valley at x = 2, each with a short horizontal tangent.",
-      fr: "Le graphe de x³ − 12x (échelle verticale réduite) avec un sommet en x = −2 et un creux en x = 2, chacun avec une petite tangente horizontale.",
-      es: "La gráfica de x³ − 12x (escala vertical reducida) con un pico en x = −2 y un valle en x = 2, cada uno con una tangente horizontal corta.",
-      ja: "x³ − 12x のグラフ（縦軸は縮小）。x = −2 に山、x = 2 に谷があり、それぞれ短い水平な接線。",
-      zh: "x³ − 12x 的图像（纵向缩小），在 x = −2 处有峰、x = 2 处有谷，各有一段水平切线。"
+      en: "Axes for the graph of the cubic. The curve and its horizontal tangents are drawn in the solution.",
+      fr: "Axes pour la courbe de la cubique. La courbe et ses tangentes horizontales sont tracées dans la solution.",
+      es: "Ejes para la gráfica de la cúbica. La curva y sus tangentes horizontales se dibujan en la solución.",
+      ja: "3次関数のグラフ用の座標軸。曲線と水平な接線は解答で描きます。",
+      zh: "三次函数图像的坐标轴。曲线与水平切线在解答中画出。"
     },
     hint: {
       en: "A horizontal tangent means $f'(x) = 0$.",
@@ -51,10 +51,12 @@
     figure(svg) {
       const F = Figure(svg, { w: 8.4, h: 5, scale: 34, pad: 18 });
       const T = F.T = axes(F, -4.2, 4.2, -2.5, 2.5);
-      plot(F, T, g, -4.1, 4.1, 'graph', 'base', -2.5, 2.5);
-      F.seg(T([-2.8, 2]), T([-1.2, 2]), 'seg thin'); F.seg(T([1.2, -2]), T([2.8, -2]), 'seg thin');
-      F.dot(T([-2, 2])); F.dot(T([2, -2]));
-      F.text(T([-2, 2]), '(−2, 16)', 'len small', 0, -14); F.text(T([2, -2]), '(2, −16)', 'len small', 0, 14);
+      F.reveal = () => {
+        plot(F, T, g, -4.1, 4.1, 'graph', 'base', -2.5, 2.5);
+        F.seg(T([-2.8, 2]), T([-1.2, 2]), 'seg thin'); F.seg(T([1.2, -2]), T([2.8, -2]), 'seg thin');
+        F.dot(T([-2, 2])); F.dot(T([2, -2]));
+        F.text(T([-2, 2]), '(−2, 16)', 'len small', 0, -14); F.text(T([2, -2]), '(2, −16)', 'len small', 0, 14);
+      };
       return F;
     },
     options: [
@@ -149,7 +151,7 @@
           ja: "$-2$ で極大、$2$ で極小。",
           zh: "$-2$ 处极大，$2$ 处极小。"
         },
-        fig(F) { F.draw(F.seg(F.T([-2.8, 2]), F.T([-1.2, 2]), 'hl yellow', 'over'), 500); F.draw(F.seg(F.T([1.2, -2]), F.T([2.8, -2]), 'hl yellow', 'over'), 500, 300); }
+        fig(F) { if (F.reveal) F.reveal(); F.draw(F.seg(F.T([-2.8, 2]), F.T([-1.2, 2]), 'hl yellow', 'over'), 500); F.draw(F.seg(F.T([1.2, -2]), F.T([2.8, -2]), 'hl yellow', 'over'), 500, 300); }
       },
       {
         title: {

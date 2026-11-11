@@ -34,11 +34,11 @@
       zh: "<b>关于 $\\bar z-z^2=i\\left(\\bar z+z^2\\right)$ 的复数解，下列哪些正确？</b>"
     },
     figureText: {
-      en: "The solutions in the complex plane: 0, and three points on the unit circle at angles 90°, 210° and 330° (i and ±√3/2 − i/2), forming an equilateral triangle.",
-      fr: "Les solutions dans le plan complexe : 0, et trois points du cercle unité aux angles 90°, 210° et 330° (i et ±√3/2 − i/2), formant un triangle équilatéral.",
-      es: "Las soluciones en el plano complejo: 0 y tres puntos de la circunferencia unidad en los ángulos 90°, 210° y 330° (i y ±√3/2 − i/2), que forman un triángulo equilátero.",
-      ja: "複素平面上の解：0 と、単位円上の角 90°、210°、330° の3点（i と ±√3/2 − i/2）で正三角形をなす。",
-      zh: "复平面上的解：0，以及单位圆上角为 90°、210°、330° 的三点（i 与 ±√3/2 − i/2），构成正三角形。"
+      en: "The complex plane with the unit circle. The solutions are plotted in the solution.",
+      fr: "Le plan complexe avec le cercle unité. Les solutions sont placées dans la solution.",
+      es: "El plano complejo con la circunferencia unidad. Las soluciones se colocan en la solución.",
+      ja: "単位円を描いた複素平面。解は解答で描きます。",
+      zh: "画有单位圆的复平面。解在解答中标出。"
     },
     hint: {
       en: "Collect terms: $\\bar z(1-i)=z^2(1+i)$. Then use polar form for $z\\ne0$.",
@@ -58,10 +58,12 @@
       const F = Figure(svg, { w: 4.4, h: 4.4, scale: 56, pad: 18 });
       const T = argand(F, -1.8, 1.8, -1.6, 1.8, { grid: false });
       F.circle(T([0, 0]), 1, 'seg thin');
+      F.reveal = () => {
       const P = [90, 210, 330].map(a => [Math.cos(a * Math.PI / 180), Math.sin(a * Math.PI / 180)]);
       F.path(P.map(T), 'tri fill-yellow');
       P.forEach(p => F.dot(T(p))); F.dot(T([0, 0]));
       F.text(T(P[0]), 'i', 'len', 14, -8); F.text(T([0, 0]), '0', 'len small', 12, 12);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -156,6 +158,9 @@
           zh: "极坐标形式"
         },
         lines: ["z=re^{i\\theta}\\ne0:\\ r^2e^{2i\\theta}=r\\,e^{-i\\pi/2}e^{-i\\theta} \\;\\Rightarrow\\; r=1,\\ 3\\theta\\equiv-\\tfrac{\\pi}{2}", "z\\in\\{0,\\ i,\\ \\pm\\tfrac{\\sqrt3}{2}-\\tfrac i2\\} \\;\\Rightarrow\\; \\boxed{4}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Multiplying $z^2=-i\\bar z$ by $z$ gives $z^3=-i$ when $|z|=1$.",
           fr: "En multipliant $z^2=-i\\bar z$ par $z$ on obtient $z^3=-i$ quand $|z|=1$.",

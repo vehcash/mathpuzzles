@@ -28,11 +28,11 @@
       zh: "<b>下列哪些等于 $360$ 的正因数个数？</b>"
     },
     figureText: {
-      en: "A 4 × 6 table of all divisors of 360: rows are 1, 2, 4, 8 and columns are 1, 3, 9, 5, 15, 45; each cell is their product.",
-      fr: "Un tableau 4 × 6 de tous les diviseurs de 360 : lignes 1, 2, 4, 8 et colonnes 1, 3, 9, 5, 15, 45 ; chaque case est leur produit.",
-      es: "Una tabla 4 × 6 de todos los divisores de 360: filas 1, 2, 4, 8 y columnas 1, 3, 9, 5, 15, 45; cada casilla es su producto.",
-      ja: "360 のすべての約数の 4 × 6 の表：行は 1、2、4、8、列は 1、3、9、5、15、45 で、各マスはその積です。",
-      zh: "360 全部因数的 4 × 6 表：行为 1、2、4、8，列为 1、3、9、5、15、45，每格为二者之积。"
+      en: "A multiplication table with the divisors 1, 2, 4, 8 of 8 down the side and the divisors of 45 across the top. The cells are filled in during the solution.",
+      fr: "Une table avec les diviseurs 1, 2, 4, 8 de 8 en ligne et ceux de 45 en colonne. Les cases sont remplies dans la solution.",
+      es: "Una tabla con los divisores 1, 2, 4, 8 de 8 en filas y los de 45 en columnas. Las casillas se rellenan en la solución.",
+      ja: "縦に 8 の約数 1, 2, 4, 8、横に 45 の約数を並べた表。マスは解答で埋めます。",
+      zh: "表格竖列为 8 的约数 1、2、4、8，横行为 45 的约数。格子在解答中填写。"
     },
     hint: {
       en: "$360 = 2^3\\cdot3^2\\cdot5$. A divisor picks an exponent for each prime.",
@@ -51,7 +51,10 @@
     figure(svg) {
       const F = Figure(svg, { w: 6.4, h: 3.2, scale: 52, pad: 14 });
       COL.forEach((c, j) => F.text([1.3 + j * 0.85, 2.95], String(c), 'tick', 0, 0));
-      ROW.forEach((r, i) => { F.text([0.35, 2.45 - i * 0.6], String(r), 'tick', 0, 0); COL.forEach((c, j) => { F.rect(0.9 + j * 0.85, 2.15 - i * 0.6, 0.8, 0.56, 'fill-blue', 'fills'); F.text([1.3 + j * 0.85, 2.43 - i * 0.6], String(r * c), 'cellnum', 0, 1); }); });
+      ROW.forEach((r, i) => F.text([0.35, 2.45 - i * 0.6], String(r), 'tick', 0, 0));
+      F.reveal = () => {
+        ROW.forEach((r, i) => { F.text([0.35, 2.45 - i * 0.6], String(r), 'tick', 0, 0); COL.forEach((c, j) => { F.rect(0.9 + j * 0.85, 2.15 - i * 0.6, 0.8, 0.56, 'fill-blue', 'fills'); F.text([1.3 + j * 0.85, 2.43 - i * 0.6], String(r * c), 'cellnum', 0, 1); }); });
+      };
       return F;
     },
     options: [
@@ -146,7 +149,7 @@
           ja: "表にすべて現れています：4行 × 6列。",
           zh: "表格列出了全部：$4$ 行乘 $6$ 列。"
         },
-        fig(F) { F.fadeIn(F.rect(0.88, 0.32, 5.14, 2.42, 'fill-yellow', 'over'), 500); }
+        fig(F) { if (F.reveal) F.reveal(); F.fadeIn(F.rect(0.88, 0.32, 5.14, 2.42, 'fill-yellow', 'over'), 500); }
       },
       {
         title: {

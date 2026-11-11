@@ -34,11 +34,11 @@
       zh: "<b>闭区间 $[2022,\\,4482]$ 中各位数字都取自 $\\{0,2,3,4,6,7\\}$（可重复）的四位整数个数等于下列哪些？</b>"
     },
     figureText: {
-      en: "A tree on the first digit: 2 (209 numbers, after removing 2000–2021), 3 (216) and 4 (144, cut off at 4482).",
-      fr: "Un arbre sur le premier chiffre : 2 (209 nombres, après avoir retiré 2000–2021), 3 (216) et 4 (144, limité à 4482).",
-      es: "Un árbol según la primera cifra: 2 (209 números, quitando 2000–2021), 3 (216) y 4 (144, cortado en 4482).",
-      ja: "先頭の数字で分けた樹形図：2（2000–2021 を除いて 209 個）、3（216 個）、4（4482 までで 144 個）。",
-      zh: "按首位数字分类：2（去掉 2000–2021 后 209 个）、3（216 个）、4（截至 4482，144 个）。"
+      en: "A tree splitting by the first digit: 2, 3 or 4. The counts are added in the solution.",
+      fr: "Un arbre selon le premier chiffre : 2, 3 ou 4. Les effectifs sont ajoutés dans la solution.",
+      es: "Un árbol según la primera cifra: 2, 3 o 4. Los recuentos se añaden en la solución.",
+      ja: "先頭の数字 2, 3, 4 で分けた樹形図。個数は解答で加えます。",
+      zh: "按首位 2、3、4 分支的树。个数在解答中加上。"
     },
     hint: {
       en: "Split by the first digit. Only the first digits $2$ and $4$ need care at the ends of the interval.",
@@ -57,7 +57,10 @@
     figure(svg) {
       const F = Figure(svg, { w: 6.4, h: 2.8, scale: 50, pad: 14 });
       const R = [3.2, 2.4]; F.dot(R);
-      [['2', '209', 1.0], ['3', '216', 3.2], ['4', '144', 5.4]].forEach(([d, n, x]) => { F.seg(R, [x, 1.48]); F.circle([x, 1.2], 0.28, 'fill-yellow'); F.text([x, 1.2], d, 'pt', 0, 0); F.text([x, 0.45], n, 'len', 0, 0); });
+      [['2', 1.0], ['3', 3.2], ['4', 5.4]].forEach(([d, x]) => { F.seg(R, [x, 1.48]); F.circle([x, 1.2], 0.28, 'fill-yellow'); F.text([x, 1.2], d, 'pt', 0, 0); });
+      F.reveal = () => {
+      [['209', 1.0], ['216', 3.2], ['144', 5.4]].forEach(([n, x]) => F.text([x, 0.45], n, 'len', 0, 0));
+      };
       return F;
     },
     options: [
@@ -179,6 +182,9 @@
           zh: "合计"
         },
         lines: ["209+216+144=\\boxed{569}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "",
           fr: "",

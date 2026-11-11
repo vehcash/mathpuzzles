@@ -34,11 +34,11 @@
       zh: "设 $A=\\left\\{\\dfrac{1967+1686\\,i\\sin\\theta}{7-3i\\cos\\theta}:\\theta\\in\\mathbb{R}\\right\\}$。$A$ 中恰有一个正整数 $n$。<b>下列哪些等于 $n$？</b>"
     },
     figureText: {
-      en: "The set A drawn in the complex plane (axes not to scale): a closed oval curve with real parts from about 207 to 311. It crosses the real axis only at 281.",
-      fr: "L’ensemble A dans le plan complexe (axes pas à l’échelle) : une courbe ovale fermée dont les parties réelles vont d’environ 207 à 311. Elle ne coupe l’axe réel qu’en 281.",
-      es: "El conjunto A en el plano complejo (ejes no a escala): una curva ovalada cerrada con partes reales de unos 207 a 311. Solo corta el eje real en 281.",
-      ja: "複素平面上の集合 A（軸の縮尺は異なる）：実部が約 207〜311 の閉じた楕円状の曲線で、実軸とは 281 でしか交わらない。",
-      zh: "复平面上的集合 A（坐标轴比例不同）：一条闭合的椭圆状曲线，实部约从 207 到 311，只在 281 处与实轴相交。"
+      en: "The real axis of the complex plane. The set A is drawn in the solution.",
+      fr: "L’axe réel du plan complexe. L’ensemble A est tracé dans la solution.",
+      es: "El eje real del plano complejo. El conjunto A se dibuja en la solución.",
+      ja: "複素平面の実軸。集合 A は解答で描きます。",
+      zh: "复平面的实轴。集合 A 在解答中画出。"
     },
     hint: {
       en: "A number is a positive integer only if its imaginary part is $0$: multiply by the conjugate $7+3i\\cos\\theta$.",
@@ -58,11 +58,13 @@
       const F = Figure(svg, { w: 4.6, h: 3.6, scale: 60, pad: 18 });
       const T = ([re, im]) => [(re - 185) / 33, im / 160 + 1.8];
       F.seg(T([185, 0]), T([335, 0]), 'axis'); F.text(T([335, 0]), 'Re', 'tick', -8, 12);
+      F.reveal = () => {
       const pts = []; for (let k = 0; k <= 200; k++) { const t = 2 * Math.PI * k / 200, s = Math.sin(t), c = Math.cos(t), d = 49 + 9 * c * c;
         pts.push(T([(13769 - 5058 * s * c) / d, (5901 * c + 11802 * s) / d])); }
       F.path(pts, 'graph', 'base', false);
       F.dot(T([281, 0])); F.text(T([281, 0]), '281', 'len', 0, 26);
       F.text(T([207, 0]), '207', 'tick', -14, 12); F.text(T([311, 0]), '311', 'tick', 14, 12);
+      };
       return F;
     },
     options: [
@@ -150,6 +152,9 @@
           zh: "实数值"
         },
         lines: ["s^2=\\tfrac15,\\quad c^2=\\tfrac45,\\quad sc=-\\tfrac25", "z=\\dfrac{13769-5058\\,sc}{49+9c^2}=\\dfrac{13769+\\tfrac{10116}{5}}{49+\\tfrac{36}{5}}=\\dfrac{78961}{281}=\\boxed{281}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Both solutions of $\\tan\\theta=-\\tfrac12$ give the same value, so $281$ is the only real (and only integer) point.",
           fr: "Les deux solutions de $\\tan\\theta=-\\tfrac12$ donnent la même valeur : $281$ est le seul point réel (et le seul entier).",

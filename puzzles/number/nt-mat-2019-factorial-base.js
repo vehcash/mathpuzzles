@@ -34,11 +34,11 @@
       zh: "在<i>灵活进制</i>中，从右数第 $j$ 位可取 $0,1,\\dots,j$，权为 $j!$。于是 $\\langle d_4d_3d_2d_1\\rangle=24d_4+6d_3+2d_2+d_1$，例如 $\\langle 1221\\rangle=41$。<b>下列哪些表示 $255$？</b>"
     },
     figureText: {
-      en: "A row of five digit boxes labelled with their weights 120, 24, 6, 2, 1 and their largest allowed digits 5, 4, 3, 2, 1.",
-      fr: "Une rangée de cinq cases de chiffres avec leurs poids 120, 24, 6, 2, 1 et leurs plus grands chiffres permis 5, 4, 3, 2, 1.",
-      es: "Una fila de cinco casillas de cifras con sus pesos 120, 24, 6, 2, 1 y sus cifras máximas permitidas 5, 4, 3, 2, 1.",
-      ja: "重み 120、24、6、2、1 と、許される最大の数字 5、4、3、2、1 を書いた5つの桁の枠。",
-      zh: "五个数位格，标出权 120、24、6、2、1，以及允许的最大数字 5、4、3、2、1。"
+      en: "Five empty digit boxes with place values 120, 24, 6, 2, 1 and the largest digit allowed in each. The digits are filled in during the solution.",
+      fr: "Cinq cases vides de valeurs 120, 24, 6, 2, 1, avec le chiffre maximal permis. Les chiffres sont remplis dans la solution.",
+      es: "Cinco casillas vacías de valores 120, 24, 6, 2, 1 con la cifra máxima permitida. Las cifras se rellenan en la solución.",
+      ja: "位の値 120, 24, 6, 2, 1 の空の5桁と各桁の上限。数字は解答で記入。",
+      zh: "位值为 120、24、6、2、1 的五个空格及各位上限。数字在解答中填入。"
     },
     hint: {
       en: "Take as many $5!=120$ as you can, then $4!$, $3!$, …",
@@ -57,8 +57,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 5.6, h: 2.2, scale: 56, pad: 16 });
       const W = ['120', '24', '6', '2', '1'], M = ['≤5', '≤4', '≤3', '≤2', '≤1'], D = ['2', '0', '2', '1', '1'];
-      W.forEach((w, k) => { const x = 0.25 + k * 1.05; F.rect(x, 0.8, 0.85, 0.8, k % 2 ? 'tri fill-blue' : 'tri fill-yellow'); F.text([x + 0.42, 1.2], D[k], 'len', 0, 0);
+      W.forEach((w, k) => { const x = 0.25 + k * 1.05; F.rect(x, 0.8, 0.85, 0.8, k % 2 ? 'tri fill-blue' : 'tri fill-yellow'); F.text([x + 0.42, 1.2], '?', 'len', 0, 0);
         F.text([x + 0.42, 1.6], w, 'tick', 0, -10); F.text([x + 0.42, 0.8], M[k], 'tick', 0, 12); });
+      F.reveal = () => {
+      W.forEach((w, k) => { const x = 0.25 + k * 1.05; F.rect(x + 0.06, 0.86, 0.73, 0.68, k % 2 ? 'fill-blue' : 'fill-yellow', 'over'); F.text([x + 0.42, 1.2], D[k], 'len', 0, 0, 'over'); });
+      };
       return F;
     },
     options: [
@@ -146,6 +149,9 @@
           zh: "读出数字"
         },
         lines: ["255=\\boxed{\\langle 20211\\rangle}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Like base ten, every number has exactly one such representation.",
           fr: "Comme en base dix, chaque nombre a exactement une telle écriture.",

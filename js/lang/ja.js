@@ -516,3 +516,5 @@ I18N.add("ja", {
 "{n} swap(s): sign": "入れ替え {n} 回：符号",
 "Matrices: determinant, inverse, rank, systems": "行列：行列式・逆行列・階数・連立方程式"
 });
+// editing board formulas
+I18N.add("ja", {"Editing the formula on the board": "黒板の式を編集中", "✓ Update": "✓ 更新", "✕ Cancel": "✕ キャンセル", "Formula updated": "式を更新しました", "Formula removed": "式を削除しました"});

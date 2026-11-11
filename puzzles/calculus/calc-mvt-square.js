@@ -27,11 +27,11 @@
       zh: "对 $[1, 3]$ 上的 $f(x) = x^2$，<b>哪些 $c$ 满足 $f'(c) = \\dfrac{f(3) - f(1)}{3 - 1}$？</b>"
     },
     figureText: {
-      en: "The parabola y = x² with the chord from (1, 1) to (3, 9) and a parallel tangent line touching at x = 2.",
-      fr: "La parabole y = x² avec la corde de (1, 1) à (3, 9) et une tangente parallèle touchant en x = 2.",
-      es: "La parábola y = x² con la cuerda de (1, 1) a (3, 9) y una tangente paralela que toca en x = 2.",
-      ja: "放物線 y = x²、(1, 1) から (3, 9) への弦、x = 2 で接する平行な接線。",
-      zh: "抛物线 y = x²，从 (1, 1) 到 (3, 9) 的弦，以及在 x = 2 处相切的平行切线。"
+      en: "The parabola y = x² on [1, 3] and the chord from (1, 1) to (3, 9). The parallel tangent is drawn in the solution.",
+      fr: "La parabole y = x² sur [1, 3] et la corde de (1, 1) à (3, 9). La tangente parallèle est tracée dans la solution.",
+      es: "La parábola y = x² en [1, 3] y la cuerda de (1, 1) a (3, 9). La tangente paralela se dibuja en la solución.",
+      ja: "[1, 3] の放物線 y = x² と (1, 1) から (3, 9) への弦。平行な接線は解答で描きます。",
+      zh: "[1, 3] 上的抛物线 y = x² 与从 (1, 1) 到 (3, 9) 的弦。平行切线在解答中画出。"
     },
     hint: {
       en: "The chord has slope $\\tfrac{9 - 1}{2}$. Solve $2c = $ that slope.",
@@ -53,9 +53,12 @@
       const g = x => x * x / 2;   // vertical scale ½
       plot(F, T, g, -0.5, 3.1, 'graph', 'base', -0.5, 4.9);
       F.seg(T([1, 0.5]), T([3, 4.5]), 'seg');
-      plot(F, T, x => 2 + 2 * (x - 2), 0.9, 3.1, 'seg thin', 'base', -0.5, 4.9);
-      F.dot(T([1, 0.5])); F.dot(T([3, 4.5])); F.dot(T([2, 2]));
       F.text(T([1, 0.5]), '(1, 1)', 'len small', -30, -10); F.text(T([3, 4.5]), '(3, 9)', 'len small', -28, 0);
+      F.dot(T([1, 0.5])); F.dot(T([3, 4.5]));
+      F.reveal = () => {
+        plot(F, T, x => 2 + 2 * (x - 2), 0.9, 3.1, 'seg thin', 'base', -0.5, 4.9);
+        F.dot(T([1, 0.5])); F.dot(T([3, 4.5])); F.dot(T([2, 2]));
+      };
       return F;
     },
     options: [
@@ -150,7 +153,7 @@
           ja: "定理の通り $2$ は $(1, 3)$ の内部にあります。",
           zh: "$2$ 确实在 $(1, 3)$ 内，符合定理要求。"
         },
-        fig(F) { F.draw(plot(F, F.T, x => 2 + 2 * (x - 2), 0.9, 3.1, 'hl yellow', 'over', -0.5, 4.9), 700); }
+        fig(F) { if (F.reveal) F.reveal(); F.draw(plot(F, F.T, x => 2 + 2 * (x - 2), 0.9, 3.1, 'hl yellow', 'over', -0.5, 4.9), 700); }
       },
       {
         title: {

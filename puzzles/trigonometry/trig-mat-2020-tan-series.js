@@ -34,11 +34,11 @@
       zh: "考虑方程 $\\dfrac{1}{\\tan x}+\\dfrac{1}{\\tan^2 x}+\\dfrac{1}{\\tan^3 x}+\\cdots=\\tan x$，$-90^\\circ<x<90^\\circ$，左边须是收敛的无穷级数。<b>下列哪些正确？</b>"
     },
     figureText: {
-      en: "The curves y = 1/(t − 1) and y = t for t = tan x with |t| > 1: they meet once, at t = (1 + √5)/2. The band −1 ≤ t ≤ 1, where the series diverges, is shaded.",
-      fr: "Les courbes y = 1/(t − 1) et y = t pour t = tan x avec |t| > 1 : elles se coupent une fois, en t = (1 + √5)/2. La bande −1 ≤ t ≤ 1, où la série diverge, est grisée.",
-      es: "Las curvas y = 1/(t − 1) e y = t para t = tan x con |t| > 1: se cortan una vez, en t = (1 + √5)/2. La franja −1 ≤ t ≤ 1, donde la serie diverge, está sombreada.",
-      ja: "t = tan x（|t| > 1）に対する曲線 y = 1/(t − 1) と y = t。t = (1 + √5)/2 で1回交わる。級数が発散する −1 ≤ t ≤ 1 の帯に色付け。",
-      zh: "令 t = tan x（|t| > 1），曲线 y = 1/(t − 1) 与 y = t 只在 t = (1 + √5)/2 处相交一次。级数发散的带状区域 −1 ≤ t ≤ 1 涂色。"
+      en: "Axes in t = tan x with the line y = t (the right-hand side) drawn. The sum of the series is added in the solution.",
+      fr: "Axes en t = tan x avec la droite y = t (le second membre). La somme de la série est ajoutée dans la solution.",
+      es: "Ejes en t = tan x con la recta y = t (el lado derecho). La suma de la serie se añade en la solución.",
+      ja: "t = tan x の座標軸と右辺の直線 y = t。級数の和は解答で加えます。",
+      zh: "以 t = tan x 为横轴，画出右边 y = t。级数之和在解答中加上。"
     },
     hint: {
       en: "It is a geometric series with ratio $\\frac{1}{\\tan x}$: when does it converge, and to what?",
@@ -57,14 +57,15 @@
     figure(svg) {
       const F = Figure(svg, { w: 6.0, h: 4.2, scale: 48, pad: 18 });
       const T = F.T = axes(F, -3, 3, -2.2, 2.0, { xl: 't' });
+      F.text(T([-1, 0]), '−1', 'tick', -10, -12); F.text(T([1, 0]), '1', 'tick', 8, -12);
+      plot(F, T, t => t, -2.2, 2.0, 'seg thin'); F.text(T([1.9, 1.9]), 'y = t', 'len small', -22, 0);
+      F.reveal = () => {
       F.rect(T([-1, -2.2])[0], 0, 2, 4.2, 'fill-pink', 'fills');
-      plot(F, T, t => t, -2.2, -1.08, 'seg'); plot(F, T, t => t, 1.08, 2.0, 'seg');
-      plot(F, T, t => t, -1, 1, 'seg thin dashc');
       plot(F, T, t => 1 / (t - 1), 1.2, 3, 'graph', 'base', -2.2, 2.0);
       plot(F, T, t => 1 / (t - 1), -3, -1.12, 'graph');
       F.circle(T([-1.12, 1 / (-2.12)]), 0.06, 'seg');
       const p = (1 + Math.sqrt(5)) / 2; F.dot(T([p, p])); F.text(T([p, p]), 'φ', 'len', -14, -10);
-      F.text(T([-1, 0]), '−1', 'tick', -10, -12); F.text(T([1, 0]), '1', 'tick', 8, -12);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -163,6 +164,9 @@
           zh: "求解并筛选"
         },
         lines: ["\\frac{1}{t-1}=t \\iff t^2-t-1=0 \\iff t=\\tfrac{1\\pm\\sqrt5}{2}", "|t|>1 \\;\\Rightarrow\\; t=\\tfrac{1+\\sqrt5}{2}\\ \\Rightarrow\\ \\boxed{\\text{one } x}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "$\\tfrac{1-\\sqrt5}{2}\\approx-0.618$ fails $|t|>1$.",
           fr: "$\\tfrac{1-\\sqrt5}{2}\\approx-0{,}618$ ne vérifie pas $|t|>1$.",

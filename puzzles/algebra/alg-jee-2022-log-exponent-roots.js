@@ -34,11 +34,11 @@
       zh: "<b>下列哪些等于满足 $x^{\\,16(\\log_5 x)^3-68\\log_5 x}=5^{-16}$ 的所有正实数 $x$ 之积？</b>"
     },
     figureText: {
-      en: "The graph of 4t⁴ − 17t² + 4 against t = log₅x: it crosses zero at t = −2, −1/2, 1/2 and 2, symmetric about t = 0.",
-      fr: "La courbe de 4t⁴ − 17t² + 4 en fonction de t = log₅x : elle s’annule en t = −2, −1/2, 1/2 et 2, symétrique par rapport à t = 0.",
-      es: "La gráfica de 4t⁴ − 17t² + 4 frente a t = log₅x: se anula en t = −2, −1/2, 1/2 y 2, simétrica respecto de t = 0.",
-      ja: "t = log₅x に対する 4t⁴ − 17t² + 4 のグラフ。t = −2, −1/2, 1/2, 2 で 0、t = 0 について対称。",
-      zh: "以 t = log₅x 为横轴的 4t⁴ − 17t² + 4 图像：在 t = −2、−1/2、1/2、2 处为零，关于 t = 0 对称。"
+      en: "Axes in the variable t = log₅ x. The equation in t is graphed in the solution.",
+      fr: "Axes en la variable t = log₅ x. L’équation en t est tracée dans la solution.",
+      es: "Ejes en la variable t = log₅ x. La ecuación en t se grafica en la solución.",
+      ja: "変数 t = log₅ x の座標軸。t の方程式は解答でグラフにします。",
+      zh: "以 t = log₅ x 为变量的坐标轴。关于 t 的方程在解答中画出。"
     },
     hint: {
       en: "Take $\\log_5$ of both sides and write $t=\\log_5 x$. The product of the $x$'s is $5^{\\text{(sum of the } t\\text{'s)}}$.",
@@ -57,8 +57,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 5.6, h: 4.0, scale: 50, pad: 18 });
       const T = F.T = axes(F, -2.8, 2.8, -1.6, 2.4, { xl: 't' });
+      F.text(T([1.5, 2.0]), 't = log₅ x', 'len small', 0, 0);
+      F.reveal = () => {
       plot(F, T, t => (4 * t ** 4 - 17 * t * t + 4) / 10, -2.25, 2.25, 'graph', 'base', -1.6, 2.4);
       [[-2, '−2'], [-0.5, '−½'], [0.5, '½'], [2, '2']].forEach(([t, s]) => { F.dot(T([t, 0])); F.text(T([t, 0]), s, 'tick', (Math.abs(t) > 1 ? 1 : -1) * (t < 0 ? -10 : 10), 14); });
+      };
       return F;
     },
     options: [
@@ -163,6 +166,9 @@
           zh: "相乘"
         },
         lines: ["\\prod x=5^{\\,2-2+\\frac12-\\frac12}=5^0=\\boxed{1}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "An even quartic in $t$ always has roots that cancel in pairs.",
           fr: "Une quartique paire en $t$ a des racines opposées deux à deux.",

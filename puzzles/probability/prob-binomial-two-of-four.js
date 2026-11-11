@@ -28,11 +28,11 @@
       zh: "某选手每次射击命中的概率为 $\\tfrac13$，相互独立。<b>下列哪些等于 $4$ 次射击中恰好命中 $2$ 次的概率？</b>"
     },
     figureText: {
-      en: "A bar chart of the binomial distribution for 4 shots with p = 1/3: 16/81, 32/81, 24/81, 8/81, 1/81 for 0 to 4 hits; the bar for 2 hits is highlighted.",
-      fr: "Un diagramme en barres de la loi binomiale pour 4 tirs avec p = 1/3 : 16/81, 32/81, 24/81, 8/81, 1/81 pour 0 à 4 réussites ; la barre de 2 réussites est mise en évidence.",
-      es: "Un diagrama de barras de la binomial para 4 tiros con p = 1/3: 16/81, 32/81, 24/81, 8/81, 1/81 para 0 a 4 aciertos; la barra de 2 aciertos está resaltada.",
-      ja: "p = 1/3、4 回の二項分布の棒グラフ：0〜4 回成功の確率は 16/81、32/81、24/81、8/81、1/81。2 回の棒が強調されています。",
-      zh: "p = 1/3、4 次射击的二项分布条形图：命中 0 到 4 次的概率为 16/81、32/81、24/81、8/81、1/81；命中 2 次的柱被突出显示。"
+      en: "Bars for 0 to 4 hits out of 4 shots, drawn to scale. Their probabilities are written in the solution.",
+      fr: "Barres pour 0 à 4 réussites sur 4 tirs, à l’échelle. Leurs probabilités sont écrites dans la solution.",
+      es: "Barras para 0 a 4 aciertos de 4 tiros, a escala. Sus probabilidades se escriben en la solución.",
+      ja: "4回中 0〜4 回命中の棒（縮尺どおり）。確率は解答で書き込みます。",
+      zh: "4 次射击命中 0 到 4 次的条形（按比例）。概率在解答中写出。"
     },
     hint: {
       en: "$P(X = k) = \\binom{n}{k} p^k (1 - p)^{n - k}$.",
@@ -51,7 +51,10 @@
     figure(svg) {
       const F = Figure(svg, { w: 6, h: 3.6, scale: 46, pad: 18 });
       F.seg([0, 0], [6, 0], 'axis');
-      F.bars = PR.map((v, k) => { const h = v / 32 * 3; const r = F.rect(0.5 + k * 1.1, 0, 0.8, h, k === 2 ? 'fill-yellow' : 'fill-blue'); F.text([0.9 + k * 1.1, 0], String(k), 'tick', 0, 12); F.text([0.9 + k * 1.1, h], v + '/81', 'len small', 0, -10); return r; });
+      F.bars = PR.map((v, k) => { const h = v / 32 * 3; const r = F.rect(0.5 + k * 1.1, 0, 0.8, h, 'fill-blue'); F.text([0.9 + k * 1.1, 0], String(k), 'tick', 0, 12); return r; });
+      F.reveal = () => {
+        PR.forEach((v, k) => F.text([0.9 + k * 1.1, v / 32 * 3], v + '/81', 'len small', 0, -10));
+      };
       return F;
     },
     options: [
@@ -146,7 +149,7 @@
           ja: "5つの確率の和は $\\tfrac{81}{81} = 1$。",
           zh: "五个概率之和为 $\\tfrac{81}{81} = 1$。"
         },
-        fig(F) { F.bars[2].classList.add('fill-pink'); F.fadeIn(F.bars[2], 500); }
+        fig(F) { if (F.reveal) F.reveal(); F.bars[2].classList.add('fill-pink'); F.fadeIn(F.bars[2], 500); }
       },
       {
         title: {

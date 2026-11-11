@@ -28,11 +28,11 @@
       zh: "设 $f(x) = x^3 - 6x^2 + 9x + 1$。<b>下列说法中正确的是？</b>"
     },
     figureText: {
-      en: "The graph of f with a local maximum at (1, 5) and a local minimum at (3, 1).",
-      fr: "Le graphe de f avec un maximum local en (1, 5) et un minimum local en (3, 1).",
-      es: "La gráfica de f con un máximo local en (1, 5) y un mínimo local en (3, 1).",
-      ja: "(1, 5) に極大、(3, 1) に極小をもつ f のグラフ。",
-      zh: "f 的图像，在 (1, 5) 处有极大值，在 (3, 1) 处有极小值。"
+      en: "A grid for the graph of the cubic. The curve and its turning points are drawn in the solution.",
+      fr: "Une grille pour la courbe de la cubique. La courbe et ses extremums sont tracés dans la solution.",
+      es: "Una cuadrícula para la gráfica de la cúbica. La curva y sus extremos se dibujan en la solución.",
+      ja: "3次関数のグラフ用の方眼。曲線と極値は解答で描きます。",
+      zh: "三次函数图像的网格。曲线与极值点在解答中画出。"
     },
     hint: {
       en: "Factor $f'(x) = 3x^2 - 12x + 9$ and look at its sign.",
@@ -51,9 +51,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 6, h: 7, scale: 30, pad: 18 });
       const T = F.T = axes(F, -0.8, 5.2, -1, 6.4, { grid: true });
-      plot(F, T, f, -0.4, 4.4, 'graph', 'base', -1, 6.4);
-      F.dot(T([1, 5])); F.dot(T([3, 1]));
-      F.text(T([1, 5]), '(1, 5)', 'len small', 0, -14); F.text(T([3, 1]), '(3, 1)', 'len small', 0, 16);
+      F.reveal = () => {
+        plot(F, T, f, -0.4, 4.4, 'graph', 'base', -1, 6.4);
+        F.dot(T([1, 5])); F.dot(T([3, 1]));
+        F.text(T([1, 5]), '(1, 5)', 'len small', 0, -14); F.text(T([3, 1]), '(3, 1)', 'len small', 0, 16);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -162,7 +164,7 @@
           ja: "これらは局所的な値で、3次関数は両端で $\\pm\\infty$ に向かいます。",
           zh: "这些是局部值：三次函数在两端趋于 $\\pm\\infty$。"
         },
-        fig(F) { F.fadeIn(F.circle(F.T([1, 5]), 0.2, 'halo', 'over'), 400); F.fadeIn(F.circle(F.T([3, 1]), 0.2, 'halo', 'over'), 400, 250); }
+        fig(F) { if (F.reveal) F.reveal(); F.fadeIn(F.circle(F.T([1, 5]), 0.2, 'halo', 'over'), 400); F.fadeIn(F.circle(F.T([3, 1]), 0.2, 'halo', 'over'), 400, 250); }
       },
       {
         title: {

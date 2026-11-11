@@ -28,11 +28,11 @@
       zh: "<b>下列哪些等于 $\\displaystyle\\lim_{x\\to0}\\frac{1 - \\cos x}{x^2}$？</b>"
     },
     figureText: {
-      en: "The graph of (1 − cos x)/x², a bell shape with an open circle at x = 0 at height one half.",
-      fr: "Le graphe de (1 − cos x)/x², en forme de cloche, avec un point creux en x = 0 à la hauteur un demi.",
-      es: "La gráfica de (1 − cos x)/x², en forma de campana, con un punto hueco en x = 0 a altura un medio.",
-      ja: "(1 − cos x)/x² のグラフ。釣鐘形で、x = 0 の高さ 1/2 に白丸。",
-      zh: "(1 − cos x)/x² 的图像呈钟形，在 x = 0、高度二分之一处有空心点。"
+      en: "The graph of (1 − cos x)/x² on both sides of x = 0, with a gap at x = 0. The height of the gap is marked in the solution.",
+      fr: "La courbe de (1 − cos x)/x² de part et d’autre de x = 0, avec un trou en x = 0. La hauteur du trou est marquée dans la solution.",
+      es: "La gráfica de (1 − cos x)/x² a ambos lados de x = 0, con un hueco en x = 0. La altura del hueco se marca en la solución.",
+      ja: "x = 0 の両側での (1 − cos x)/x² のグラフ（x = 0 で穴）。穴の高さは解答で示します。",
+      zh: "(1 − cos x)/x² 在 x = 0 两侧的图像，x = 0 处有空缺。空缺的高度在解答中标出。"
     },
     hint: {
       en: "$\\cos x \\approx 1 - \\frac{x^2}{2}$ near $0$.",
@@ -53,8 +53,10 @@
       const T = F.T = axes(F, -4.2, 4.2, -0.4, 2.4);
       const g = x => 4 * f(x);   // vertical scale ×4
       plot(F, T, g, -4.1, -0.02, 'graph'); plot(F, T, g, 0.02, 4.1, 'graph');
-      F.circle(T([0, 2]), 0.09, 'seg').setAttribute('fill', 'var(--paper)');
-      F.text(T([0, 2]), '1/2', 'len small', 24, 16);
+      F.reveal = () => {
+        F.circle(T([0, 2]), 0.09, 'seg').setAttribute('fill', 'var(--paper)');
+        F.text(T([0, 2]), '1/2', 'len small', 24, 16);
+      };
       return F;
     },
     options: [
@@ -149,7 +151,7 @@
           ja: "グラフは白丸の高さ $\\tfrac12$ に近づきます。",
           zh: "图像在空心点处趋近高度 $\\tfrac12$。"
         },
-        fig(F) { F.fadeIn(F.circle(F.T([0, 2]), 0.22, 'halo', 'over'), 500); }
+        fig(F) { if (F.reveal) F.reveal(); F.fadeIn(F.circle(F.T([0, 2]), 0.22, 'halo', 'over'), 500); }
       },
       {
         title: {

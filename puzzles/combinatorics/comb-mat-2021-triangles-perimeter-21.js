@@ -34,11 +34,11 @@
       zh: "设 $f(P)$ 为满足 $a+b+c=P$、$a\\le b\\le c$ 且能构成（非退化）三角形三边的正整数三元组个数。<b>下列哪些等于 $f(21)$？</b>"
     },
     figureText: {
-      en: "A table of the valid triples for perimeter 21, grouped by the longest side c = 7, 8, 9, 10, with the count of each group.",
-      fr: "Un tableau des triplets valides pour le périmètre 21, groupés selon le plus grand côté c = 7, 8, 9, 10, avec l’effectif de chaque groupe.",
-      es: "Una tabla de las ternas válidas para perímetro 21, agrupadas por el lado mayor c = 7, 8, 9, 10, con el número de cada grupo.",
-      ja: "周 21 の有効な組を最長辺 c = 7, 8, 9, 10 ごとにまとめた表と各組の個数。",
-      zh: "周长 21 的有效三元组表，按最长边 c = 7、8、9、10 分组，并给出各组个数。"
+      en: "An empty table with columns for the longest side c, the other two sides a, b, and the count. It is filled in during the solution.",
+      fr: "Un tableau vide avec des colonnes pour le plus grand côté c, les deux autres côtés a, b et l’effectif. Il est rempli dans la solution.",
+      es: "Una tabla vacía con columnas para el lado mayor c, los otros lados a, b y el recuento. Se rellena en la solución.",
+      ja: "最長辺 c、残りの辺 a, b、個数の欄がある空の表。解答で埋めます。",
+      zh: "空表格，列为最长边 c、另两边 a, b 与个数。在解答中填写。"
     },
     hint: {
       en: "With $a\\le b\\le c$, the only triangle condition left is $a+b>c$, i.e. $c<\\tfrac{P}{2}$. Fix $c$ and count.",
@@ -57,8 +57,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 8.4, h: 3.6, scale: 40, pad: 14 });
       const rows = [['c = 10', '1,10 · 2,9 · 3,8 · 4,7 · 5,6', '5'], ['c = 9', '3,9 · 4,8 · 5,7 · 6,6', '4'], ['c = 8', '5,8 · 6,7', '2'], ['c = 7', '7,7', '1']];
-      rows.forEach((r, i) => { const y = 3.1 - i * 0.8; F.text([0.7, y], r[0], 'pt small', 0, 0); F.text([4.2, y], r[1], 'len small', 0, 0); F.text([7.9, y], r[2], 'pt', 0, 0); });
+      F.text([0.7, 3.4], 'c', 'pt small', 0, 0); F.text([4.2, 3.4], 'a, b', 'pt small', 0, 0); F.text([7.9, 3.4], '#', 'pt small', 0, 0);
+      F.reveal = () => {
+      rows.forEach((r, i) => { const y = 2.8 - i * 0.65; F.text([0.7, y], r[0], 'pt small', 0, 0); F.text([4.2, y], r[1], 'len small', 0, 0); F.text([7.9, y], r[2], 'pt', 0, 0); });
       F.seg([7.4, 0.35], [8.3, 0.35], 'seg thin'); F.text([7.9, 0.05], '12', 'len', 0, 0);
+      };
       return F;
     },
     options: [
@@ -146,6 +149,9 @@
           zh: "逐个 c 计数"
         },
         lines: ["c=10:5,\\quad c=9:4,\\quad c=8:2,\\quad c=7:1\\;\\Rightarrow\\;\\boxed{12}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "For each $c$, $a\\le b\\le c$ and $a+b=21-c$.",
           fr: "Pour chaque $c$ : $a\\le b\\le c$ et $a+b=21-c$.",

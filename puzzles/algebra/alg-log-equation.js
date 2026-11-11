@@ -28,11 +28,11 @@
       zh: "<b>下列哪些是方程 $\\log_2 x + \\log_2(x - 2) = 3$ 的解？</b>"
     },
     figureText: {
-      en: "The graph of y = log₂x + log₂(x − 2), defined only for x > 2, crossing the line y = 3 once, at x = 4.",
-      fr: "Le graphe de y = log₂x + log₂(x − 2), défini seulement pour x > 2, qui coupe la droite y = 3 une fois, en x = 4.",
-      es: "La gráfica de y = log₂x + log₂(x − 2), definida solo para x > 2, que corta la recta y = 3 una vez, en x = 4.",
-      ja: "x > 2 でのみ定義される y = log₂x + log₂(x − 2) のグラフ。直線 y = 3 と x = 4 で1回交わります。",
-      zh: "只在 x > 2 时有定义的 y = log₂x + log₂(x − 2) 的图像，与直线 y = 3 交于一点 x = 4。"
+      en: "A grid with the line x = 2 and the level y = 3. The graph of log₂(x − 2) is drawn in the solution.",
+      fr: "Une grille avec la droite x = 2 et le niveau y = 3. La courbe de log₂(x − 2) est tracée dans la solution.",
+      es: "Una cuadrícula con la recta x = 2 y el nivel y = 3. La gráfica de log₂(x − 2) se dibuja en la solución.",
+      ja: "直線 x = 2 と高さ y = 3 の方眼。log₂(x − 2) のグラフは解答で描きます。",
+      zh: "网格上画出直线 x = 2 与水平线 y = 3。log₂(x − 2) 的图像在解答中画出。"
     },
     hint: {
       en: "$\\log_2 a + \\log_2 b = \\log_2(ab)$, and both $x$ and $x - 2$ must be positive.",
@@ -53,8 +53,10 @@
       const T = F.T = axes(F, -0.6, 6.4, -2, 4.4, { grid: true });
       F.seg(T([2, -2]), T([2, 4.4]), 'seg thin');
       F.seg(T([-0.6, 3]), T([6.4, 3]), 'seg thin');
-      plot(F, T, f, 2.02, 6.3, 'graph', 'base', -2, 4.4);
       F.text(T([2, -2]), 'x = 2', 'len small', -28, -6); F.text(T([0, 3]), '3', 'len small', -12, -14);
+      F.reveal = () => {
+        plot(F, T, f, 2.02, 6.3, 'graph', 'base', -2, 4.4);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -152,7 +154,7 @@
           ja: "定義域 $x > 2$ に入るのは $x = 4$ だけです。",
           zh: "只有 $x = 4$ 在定义域 $x > 2$ 内。"
         },
-        fig(F) { F.fadeIn(F.circle(F.T([4, 3]), 0.18, 'halo', 'over'), 400); F.fadeIn(F.dot(F.T([4, 3])), 300, 200); }
+        fig(F) { if (F.reveal) F.reveal(); F.fadeIn(F.circle(F.T([4, 3]), 0.18, 'halo', 'over'), 400); F.fadeIn(F.dot(F.T([4, 3])), 300, 200); }
       },
       {
         title: {

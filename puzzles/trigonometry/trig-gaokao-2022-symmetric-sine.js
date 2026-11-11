@@ -34,11 +34,11 @@
       zh: "函数 $f(x)=\\sin\\!\\left(\\omega x+\\frac{\\pi}{4}\\right)+b$（$\\omega>0$）的最小正周期为 $T$，且 $\\frac{2\\pi}{3}<T<\\pi$。其图像关于点 $\\left(\\frac{3\\pi}{2},\\,2\\right)$ 中心对称。<b>下列哪些等于 $f\\!\\left(\\frac{\\pi}{2}\\right)$？</b>"
     },
     figureText: {
-      en: "The graph of f oscillating around the line y = 2, with the centre of symmetry (3π/2, 2) marked on that line.",
-      fr: "La courbe de f oscillant autour de la droite y = 2, avec le centre de symétrie (3π/2, 2) marqué sur cette droite.",
-      es: "La gráfica de f oscilando alrededor de la recta y = 2, con el centro de simetría (3π/2, 2) marcado en esa recta.",
-      ja: "直線 y = 2 のまわりを振動する f のグラフと、その直線上の対称の中心 (3π/2, 2)。",
-      zh: "f 的图像围绕直线 y = 2 振动，该直线上标出对称中心 (3π/2, 2)。"
+      en: "The line y = 2 with the centre of symmetry (3π/2, 2) marked on it. The graph of f is drawn in the solution.",
+      fr: "La droite y = 2 avec le centre de symétrie (3π/2, 2). La courbe de f est tracée dans la solution.",
+      es: "La recta y = 2 con el centro de simetría (3π/2, 2). La gráfica de f se dibuja en la solución.",
+      ja: "直線 y = 2 と対称の中心 (3π/2, 2)。f のグラフは解答で描きます。",
+      zh: "直线 y = 2 及其上的对称中心 (3π/2, 2)。f 的图像在解答中画出。"
     },
     hint: {
       en: "A centre of symmetry of a sinusoid lies on its midline and at a zero of the sine part.",
@@ -57,10 +57,12 @@
     figure(svg) {
       const F = Figure(svg, { w: 6.4, h: 3.8, scale: 52, pad: 18 });
       const T = F.T = axes(F, -0.2, 6.0, -0.2, 3.6);
-      plot(F, T, x => Math.sin(2.5 * x + Math.PI / 4) + 2, 0.25, 5.8, 'graph');
       F.seg(T([0, 2]), T([5.8, 2]), 'seg thin');
       F.dot(T([1.5 * Math.PI, 2])); F.text(T([1.5 * Math.PI, 2]), '(3π/2, 2)', 'len small', -38, -16);
+      F.reveal = () => {
+      plot(F, T, x => Math.sin(2.5 * x + Math.PI / 4) + 2, 0.25, 5.8, 'graph');
       F.dot(T([Math.PI / 2, 1])); F.text(T([Math.PI / 2, 1]), 'π/2', 'len small', 0, 18);
+      };
       return F;
     },
     options: [
@@ -165,6 +167,9 @@
           zh: "求值"
         },
         lines: ["f\\!\\left(\\tfrac{\\pi}{2}\\right)=\\sin\\!\\left(\\tfrac{5\\pi}{4}+\\tfrac{\\pi}{4}\\right)+2=\\sin\\tfrac{3\\pi}{2}+2=\\boxed{1}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "$\\tfrac{\\pi}{2}$ is a minimum of the graph.",
           fr: "$\\tfrac{\\pi}{2}$ est un minimum de la courbe.",

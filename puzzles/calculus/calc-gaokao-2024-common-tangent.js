@@ -34,11 +34,11 @@
       zh: "曲线 $y=e^x+x$ 在点 $(0,1)$ 处的切线也是曲线 $y=\\ln(x+1)+a$ 的切线。<b>下列哪些等于 $a$？</b>"
     },
     figureText: {
-      en: "The curve y = eˣ + x, the line y = 2x + 1 touching it at (0, 1), and the curve y = ln(x + 1) + a touching the same line at (−1/2, 0).",
-      fr: "La courbe y = eˣ + x, la droite y = 2x + 1 qui la touche en (0, 1), et la courbe y = ln(x + 1) + a qui touche la même droite en (−1/2, 0).",
-      es: "La curva y = eˣ + x, la recta y = 2x + 1 que la toca en (0, 1) y la curva y = ln(x + 1) + a que toca la misma recta en (−1/2, 0).",
-      ja: "曲線 y = eˣ + x、(0, 1) で接する直線 y = 2x + 1、同じ直線に (−1/2, 0) で接する曲線 y = ln(x + 1) + a。",
-      zh: "曲线 y = eˣ + x，在 (0, 1) 处与之相切的直线 y = 2x + 1，以及在 (−1/2, 0) 处与同一直线相切的曲线 y = ln(x + 1) + a。"
+      en: "The curve y = eˣ + x with the point (0, 1). The tangent and the second curve are drawn in the solution.",
+      fr: "La courbe y = eˣ + x avec le point (0, 1). La tangente et la seconde courbe sont tracées dans la solution.",
+      es: "La curva y = eˣ + x con el punto (0, 1). La tangente y la segunda curva se dibujan en la solución.",
+      ja: "曲線 y = eˣ + x と点 (0, 1)。接線ともう1つの曲線は解答で描きます。",
+      zh: "曲线 y = eˣ + x 与点 (0, 1)。切线和第二条曲线在解答中画出。"
     },
     hint: {
       en: "Find the line first, then the point of the second curve where the slope is the same.",
@@ -58,10 +58,12 @@
       const F = Figure(svg, { w: 4.2, h: 3.9, scale: 60, pad: 16 });
       const T = axes(F, -1.2, 3.0, -1.4, 2.5, { grid: true });
       plot(F, T, x => Math.exp(x) + x, -1.2, 0.68, 'graph', 'base', -1.4, 2.5);
+      F.dot(T([0, 1])); F.text(T([0, 1]), '(0, 1)', 'len small', -32, -6);
+      F.reveal = () => {
       const l = plot(F, T, x => 2 * x + 1, -1.2, 0.75, 'graph', 'base', -1.4, 2.5); l.style.stroke = '#3b8fbb';
       const g = plot(F, T, x => Math.log(x + 1) + Math.log(2), -0.93, 3.0, 'graph', 'base', -1.4, 2.5); g.style.stroke = '#3e9a5e';
-      F.dot(T([0, 1])); F.dot(T([-0.5, 0]));
-      F.text(T([0, 1]), '(0, 1)', 'len small', -32, -6); F.text(T([-0.5, 0]), '(−½, 0)', 'len small', 36, 14);
+      F.dot(T([-0.5, 0])); F.text(T([-0.5, 0]), '(−½, 0)', 'len small', 36, 14);
+      };
       return F;
     },
     options: [
@@ -149,6 +151,9 @@
           zh: "斜率与函数值都相等"
         },
         lines: ["\\big(\\ln(x+1)+a\\big)'=\\tfrac{1}{x+1}=2 \\;\\Rightarrow\\; x=-\\tfrac12", "\\ln\\tfrac12+a = 2\\cdot\\left(-\\tfrac12\\right)+1 = 0 \\;\\Rightarrow\\; \\boxed{a=\\ln 2}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Tangency needs both the same slope and the same point.",
           fr: "Être tangent demande la même pente et le même point.",

@@ -27,11 +27,11 @@
       zh: "<b>下列哪些等于 $f(x) = x^2$ 在 $[0, 3]$ 上的平均值？</b>"
     },
     figureText: {
-      en: "The parabola y = x² on [0, 3] and a rectangle of the same area, of height 3.",
-      fr: "La parabole y = x² sur [0, 3] et un rectangle de même aire, de hauteur 3.",
-      es: "La parábola y = x² en [0, 3] y un rectángulo de la misma área, de altura 3.",
-      ja: "[0, 3] 上の放物線 y = x² と、同じ面積で高さ 3 の長方形。",
-      zh: "[0, 3] 上的抛物线 y = x² 和一个面积相同、高为 3 的矩形。"
+      en: "The graph of f(x) = x² on [0, 3], reaching 9 at x = 3. The average height is drawn in the solution.",
+      fr: "La courbe de f(x) = x² sur [0, 3], qui atteint 9 en x = 3. La hauteur moyenne est tracée dans la solution.",
+      es: "La gráfica de f(x) = x² en [0, 3], que llega a 9 en x = 3. La altura media se dibuja en la solución.",
+      ja: "[0, 3] での f(x) = x² のグラフ（x = 3 で 9）。平均の高さは解答で描きます。",
+      zh: "[0, 3] 上 f(x) = x² 的图像，x = 3 时为 9。平均高度在解答中画出。"
     },
     hint: {
       en: "Average value $= \\dfrac{1}{b - a}\\displaystyle\\int_a^b f(x)\\,dx$.",
@@ -51,10 +51,14 @@
       const F = Figure(svg, { w: 4.4, h: 5.2, scale: 44, pad: 18 });
       const T = F.T = axes(F, -0.4, 4, -0.3, 4.9);
       const g = x => x * x / 2;   // vertical scale ½
-      F.rect(0.4, 0.3, 3, 1.5, 'fill-yellow', 'fills');
       plot(F, T, g, 0, 3.1, 'graph', 'base', -0.3, 4.9);
-      F.seg(T([0, 1.5]), T([3, 1.5]), 'seg thin'); F.seg(T([3, 0]), T([3, 4.5]), 'seg thin');
-      F.text(T([0, 1.5]), '3', 'len small', -10, 0); F.text(T([3, 0]), '3', 'tick', 0, 14); F.text(T([3, 4.5]), '9', 'len small', 12, 0);
+       F.seg(T([3, 0]), T([3, 4.5]), 'seg thin');
+       F.text(T([3, 0]), '3', 'tick', 0, 14); F.text(T([3, 4.5]), '9', 'len small', 12, 0);
+      F.reveal = () => {
+        F.rect(0.4, 0.3, 3, 1.5, 'fill-yellow', 'fills');
+        F.seg(T([0, 1.5]), T([3, 1.5]), 'seg thin');
+        F.text(T([0, 1.5]), '3', 'len small', -10, 0);
+      };
       return F;
     },
     options: [
@@ -149,7 +153,7 @@
           ja: "高さ $3$ の長方形は $x^2$ の下の領域と同じ面積です。",
           zh: "高为 $3$ 的矩形与 $x^2$ 下方区域面积相同。"
         },
-        fig(F) { F.draw(F.seg(F.T([0, 1.5]), F.T([3, 1.5]), 'hl yellow', 'over'), 600); }
+        fig(F) { if (F.reveal) F.reveal(); F.draw(F.seg(F.T([0, 1.5]), F.T([3, 1.5]), 'hl yellow', 'over'), 600); }
       },
       {
         title: {

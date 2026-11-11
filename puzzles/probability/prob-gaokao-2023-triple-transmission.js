@@ -34,11 +34,11 @@
       zh: "信号在有噪声的信道中独立传输。发送 $0$ 收到 $1$ 的概率为 $\\alpha$；发送 $1$ 收到 $0$ 的概率为 $\\beta$（$0<\\alpha,\\beta<1$）。<i>单次</i>传输每个信号发一次，收到什么就译成什么；<i>三次</i>传输每个信号发三次，按多数译码（收到 $1,0,1$ 译为 $1$）。<b>下列哪些正确？</b>"
     },
     figureText: {
-      en: "The probability that a sent 0 is decoded correctly, plotted against α: the line 1 − α for single sending and the curve (1 − α)²(1 + 2α) for triple sending. The curve is higher for α < 1/2 and lower for α > 1/2.",
-      fr: "La probabilité qu’un 0 envoyé soit bien décodé, en fonction de α : la droite 1 − α (envoi simple) et la courbe (1 − α)²(1 + 2α) (envoi triple). La courbe est au-dessus pour α < 1/2 et en dessous pour α > 1/2.",
-      es: "La probabilidad de decodificar bien un 0 enviado, frente a α: la recta 1 − α (envío simple) y la curva (1 − α)²(1 + 2α) (envío triple). La curva está por encima para α < 1/2 y por debajo para α > 1/2.",
-      ja: "送った 0 が正しく復号される確率を α に対して描く：単回は直線 1 − α、3回は曲線 (1 − α)²(1 + 2α)。α < 1/2 では曲線が上、α > 1/2 では下。",
-      zh: "发送 0 被正确译码的概率随 α 的变化：单次为直线 1 − α，三次为曲线 (1 − α)²(1 + 2α)。α < 1/2 时曲线在上方，α > 1/2 时在下方。"
+      en: "The probability that a sent 0 arrives correctly with single sending, the line 1 − α. Triple sending is compared in the solution.",
+      fr: "La probabilité qu’un 0 envoyé une fois arrive correctement, la droite 1 − α. L’envoi triple est comparé dans la solution.",
+      es: "La probabilidad de que un 0 enviado una vez llegue bien, la recta 1 − α. El envío triple se compara en la solución.",
+      ja: "1回送信で 0 が正しく届く確率、直線 1 − α。3回送信との比較は解答で。",
+      zh: "单次发送时 0 被正确接收的概率，直线 1 − α。三次发送在解答中比较。"
     },
     hint: {
       en: "In triple sending, 'decoded correctly' means at most one of the three copies was flipped.",
@@ -59,9 +59,10 @@
       const X = a => 0.3 + a * 4.0, Y = p => 0.3 + p * 2.9;
       F.seg([X(0), Y(0)], [X(1.05), Y(0)], 'axis'); F.seg([X(0), Y(0)], [X(0), Y(1.05)], 'axis');
       const l = [], c = []; for (let k = 0; k <= 60; k++) { const a = k / 60; l.push([X(a), Y(1 - a)]); c.push([X(a), Y((1 - a) * (1 - a) * (1 + 2 * a))]); }
-      F.curve(l, 'seg'); F.curve(c, 'graph');
-      F.dot([X(0.5), Y(0.5)]); F.text([X(0.5), Y(0)], '1/2', 'tick', 0, 12); F.text([X(1.05), Y(0)], 'α', 'tick', 0, 12);
-      F.text([X(0), Y(1)], '1', 'tick', -10, 0);
+      F.curve(l, 'seg'); F.text([X(1.05), Y(0)], 'α', 'tick', 0, 12); F.text([X(0), Y(1)], '1', 'tick', -10, 0);
+      F.reveal = () => {
+      F.curve(c, 'graph'); F.dot([X(0.5), Y(0.5)]); F.text([X(0.5), Y(0)], '1/2', 'tick', 0, 12);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -178,6 +179,9 @@
           zh: "与单次比较"
         },
         lines: ["(1-\\alpha)^2(1+2\\alpha)-(1-\\alpha)=\\alpha(1-\\alpha)(1-2\\alpha)"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Positive exactly when $\\alpha<\\tfrac12$: repeating helps only on a mostly reliable channel.",
           fr: "Positif exactement quand $\\alpha<\\tfrac12$ : répéter n’aide que sur un canal plutôt fiable.",

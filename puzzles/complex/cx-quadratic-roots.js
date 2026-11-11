@@ -21,11 +21,11 @@
       zh: '<b>下列哪些是 $z^2 + 2z + 5 = 0$ 的解？</b>'
     },
     figureText: {
-      en: 'The complex plane with the two roots −1 + 2i and −1 − 2i, mirror images of each other in the real axis, on the circle of radius √5 around the origin.',
-      fr: 'Le plan complexe avec les deux racines −1 + 2i et −1 − 2i, symétriques par rapport à l’axe réel, sur le cercle de rayon √5 centré à l’origine.',
-      es: 'El plano complejo con las dos raíces −1 + 2i y −1 − 2i, simétricas respecto al eje real, sobre la circunferencia de radio √5 centrada en el origen.',
-      ja: '複素平面上の2つの解 −1 + 2i と −1 − 2i。実軸について対称で、原点中心・半径 √5 の円上にあります。',
-      zh: '复平面上的两个根 −1 + 2i 和 −1 − 2i，关于实轴对称，都在以原点为圆心、半径为 √5 的圆上。'
+      en: "The complex plane where the roots will be placed. They are plotted in the solution.",
+      fr: "Le plan complexe où seront placées les racines. Elles sont placées dans la solution.",
+      es: "El plano complejo donde irán las raíces. Se colocan en la solución.",
+      ja: "解を置く複素平面。解は解答で描きます。",
+      zh: "将放置根的复平面。根在解答中标出。"
     },
     hint: {
       en: 'Use the quadratic formula; the discriminant is negative, and $\\sqrt{-16} = 4i$.',
@@ -44,10 +44,12 @@
     figure(svg) {
       const F = Figure(svg, { w: 5.4, h: 5.4, scale: 46, pad: 18 });
       const T = F.T = argand(F, -3, 2.4, -2.7, 2.7);
-      F.circle(T([0, 0]), Math.sqrt(5), 'seg thin').setAttribute('fill', 'none');
-      F.seg(T([-1, 2]), T([-1, -2]), 'seg thin');
-      F.dot(T([-1, 2])); F.dot(T([-1, -2]));
-      F.text(T([-1, 2]), '−1 + 2i', 'len', -36, -10); F.text(T([-1, -2]), '−1 − 2i', 'len', -36, 12);
+      F.reveal = () => {
+        F.circle(T([0, 0]), Math.sqrt(5), 'seg thin').setAttribute('fill', 'none');
+        F.seg(T([-1, 2]), T([-1, -2]), 'seg thin');
+        F.dot(T([-1, 2])); F.dot(T([-1, -2]));
+        F.text(T([-1, 2]), '−1 + 2i', 'len', -36, -10); F.text(T([-1, -2]), '−1 − 2i', 'len', -36, 12);
+      };
       return F;
     },
     options: [
@@ -133,6 +135,7 @@
         fig(F) { [[-1, 2], [-1, -2]].forEach((p, k) => F.fadeIn(F.circle(F.T(p), 0.18, 'halo', 'over'), 400, 300 * k)); }
       },
       {
+        fig(F) { if (F.reveal) F.reveal(); },
         title: { en: 'Check with sum and product', fr: 'Vérifier avec la somme et le produit', es: 'Comprobar con la suma y el producto', ja: '和と積で確認', zh: '用和与积验证' },
         lines: ['(-1 + 2i) + (-1 - 2i) = -2 = -\\tfrac{b}{a}', '(-1 + 2i)(-1 - 2i) = 1 + 4 = 5 = \\tfrac{c}{a}\\ \\checkmark'],
         note: {

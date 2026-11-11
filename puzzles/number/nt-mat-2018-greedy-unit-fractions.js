@@ -34,11 +34,11 @@
       zh: "<i>贪心法</i>把分数 $0<q<1$ 写成不同单位分数 $\\frac1m$ 之和：每一步减去不超过剩余部分的最大单位分数。<b>对 $\\frac{4}{13}$ 使用此法，下列哪些正确？</b>"
     },
     figureText: {
-      en: "A bar of length 4/13 cut into three pieces: 1/4, then 1/18, then a tiny 1/468.",
-      fr: "Une barre de longueur 4/13 coupée en trois morceaux : 1/4, puis 1/18, puis un minuscule 1/468.",
-      es: "Una barra de longitud 4/13 cortada en tres trozos: 1/4, luego 1/18 y un diminuto 1/468.",
-      ja: "長さ 4/13 の帯を3つに分けた図：1/4、1/18、ごく小さい 1/468。",
-      zh: "长为 4/13 的条被分成三段：1/4、1/18，以及极小的 1/468。"
+      en: "A bar of length 4/13. Its split into unit fractions is drawn in the solution.",
+      fr: "Une barre de longueur 4/13. Son découpage en fractions unitaires est tracé dans la solution.",
+      es: "Una barra de longitud 4/13. Su división en fracciones unitarias se dibuja en la solución.",
+      ja: "長さ 4/13 の帯。単位分数への分割は解答で描きます。",
+      zh: "长度为 4/13 的条。拆成单位分数的过程在解答中画出。"
     },
     hint: {
       en: "The largest $\\frac1m\\le q$ has $m=\\lceil 1/q\\rceil$.",
@@ -57,8 +57,11 @@
     figure(svg) {
       const F = Figure(svg, { w: 6.0, h: 1.8, scale: 56, pad: 18 });
       const L = 5.6 / (4 / 13), x0 = 0.2, y = 0.6, h = 0.6;
+      F.rect(x0, y, 5.6, h, 'tri'); F.text([x0 + 2.8, y + h / 2], '4/13', 'len', 0, 0);
+      F.reveal = () => {
       let x = x0; [[1 / 4, 'fill-yellow', '1/4'], [1 / 18, 'fill-blue', '1/18'], [1 / 468, 'fill-pink', '']].forEach(([v, c, t]) => { F.rect(x, y, v * L, h, 'tri ' + c); if (t) F.text([x + v * L / 2, y + h / 2], t, 'len small', 0, 0); x += v * L; });
       F.text([x0 + 5.6, y], '1/468', 'len small', -6, 16);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -155,6 +158,9 @@
           zh: "第二步"
         },
         lines: ["\\lceil 52/3\\rceil=18:\\quad \\tfrac3{52}-\\tfrac1{18}=\\tfrac{54-52}{936}=\\tfrac1{468}"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "The remainder is a unit fraction, so the method stops: $\\boxed{\\tfrac14+\\tfrac1{18}+\\tfrac1{468}}$.",
           fr: "Le reste est une fraction unitaire : la méthode s’arrête, $\\boxed{\\tfrac14+\\tfrac1{18}+\\tfrac1{468}}$.",

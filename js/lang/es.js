@@ -516,3 +516,5 @@ I18N.add("es", {
 "{n} swap(s): sign": "{n} intercambio(s): signo",
 "Matrices: determinant, inverse, rank, systems": "Matrices: determinante, inversa, rango, sistemas"
 });
+// editing board formulas
+I18N.add("es", {"Editing the formula on the board": "Editando la fórmula de la pizarra", "✓ Update": "✓ Actualizar", "✕ Cancel": "✕ Cancelar", "Formula updated": "Fórmula actualizada", "Formula removed": "Fórmula eliminada"});

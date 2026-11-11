@@ -27,11 +27,11 @@
       zh: "复数 $z$ 满足 $z + |z| = 2 + 8i$。<b>下列说法中正确的是？</b>"
     },
     figureText: {
-      en: "The complex plane with z = −15 + 8i at distance 17 from the origin; adding the real number 17 moves it to 2 + 8i.",
-      fr: "Le plan complexe avec z = −15 + 8i à distance 17 de l’origine ; ajouter le réel 17 l’amène en 2 + 8i.",
-      es: "El plano complejo con z = −15 + 8i a distancia 17 del origen; sumar el real 17 lo lleva a 2 + 8i.",
-      ja: "原点からの距離が 17 の z = −15 + 8i。実数 17 を足すと 2 + 8i に移ります。",
-      zh: "复平面上到原点距离为 17 的 z = −15 + 8i；加上实数 17 后移到 2 + 8i。"
+      en: "The complex plane with the point 2 + 8i. The number z is found and drawn in the solution.",
+      fr: "Le plan complexe avec le point 2 + 8i. Le nombre z est trouvé et tracé dans la solution.",
+      es: "El plano complejo con el punto 2 + 8i. El número z se halla y dibuja en la solución.",
+      ja: "点 2 + 8i を記した複素平面。z は解答で求めて描きます。",
+      zh: "标出点 2 + 8i 的复平面。z 在解答中求出并画出。"
     },
     hint: {
       en: "$|z|$ is real, so $\\mathrm{Im}\\,z = 8$. Write $z = a + 8i$.",
@@ -50,9 +50,12 @@
     figure(svg) {
       const F = Figure(svg, { w: 19, h: 10, scale: 18, pad: 34 });
       const T = F.T = argand(F, -16, 3, -1, 9, { grid: false });
-      F.seg(T([0, 0]), T([-15, 8]), 'seg thin'); F.dot(T([-15, 8])); F.dot(T([2, 8]));
-      const a = arrow(F, T([-15, 8]), T([1.6, 8]), 'vec two');
-      F.text(T([-15, 8]), 'z', 'pt', -10, -8); F.text(T([2, 8]), '2 + 8i', 'len small', 18, 14); F.text(T([-7.5, 4]), '17', 'len', -12, 14); F.text(T([-6.5, 8]), '+17', 'len small', 0, -12);
+      F.dot(T([2, 8])); F.text(T([2, 8]), '2 + 8i', 'len small', 18, 14);
+      F.reveal = () => {
+        F.seg(T([0, 0]), T([-15, 8]), 'seg thin'); F.dot(T([-15, 8])); F.dot(T([2, 8]));
+        const a = arrow(F, T([-15, 8]), T([1.6, 8]), 'vec two');
+        F.text(T([-15, 8]), 'z', 'pt', -10, -8); F.text(T([2, 8]), '2 + 8i', 'len small', 18, 14); F.text(T([-7.5, 4]), '17', 'len', -12, 14); F.text(T([-6.5, 8]), '+17', 'len small', 0, -12);
+      };
       return F;
     },
     options: [
@@ -147,7 +150,7 @@
           ja: "確認：$-15 + 17 = 2$、$2 - a = 17 \\ge 0$。",
           zh: "验证：$-15 + 17 = 2$，且 $2 - a = 17 \\ge 0$。"
         },
-        fig(F) { F.draw(F.seg(F.T([0, 0]), F.T([-15, 8]), 'hl yellow', 'over'), 700); }
+        fig(F) { if (F.reveal) F.reveal(); F.draw(F.seg(F.T([0, 0]), F.T([-15, 8]), 'hl yellow', 'over'), 700); }
       },
       {
         title: {

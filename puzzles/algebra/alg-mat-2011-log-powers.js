@@ -34,11 +34,11 @@
       zh: "考虑方程 $x = 8^{\\log_2 x} - 9^{\\log_3 x} - 4^{\\log_2 x} + \\log_{0.5} 0.25$。<b>下列哪些正确？</b>"
     },
     figureText: {
-      en: "The line y = x and the cubic y = x³ − 2x² + 2 for x > 0. They cross at (1, 1) and (2, 2).",
-      fr: "La droite y = x et la cubique y = x³ − 2x² + 2 pour x > 0. Elles se coupent en (1, 1) et (2, 2).",
-      es: "La recta y = x y la cúbica y = x³ − 2x² + 2 para x > 0. Se cortan en (1, 1) y (2, 2).",
-      ja: "x > 0 での直線 y = x と 3 次関数 y = x³ − 2x² + 2。(1, 1) と (2, 2) で交わります。",
-      zh: "x > 0 时直线 y = x 与三次曲线 y = x³ − 2x² + 2，交于 (1, 1) 和 (2, 2)。"
+      en: "The cubic y = x³ − 2x² + 2 for x > 0. The line y = x is added in the solution.",
+      fr: "La cubique y = x³ − 2x² + 2 pour x > 0. La droite y = x est ajoutée dans la solution.",
+      es: "La cúbica y = x³ − 2x² + 2 para x > 0. La recta y = x se añade en la solución.",
+      ja: "x > 0 での3次曲線 y = x³ − 2x² + 2。直線 y = x は解答で加えます。",
+      zh: "x > 0 时的三次曲线 y = x³ − 2x² + 2。直线 y = x 在解答中加上。"
     },
     hint: {
       en: "$8^{\\log_2 x} = (2^{\\log_2 x})^3$.",
@@ -57,10 +57,12 @@
     figure(svg) {
       const F = Figure(svg, { w: 3.1, h: 3.5, scale: 62, pad: 18 });
       const T = axes(F, -0.3, 2.8, -0.3, 3.2, { grid: true });
-      const l = plot(F, T, x => x, 0, 2.8); l.style.stroke = '#3b8fbb';
       plot(F, T, x => x * x * x - 2 * x * x + 2, 0.02, 2.7, 'graph', 'base', -0.3, 3.2);
+      F.reveal = () => {
+      const l = plot(F, T, x => x, 0, 2.8); l.style.stroke = '#3b8fbb';
       F.dot(T([1, 1])); F.dot(T([2, 2]));
       F.text(T([1, 1]), '(1, 1)', 'len small', 22, 30); F.text(T([2, 2]), '(2, 2)', 'len small', 30, 4);
+      };
       return F;
     },
     words: {  // figure labels and \text{…} words inside formulas
@@ -157,6 +159,9 @@
           zh: "解三次方程"
         },
         lines: ["x = x^3-2x^2+2 \\iff x^3-2x^2-x+2=0", "(x-2)(x-1)(x+1)=0 \\;\\Rightarrow\\; x=1,\\,2 \\;(x>0)"],
+        fig(F) {
+          if (F.reveal) F.reveal();
+        },
         note: {
           en: "Group: $x^2(x-2)-(x-2)$. Only the positive roots count.",
           fr: "Regrouper : $x^2(x-2)-(x-2)$. Seules les racines positives comptent.",
