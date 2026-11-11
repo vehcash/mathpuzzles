@@ -38,6 +38,16 @@
   ui.ask = BoardUI.AskSettings(board, $('#ask-panel'));
   ui.steps = BoardUI.StepsPanel(board, $('#calc-panel'), ui.eq);
   ui.eq.onSteps = src => ui.steps.open(src);
+  // matrix tools (js/matrix.js). Pages built before it existed (puzzle/*.html) may not include the script or the panel: load / skip them.
+  const initMatrix = () => {
+    if (!window.BoardMatrix) return;
+    if (BoardMatrix.ensureMarkup) BoardMatrix.ensureMarkup();   // older matrix.js builds lack it
+    BoardMatrix.draggable($('#sys-panel')); BoardMatrix.draggable($('#calc-panel'));
+    if ($('#mat-panel')) { ui.mat = BoardMatrix.MatrixPanel(board, $('#mat-panel')); window.ui_matrix = ui.mat; }
+    const mb = $('#eq-matrix'); if (mb) { mb.hidden = !ui.mat; mb.onclick = () => ui.mat && ui.mat.toggle(); }
+  };
+  if (window.BoardMatrix) initMatrix();
+  else { const s = document.createElement('script'); s.src = 'js/matrix.js?v=20261111d'; s.onload = initMatrix; document.head.appendChild(s); }
   ui.tools = BoardUI.Toolbox(board, $('#toolbox'), ui.eq, ui.sys);
   ui.graphs.sync(); ui.geo.sync(); ui.tools.sync();
   I18N.onChange(() => { board.render(); ui.graphs.sync(); ui.geo.sync(); ui.tools.sync(); if (!$('#ask-panel').hidden) ui.ask.render(); ui.eq.set && ui.eq.refresh && ui.eq.refresh(); });

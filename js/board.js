@@ -172,9 +172,7 @@
           const hit = this.hitTest(p); if (hit) { this.pushHistory(); this.drawing = { mode: 'move', obj: hit, last: p }; } return;
         }
         if (this.tool.startsWith('g-')) { this.geoDown(p, e); return; }
-        if (this.opts.panAxes) {   // tutorial boards: dragging inside a graph moves the view, inside a 3D scene turns it
-          const sc = this.objects.find(o => o.type === 'scene' && p.x > o.x0 && p.x < o.x1 && p.y > o.y0 && p.y < o.y1);
-          if (sc && !sc.flat) { this.drawing = { mode: 'turn', sc, last: p }; this.live.style.cursor = 'grabbing'; return; }
+        if (this.opts.panAxes) {   // tutorial boards: dragging inside a graph moves the view
           const ax = this.objects.find(o => o.type === 'axes' && !o.hidden && p.x > o.x0 && p.x < o.x1 && p.y > o.y0 && p.y < o.y1);
           if (ax) { this.drawing = { mode: 'pan', ax, last: p }; this.live.style.cursor = 'grabbing'; return; }
         }
@@ -198,7 +196,6 @@
           else if (d.mode === 'erase') { d.pts.push(q); this.eraseAt(q); }
           else if (d.mode === 'move') { this.translate(d.obj, q.x - d.last.x, q.y - d.last.y); d.last = q; this.implicitCache.clear(); this.render(); }
           else if (d.mode === 'geodrag') this.geoMove(q);
-          else if (d.mode === 'turn') { d.sc.yaw -= (q.x - d.last.x) * 0.01; d.sc.pitch = clamp(d.sc.pitch + (q.y - d.last.y) * 0.01, -1.45, 1.45); d.last = q; this.render(); }
           else if (d.mode === 'pan') { d.ax.ox += q.x - d.last.x; d.ax.oy += q.y - d.last.y; d.last = q; this.implicitCache.clear(); this.render(); if (this.opts.onView) this.opts.onView(d.ax); }
         });
         this.drawLive();
@@ -222,7 +219,7 @@
           this.render();
           if (this.tool === 'smart') this.timer = setTimeout(() => this.processPending(), SMART_DELAY);
         }
-        if (d.mode === 'erase' || d.mode === 'move' || d.mode === 'pan' || d.mode === 'turn') { this.implicitCache.clear(); this.render(); this.live.style.cursor = ''; }
+        if (d.mode === 'erase' || d.mode === 'move' || d.mode === 'pan') { this.implicitCache.clear(); this.render(); this.live.style.cursor = ''; }
       };
       el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
       el.addEventListener('pointerleave', () => { if (!this.drawing) { this.hover = null; this.drawLive(); } });
@@ -232,10 +229,7 @@
         if (hit && hit.gid && this.objects.some(o => o.type === 'ink' && o.hidden && o.gid === hit.gid)) { e.preventDefault(); this.changeIntent(hit.gid); }
       });
       el.addEventListener('wheel', e => {
-        const p = this._pos(e);
-        const sc = this.opts.panAxes && this.objects.find(o => o.type === 'scene' && p.x > o.x0 && p.x < o.x1 && p.y > o.y0 && p.y < o.y1);
-        if (sc) { e.preventDefault(); sc.zoom = clamp(sc.zoom * (e.deltaY < 0 ? 1.12 : 1 / 1.12), 0.4, 4); this.render(); return; }
-        const ax = this.objects.find(o => o.type === 'axes' && p.x > o.x0 && p.x < o.x1 && p.y > o.y0 && p.y < o.y1);
+        const p = this._pos(e); const ax = this.objects.find(o => o.type === 'axes' && p.x > o.x0 && p.x < o.x1 && p.y > o.y0 && p.y < o.y1);
         if (!ax) return; e.preventDefault(); this.zoomAxes(ax, e.deltaY < 0 ? 1.15 : 1 / 1.15, this.opts.panAxes ? p : null);
       }, { passive: false });
       document.addEventListener('keydown', e => {
@@ -854,7 +848,7 @@
       this.cancelPlacing();
       const el = document.createElement('div'); el.className = 'ink-math placing'; el.style.fontSize = '30px'; el.style.color = this.color;
       el.innerHTML = '<span class="ink-math-body"></span>';
-      const tex = spec.system ? casesOf(spec.system) : global.MathCore.analyze(spec.ascii).latex;
+      const tex = spec.tex ? spec.tex : spec.system ? casesOf(spec.system) : global.MathCore.analyze(spec.ascii).latex;
       global.katex.render(tex, el.firstChild, { throwOnError: false });
       this.overlay.appendChild(el);
       this.placing = { spec, el };
@@ -867,7 +861,8 @@
       const { spec } = this.placing; this.cancelPlacing();
       this.pushHistory();
       const m = { type: 'math', id: uid++, x: p.x + 6, y: p.y, size: 30, color: this.color, ascii: spec.ascii || '', anim: { start: performance.now(), dur: 300 } };
-      if (spec.system) { m.system = spec.system.slice(); m.ascii = spec.system.join(' ; '); m.solved = !!spec.solved; }
+      if (spec.tex) { m.tex = spec.tex; m.fixed = true; m.size = 26; }   // ready-made LaTeX (matrix tools)
+      else if (spec.system) { m.system = spec.system.slice(); m.ascii = spec.system.join(' ; '); m.solved = !!spec.solved; }
       else { try { const inf = global.MathCore.analyze(m.ascii); if (spec.solved && inf.kind === 'value') m.ascii += '='; } catch (e) { m.error = true; } m.solved = !!spec.solved; }
       this.objects.push(m); this.render();
       if (spec.plot) { try { if (spec.system) this.plotSystem(spec.system); else { m.plotted = true; this.plotEquation(m.ascii, { near: m, noHistory: true }); } } catch (e) { this.onStatus(e.message); } }
@@ -917,34 +912,9 @@
       const ln = { type: 'line', id: uid++, a: P(x1, y1), b: P(x2, y2), color: o.c || COLORS.chalk, w: o.w || 2.4, anim: { start: performance.now() + (o.d || 0), dur: o.dur || 500 } };
       this.objects.push(ln); this.requestFrame(); return ln;
     }
-    // ---------- a 3D scene (geometry in space): an orthographic camera turned by yaw / pitch; drag to turn it, wheel to zoom
-    /** box = board fractions; o.r = half-size of the cube shown around o.c; o.axes = false hides the x, y, z axes */
-    sScene(box, o = {}) {
-      const sc = { type: 'scene', id: uid++, x0: box[0] * this.W, y0: box[1] * this.H, x1: box[2] * this.W, y1: box[3] * this.H, c: o.c || [0, 0, 0], r: o.r || 4,
-        yaw: o.flat ? -Math.PI / 2 : o.yaw !== undefined ? o.yaw : 0.55, pitch: o.flat ? Math.PI / 2 : o.pitch !== undefined ? o.pitch : 0.42, zoom: 1, axes: o.axes !== false, flat: !!o.flat, names: o.names, items: [], color: COLORS.chalk,
-        anim: { start: performance.now() + (o.d || 0), dur: 500 } };
-      sc.home = { yaw: sc.yaw, pitch: sc.pitch, zoom: 1 };
-      this.objects.push(sc); this.requestFrame(); return sc;
-    }
-    /** add one item to a scene: { k: 'seg' | 'poly' | 'pt' | 'lab' | 'circ' | 'sph', …, c: colour, d: delay, dur } */
-    s3(sc, it) {
-      it.anim = { start: performance.now() + (it.d || 0), dur: it.dur || 600 };
-      sc.items.push(it);
-      const end = it.anim.start + it.anim.dur;
-      sc.anim = { start: (sc.anim ? sc.anim.start : performance.now()), dur: Math.max(sc.anim ? sc.anim.dur : 0, end - (sc.anim ? sc.anim.start : performance.now())) };
-      this.requestFrame(); return it;
-    }
-    /** maths point → board pixels for a scene */
-    p3(sc, P) {
-      const cy = Math.cos(sc.yaw), sy = Math.sin(sc.yaw), cp = Math.cos(sc.pitch), sp = Math.sin(sc.pitch);
-      const x = P[0] - sc.c[0], y = P[1] - sc.c[1], z = P[2] - sc.c[2];
-      const u = -x * sy + y * cy, depth = x * cy + y * sy, v = z * cp - depth * sp;
-      const k = Math.min(sc.x1 - sc.x0, sc.y1 - sc.y0) / (2.0 * sc.r) * sc.zoom;
-      return { x: (sc.x0 + sc.x1) / 2 + u * k, y: (sc.y0 + sc.y1) / 2 - v * k, depth: depth * cp + z * sp };
-    }
     sTangent(gr, a) { const st = global.MathCore.calcSteps('tangent(' + gr.rhs + ', ' + a + ')'); return this.plotTangent(st, { axes: this.objects.find(x => x.id === gr.axes), noHistory: true }); }
     /** finish every animation now (used when a tutorial jumps to a step) */
-    sSettle() { this.objects.forEach(o => { delete o.anim; if (o.items) o.items.forEach(i => { delete i.anim; }); }); this.render(); }
+    sSettle() { this.objects.forEach(o => { delete o.anim; }); this.render(); }
 
     // =========================================================== math overlays
     mathContent(m) {
@@ -1142,58 +1112,7 @@
         case 'axes': this.drawAxes(c, o, p); break;
         case 'graph': this.drawGraph(c, o, p); break;
         case 'point': this.drawPoint(c, o, p); break;
-        case 'scene': this.drawScene(c, o, p); break;
       }
-    }
-    drawScene(c, sc, p) {
-      const now = performance.now(), P = q => this.p3(sc, q);
-      const prog = it => it.anim ? Math.max(0, Math.min(1, (now - it.anim.start) / it.anim.dur)) : 1;
-      c.save(); c.beginPath(); c.rect(sc.x0, sc.y0, sc.x1 - sc.x0, sc.y1 - sc.y0); c.clip();
-      const seg = (A, B, t, o = {}) => { const a = P(A), b = P(B); c.beginPath(); c.moveTo(a.x, a.y); c.lineTo(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t); c.stroke();
-        if (o.arrow && t > 0.95) { const ang = Math.atan2(b.y - a.y, b.x - a.x), L = 11; c.beginPath(); c.moveTo(b.x, b.y); c.lineTo(b.x - L * Math.cos(ang - 0.4), b.y - L * Math.sin(ang - 0.4)); c.lineTo(b.x - L * Math.cos(ang + 0.4), b.y - L * Math.sin(ang + 0.4)); c.closePath(); c.fill(); } };
-      const text = (q, s, size = 17, dx = 7, dy = -8) => { const a = P(q); c.font = `italic ${size}px "KaTeX_Math", "Times New Roman", serif`; c.fillText(s, a.x + dx, a.y + dy); };
-      // axes through the origin, with a tick at every whole unit
-      if (sc.axes) {
-        const A = p; c.globalAlpha *= 0.55 * A; c.lineWidth = 1.6; c.strokeStyle = c.fillStyle = sc.color;
-        const lo = sc.c.map(v => v - sc.r), hi = sc.c.map(v => v + sc.r), names = sc.names || ['x', 'y', 'z'];
-        for (let k = 0; k < (sc.flat ? 2 : 3); k++) {
-          const a = [0, 0, 0], b = [0, 0, 0]; a[k] = Math.min(lo[k], 0); b[k] = Math.max(hi[k], 0) + sc.r * 0.12;
-          seg(a, b, 1, { arrow: true });
-          for (let t = Math.ceil(a[k]); t <= hi[k]; t++) { if (!t) continue; const m = [0, 0, 0]; m[k] = t; const q = P(m); c.beginPath(); c.arc(q.x, q.y, 1.8, 0, 7); c.fill(); }
-          c.globalAlpha /= 0.55; text(b, names[k], 18, 4, -6); c.globalAlpha *= 0.55;
-        }
-        c.globalAlpha /= 0.55 * A; c.lineWidth = 2.6;
-      }
-      for (const it of sc.items) {
-        const t = prog(it); if (t <= 0) continue;
-        c.save(); c.strokeStyle = c.fillStyle = it.c || COLORS.chalk; c.lineWidth = it.w || 2.6; if (it.dash) c.setLineDash([8, 7]);
-        if (it.k === 'seg') seg(it.a, it.b, t, it);
-        else if (it.k === 'poly' || it.k === 'circ') {
-          let pts = it.pts;
-          if (it.k === 'circ') {   // circle of centre it.o, radius it.r, in the plane normal to it.n
-            const n = it.n, m = Math.hypot(...n), N = n.map(v => v / m), h = Math.abs(N[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
-            const cr = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
-            let u = cr(N, h); const um = Math.hypot(...u); u = u.map(v => v / um); const w = cr(N, u);
-            pts = []; for (let i = 0; i <= 72; i++) { const a = i / 72 * 2 * Math.PI; pts.push([0, 1, 2].map(j => it.o[j] + it.r * (Math.cos(a) * u[j] + Math.sin(a) * w[j]))); }
-          }
-          const q = pts.map(P);
-          if (it.fill) { c.save(); c.globalAlpha *= it.fill * t; c.beginPath(); q.forEach((a, i) => i ? c.lineTo(a.x, a.y) : c.moveTo(a.x, a.y)); c.closePath(); c.fill(); c.restore(); }
-          if (it.edge !== false) { const n = Math.max(1, Math.round(q.length * t)); c.beginPath(); q.slice(0, n + 1).forEach((a, i) => i ? c.lineTo(a.x, a.y) : c.moveTo(a.x, a.y)); if (t >= 1 && it.k === 'poly') c.closePath(); c.stroke(); }
-        }
-        else if (it.k === 'sph') {   // outline + equator (dashed at the back)
-          const o = P(it.o), k = Math.min(sc.x1 - sc.x0, sc.y1 - sc.y0) / (2.0 * sc.r) * sc.zoom, R = it.r * k;
-          if (it.fill) { c.save(); c.globalAlpha *= it.fill * t; c.beginPath(); c.arc(o.x, o.y, R, 0, 7); c.fill(); c.restore(); }
-          c.beginPath(); c.arc(o.x, o.y, R, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * t); c.stroke();
-          if (t >= 1) { c.save(); c.lineWidth = 1.4; c.globalAlpha *= 0.7; let prevFront = null; c.beginPath();
-            for (let i = 0; i <= 96; i++) { const a = i / 96 * 2 * Math.PI, Q = [it.o[0] + it.r * Math.cos(a), it.o[1] + it.r * Math.sin(a), it.o[2]], s = P(Q), front = s.depth > o.depth;
-              if (front !== prevFront) { c.stroke(); c.setLineDash(front ? [] : [5, 6]); c.beginPath(); c.moveTo(s.x, s.y); prevFront = front; } else c.lineTo(s.x, s.y); }
-            c.stroke(); c.restore(); }
-        }
-        else if (it.k === 'pt') { const a = P(it.p); c.beginPath(); c.arc(a.x, a.y, 4.6 * Math.min(1, t * 1.5), 0, 7); it.hollow ? c.stroke() : c.fill(); if (it.lab && t > 0.6) { c.globalAlpha *= Math.min(1, (t - 0.6) / 0.4); text(it.p, it.lab, it.s || 18, it.dx !== undefined ? it.dx : 8, it.dy !== undefined ? it.dy : -9); } }
-        else if (it.k === 'lab') { c.globalAlpha *= t; text(it.p, it.s, it.size || 17, it.dx || 0, it.dy || 0); }
-        c.restore();
-      }
-      c.restore();
     }
     drawAxes(c, a, p) {
       const ux = a.unit, uy = UY(a);

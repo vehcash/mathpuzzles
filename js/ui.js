@@ -312,6 +312,7 @@
           <button class="tb-act" data-act="place" title="Place on the board (Shift+Enter)">＋ Place</button>
           <button class="tb-act solve" data-act="solve" title="Place with its solution">= Solve</button>
           <button class="tb-act" data-act="system" title="System of equations">{ } System</button>
+          <button class="tb-act" data-act="matrix" title="Matrices and determinants">▦ Matrices</button>
           <button class="tb-act" data-act="axes" title="New coordinate axes">⊹ Axes</button>
           <button class="tb-act" data-act="steps" title="Step-by-step for calculus">📝 Steps</button>
         </div>
@@ -338,7 +339,7 @@
     calcKeys.forEach(mkKey(el.querySelector('.tb-calculus')));
     el.querySelectorAll('[data-act]').forEach(b => {
       b.onmousedown = e => e.preventDefault();
-      b.onclick = () => { const a = b.dataset.act; if (a === 'system') sys.toggle(); else if (a === 'axes') board.insertAxes(); else eq[a](); };
+      b.onclick = () => { const a = b.dataset.act; if (a === 'system') sys.toggle(); else if (a === 'matrix') { global.ui_matrix && global.ui_matrix.toggle(); } else if (a === 'axes') board.insertAxes(); else eq[a](); };
     });
 
     // geometry palette

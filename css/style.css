@@ -650,3 +650,28 @@ a.brand { color: inherit; text-decoration: none; }
 /* ---- "about" block: what the site is, for students and for teachers. It is there for search engines and screen readers,
    so it stays in the page but takes no room and is never drawn over or under the app. ---- */
 .about { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+/* ---- draggable floating panels + matrix tools ---- */
+.float-panel header.drag-handle { cursor: grab; user-select: none; touch-action: none; }
+.float-panel.dragging { opacity: .96; box-shadow: 0 22px 60px rgba(0,0,0,.55); }
+.float-panel.dragging header.drag-handle { cursor: grabbing; }
+.mat-panel { width: min(470px, calc(100% - 24px)); }
+.mx-presets { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px 12px 0; }
+.mx-presets button { border: 1px solid var(--line); background: var(--paper-2); border-radius: 7px; padding: 3px 9px; font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.mx-presets button:hover { background: #fff; }
+.mx-mats { display: flex; flex-wrap: wrap; gap: 10px 18px; padding: 8px 12px 0; }
+.mx-mats > div[hidden] { display: none; }
+.mx-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; font-size: 13px; }
+.mx-head b { font-family: var(--serif); font-size: 16px; font-style: italic; }
+.mx-size { display: inline-flex; align-items: center; gap: 3px; color: var(--ink-soft); }
+.mx-size button { width: 20px; height: 20px; border: 1px solid var(--line); background: #fff; border-radius: 5px; line-height: 1; padding: 0; font-size: 13px; color: var(--ink); }
+.mx-size span { min-width: 10px; text-align: center; font-weight: 700; color: var(--ink); }
+.mx-grid { display: grid; gap: 4px; padding: 3px 7px; border-left: 2px solid var(--ink-soft); border-right: 2px solid var(--ink-soft); border-radius: 8px; }
+.mx-grid input { width: 52px; box-sizing: border-box; border: 1px solid var(--line); border-radius: 6px; padding: 5px 4px; text-align: center; font: 14px ui-monospace, Menlo, Consolas, monospace; background: #fff; outline: none; }
+.mx-grid input:focus { border-color: var(--accent-2); }
+.mx-grid input.bad { border-color: #c0392b; background: #fdecea; }
+.mx-tools { display: flex; gap: 14px; padding: 6px 12px 8px; font-size: 13px; }
+.mx-ops .act[disabled] { opacity: .4; cursor: not-allowed; }
+.mx-ops .act[hidden] { display: none; }
+.mat-panel .sys-steps .m { overflow-x: auto; }
+.mat-panel .sys-answer { overflow-x: auto; }
