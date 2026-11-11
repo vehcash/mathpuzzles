@@ -59,7 +59,7 @@
       const T = F.T = axes(F, -0.3, 2.3, -0.3, 3.3);
       const f = x => (Math.exp(2 * x) - x * x) / 2.2;
       const q = [T([0, 0])]; for (let k = 0; k <= 40; k++) { const x = k / 40; q.push(T([x, f(x)])); } q.push(T([1, 0]));
-      F.path(q, 'fill-yellow', 'fills'); plot(F, T, f, 0, 1.15, 'graph'); F.text(T([1, 0]), '1', 'tick', 0, 14);
+      F.path(q, 'fill-yellow', 'fills'); plot(F, T, f, 0, 1.15, 'graph', 'base', -0.3, 3.3); F.text(T([1, 0]), '1', 'tick', 0, 14);
       return F;
     },
     options: [
