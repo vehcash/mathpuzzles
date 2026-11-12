@@ -43,12 +43,14 @@
   const initMatrix = () => {
     if (!window.BoardMatrix) return;
     if (BoardMatrix.ensureMarkup) BoardMatrix.ensureMarkup();   // older matrix.js builds lack it
-    BoardMatrix.draggable($('#sys-panel')); BoardMatrix.draggable($('#calc-panel'));
+    BoardMatrix.draggable($('#sys-panel')); BoardMatrix.draggable($('#calc-panel')); BoardMatrix.draggable($('#graphs-panel'));
     if ($('#mat-panel')) { ui.mat = BoardMatrix.MatrixPanel(board, $('#mat-panel')); window.ui_matrix = ui.mat; }
     const mb = $('#eq-matrix'); if (mb) { mb.hidden = !ui.mat; mb.onclick = () => ui.mat && ui.mat.toggle(); }
   };
   if (window.BoardMatrix) initMatrix();
   else { const s = document.createElement('script'); s.src = 'js/matrix.js?v=20261111e'; s.onload = initMatrix; document.head.appendChild(s); }
+  // points, vectors and named results (js/vectors.js): pages built before it existed load it here
+  if (!window.VecCore) { const s = document.createElement('script'); s.src = 'js/vectors.js?v=20261112a'; s.onload = () => { board.render(); ui.eq.refresh && ui.eq.refresh(); }; document.head.appendChild(s); }
   ui.tools = BoardUI.Toolbox(board, $('#toolbox'), ui.eq, ui.sys);
   ui.graphs.sync(); ui.geo.sync(); ui.tools.sync();
   I18N.onChange(() => { board.render(); ui.graphs.sync(); ui.geo.sync(); ui.tools.sync(); if (!$('#ask-panel').hidden) ui.ask.render(); ui.eq.set && ui.eq.refresh && ui.eq.refresh(); });
@@ -72,7 +74,7 @@
   $('#reg-n').addEventListener('keydown', e => e.stopPropagation());
   $('#geo-measures').onchange = e => { board.geo.showMeasures = e.target.checked; board.render(); };
   $('#geo-angles').onchange = e => { board.geo.showAngles = e.target.checked; board.render(); };
-  $('#eq-system').onclick = () => ui.sys.toggle();
+  if ($('#eq-system')) $('#eq-system').onclick = () => ui.sys.toggle();   // older pages; the toolbox has System too
   $('#btn-undo').onclick = () => board.undo();
   $('#btn-redo').onclick = () => board.redo();
   $('#btn-clear').onclick = () => board.clear();

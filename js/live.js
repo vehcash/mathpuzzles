@@ -77,7 +77,7 @@
         else {
           m.ascii = c.equation;
           try { const info = MathCore.analyze(m.ascii); if (c.solve && info.kind === 'value' && !/=\s*$/.test(m.ascii)) m.ascii += '='; }
-          catch (e) { m.error = true; throw new Error('cannot read the equation "' + c.equation + '": ' + e.message); }
+          catch (e) { if (!(board.readable && board.readable(m.ascii))) { m.error = true; throw new Error('cannot read the equation "' + c.equation + '": ' + e.message); } }
           m.solved = !!c.solve;
         }
         if (c.plot) {

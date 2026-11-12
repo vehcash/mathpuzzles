@@ -17,7 +17,14 @@
     const pos = a + text.length + mid.length; inp.focus(); inp.setSelectionRange(pos, pos);
     inp.dispatchEvent(new Event('input'));
   }
-  function describe(ascii) {
+  function describe(ascii, board, at) {
+    // points, vectors and names defined on the board (js/vectors.js); at = the line being edited
+    const vr = board && board.vecAnalyze ? board.vecAnalyze(ascii, at || null) : null;
+    if (vr && !vr.delegate) {
+      if (vr.kind === 'error') return { ok: true, vec: true, tex: vr.latex, hint: '\\textcolor{#ff8f8f}{\\text{' + String(tr(vr.error || '?')).replace(/[{}\\^_$&#%~]/g, ' ') + '}}', plottable: false, solvable: false, info: { kind: 'vec' } };
+      return { ok: true, vec: true, tex: vr.latex, hint: vr.resultTex.trim(), plottable: !!vr.drawable, solvable: false, info: { kind: 'vec' }, vr };
+    }
+    if (vr && vr.delegate) { const d = describe(vr.delegate); if (d.ok && vr.latex) d.tex = vr.latex; return d; }
     try {
       const info = MathCore.analyze(ascii);
       let hint = '';
@@ -37,7 +44,7 @@
     const update = () => {
       const v = inp.value.trim();
       if (!v) { pv.innerHTML = '<span class="muted">live preview</span>'; root.classList.remove('can-plot', 'can-solve'); return; }
-      const d = describe(v);
+      const d = describe(v, board, editing);
       if (!d.ok) { pv.innerHTML = '<span class="err">' + esc(d.err) + '</span>'; root.classList.remove('can-plot', 'can-solve'); return; }
       pv.innerHTML = K(d.tex) + (d.hint ? ' <span class="hint">' + K(I18N.tex(d.hint)) + '</span>' : '');
       root.classList.toggle('can-plot', d.plottable); root.classList.toggle('can-solve', d.solvable); root.classList.toggle('can-steps', d.calc);
@@ -46,7 +53,7 @@
     let recent = Store.getJSON('chalkproof.recent', []) || [];
     const remember = v => { recent = [v].concat(recent.filter(r => r !== v)).slice(0, 8); Store.setJSON('chalkproof.recent', recent); api.onRecent && api.onRecent(); };
     const plot = () => { const v = inp.value.trim(); if (!v) return inp.focus(); try { board.plotEquation(v); remember(v); board.onStatus(tr('Plotted {x} — scroll on the axes to zoom, hover the curve to trace', { x: v })); inp.select(); } catch (e) { board.onStatus(e.message); } };
-    const place = (opts = {}) => { const v = inp.value.trim(); if (!v) return inp.focus(); if (!describe(v).ok) { board.onStatus('Check the equation first'); return; } board.startPlacing(Object.assign({ ascii: v }, opts)); remember(v); inp.blur(); };
+    const place = (opts = {}) => { const v = inp.value.trim(); if (!v) return inp.focus(); if (!describe(v, board).ok) { board.onStatus('Check the equation first'); return; } board.startPlacing(Object.assign({ ascii: v }, opts)); remember(v); inp.blur(); };
     // ---- editing a formula that is already on the board (double-click / ✎): it is loaded into this field
     let editing = null, saved = '';
     const banner = document.createElement('div'); banner.className = 'eq-editing'; banner.hidden = true;
@@ -54,7 +61,7 @@
     root.querySelector('.eq-field').appendChild(banner);
     banner.onmousedown = e => { if (e.target.closest('button')) e.preventDefault(); };
     const endEdit = () => { editing = null; banner.hidden = true; root.classList.remove('is-editing'); inp.value = saved; update(); };
-    const commitEdit = () => { const m = editing; if (!m) return; const v = inp.value.trim(); if (v && !describe(v).ok) { board.onStatus('Check the equation first'); inp.focus(); return; } board.commitMath(m, v); endEdit(); board.onStatus(v ? tr('Formula updated') : tr('Formula removed')); };
+    const commitEdit = () => { const m = editing; if (!m) return; const v = inp.value.trim(); if (v && !describe(v, board, m).ok) { board.onStatus('Check the equation first'); inp.focus(); return; } board.commitMath(m, v); endEdit(); board.onStatus(v ? tr('Formula updated') : tr('Formula removed')); };
     const cancelEdit = () => { if (!editing) return; board.cancelEditMath(); endEdit(); };
     banner.querySelector('.ok').onclick = commitEdit;
     banner.querySelector('.no').onclick = cancelEdit;
@@ -69,14 +76,19 @@
     inp.addEventListener('keydown', e => {
       e.stopPropagation();
       if (editing) return;
-      if (e.key === 'Enter') { e.preventDefault(); const d = describe(inp.value.trim()); if (e.shiftKey || !d.ok || !d.plottable) place(); else plot(); }
+      if (e.key === 'Enter') {
+        e.preventDefault(); const v = inp.value.trim(), d = describe(v, board);
+        // worksheet lines (P1 = (1,1,1), u·v, …) go straight under the previous line, drawn too when they are 2-D
+        if (d.ok && d.vec && !e.shiftKey) { board.addTyped(v, d.plottable); remember(v); inp.value = ''; update(); board.onStatus(tr('Added — the next lines can use it')); return; }
+        if (e.shiftKey || !d.ok || !d.plottable) place(); else plot();
+      }
       if (e.key === 'Escape') inp.blur();
     });
     $('#eq-plot', root).onclick = plot;
     $('#eq-place', root).onclick = () => place();
-    $('#eq-solve', root).onclick = () => { const d = describe(inp.value.trim()); if (d.ok && (d.solvable || d.info.kind === 'evaluate' || d.info.kind === 'value' || d.calc)) place({ solved: true }); else { board.onStatus(d.ok ? 'Nothing to solve — try an equation with one unknown, or use { System' : 'Check the equation first'); } };
+    $('#eq-solve', root).onclick = () => { const d = describe(inp.value.trim(), board); if (d.ok && (d.solvable || d.info.kind === 'evaluate' || d.info.kind === 'value' || d.calc)) place({ solved: true }); else { board.onStatus(d.ok ? 'Nothing to solve — try an equation with one unknown, or use { System' : 'Check the equation first'); } };
     const solve = () => $('#eq-solve', root).onclick();
-    const steps = () => { const v = inp.value.trim(); const d = describe(v); if (!d.ok) { board.onStatus('Check the expression first'); return; } if (!d.calc) { board.onStatus('Steps are for calculus: d/dx(…), lim(…), int(…), tangent(…)'); return; } api.onSteps && api.onSteps(v); };
+    const steps = () => { const v = inp.value.trim(); const d = describe(v, board); if (!d.ok) { board.onStatus('Check the expression first'); return; } if (!d.calc) { board.onStatus('Steps are for calculus: d/dx(…), lim(…), int(…), tangent(…)'); return; } api.onSteps && api.onSteps(v); };
     $('#eq-steps', root).onclick = steps;
     update();
     const api = {
@@ -100,7 +112,7 @@
       const r = document.createElement('div'); r.className = 'sys-row';
       r.innerHTML = '<span class="brace"></span><input spellcheck="false" placeholder="e.g. 2x + y = 5"><span class="pv"></span><button class="x" title="Remove">×</button>';
       const i = r.querySelector('input'); i.value = val;
-      const up = () => { const d = describe(i.value.trim()); r.querySelector('.pv').innerHTML = !i.value.trim() ? '' : d.ok ? K(d.tex) : '<span class="err">?</span>'; preview(); };
+      const up = () => { const d = describe(i.value.trim(), board); r.querySelector('.pv').innerHTML = !i.value.trim() ? '' : d.ok ? K(d.tex) : '<span class="err">?</span>'; preview(); };
       i.addEventListener('input', up);
       i.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); const next = r.nextElementSibling; if (next) next.querySelector('input').focus(); else { const nr = addRow(); nr.querySelector('input').focus(); } } });
       r.querySelector('.x').onclick = () => { r.remove(); if (!rows.children.length) addRow(); preview(); };
@@ -153,21 +165,35 @@
     $('.gl-toggle', el).onclick = () => { el.classList.toggle('collapsed'); $('.gl-toggle', el).textContent = (el.classList.contains('collapsed') ? '▸ ' : '▾ ') + tr('Graphs'); };
     $('.gl-keys', el).onchange = e => { board.showKeyPoints = e.target.checked; board.render(); };
     $('.gl-trace', el).onchange = e => { board.trace = e.target.checked; };
-    $('.gl-zin', el).onclick = () => { const ax = board.objects.filter(o => o.type === 'axes' && !o.hidden).pop(); if (ax) board.zoomAxes(ax, 1.25); };
-    $('.gl-zout', el).onclick = () => { const ax = board.objects.filter(o => o.type === 'axes' && !o.hidden).pop(); if (ax) board.zoomAxes(ax, 0.8); };
+    $('.gl-zin', el).onclick = () => { const ax = board.targetAxes(); if (ax) board.zoomAxes(ax, 1.25); };
+    $('.gl-zout', el).onclick = () => { const ax = board.targetAxes(); if (ax) board.zoomAxes(ax, 0.8); };
+    // several axes: choose where new graphs go, and move a graph to other axes
+    const target = document.createElement('div'); target.className = 'gl-target'; list.before(target);
+    const axSelect = (sel, onPick) => {
+      const s = document.createElement('select'); s.className = 'gl-ax'; s.title = tr('Axes');
+      board.axesList().forEach((a, i) => { const o = document.createElement('option'); o.value = a.id; o.textContent = '⊹ ' + (i + 1); if (a.id === sel) o.selected = true; s.appendChild(o); });
+      s.onchange = () => onPick(+s.value); s.onkeydown = e => e.stopPropagation(); return s;
+    };
     let last = '';
     return {
       sync() {
         const gs = board.graphs();
-        const key = gs.map(g => g.id + g.eq + g.color + !!g.hidden).join('|') + I18N.lang;
+        const axes = board.axesList(), tgt = board.targetAxes();
+        const key = gs.map(g => g.id + g.eq + g.color + !!g.hidden + '@' + g.axes).join('|') + I18N.lang + '#' + axes.map(a => a.id).join(',') + '>' + (tgt && tgt.id);
         el.hidden = !gs.length;
         if (key === last) return; last = key;
         list.innerHTML = '';
+        target.innerHTML = ''; target.hidden = axes.length < 2;
+        if (axes.length > 1) {
+          const l = document.createElement('span'); l.textContent = tr('New graphs go on'); target.appendChild(l);
+          target.appendChild(axSelect(tgt && tgt.id, id => board.setPlotAxes(id)));
+        }
         gs.forEach(g => {
           const r = document.createElement('div'); r.className = 'gl-row' + (g.hidden ? ' off' : '');
           let tex = g.eq; try { tex = MathCore.analyze(g.eq).latex; } catch (e) { /* */ }
           r.innerHTML = '<button class="sw" title="Change colour" style="background:' + g.color + '"></button><span class="eq">' + K(tex) + '</span><button class="eye" title="Show / hide">' + (g.hidden ? '◌' : '◉') + '</button><button class="del" title="Remove">×</button>' +
             (g.mode === 'explicit' ? '<div class="gl-tools"><button data-t="d" title="Plot the derivative f′">f′</button><button data-t="t" title="Tangent line at x = a">⟋ tangent</button><button data-t="a" title="Shade the area / integral from a to b">∫ area</button></div><div class="gl-form" hidden></div>' : '');
+          if (axes.length > 1) r.insertBefore(axSelect(g.axes, id => board.moveGraph(g.id, id)), r.querySelector('.eye'));
           r.querySelector('.sw').onclick = () => { const P = BoardUtil.PLOT_COLORS; board.setGraph(g.id, { color: P[(P.indexOf(g.color) + 1) % P.length] }); };
           r.querySelector('.eye').onclick = () => board.setGraph(g.id, { hidden: !g.hidden });
           r.querySelector('.del').onclick = () => board.removeGraph(g.id);
@@ -308,6 +334,14 @@
       ['→', '→', null, null, 'op', 'Tends to'], ['∞', '∞', null, null, 'op', 'Infinity'], [',', ', ', null, null, 'op', 'Separate arguments'],
       ['e', 'e', null, null, '', "Euler's number"], ['x→a⁺', '+', null, null, 'op', 'One-sided limit from the right (type after a)'], ['📝 Steps', null, null, 'steps', 'fn wide', 'Show the steps']
     ];
+    const vecKeys = [   // points, vectors and named results (js/vectors.js)
+      ['A=(,)', 'A = (', ')', null, 'calc', 'A point: P1 = (1, 2, 3) — capital names are points'], ['u=(,)', 'u = (', ')', null, 'calc', 'A vector: u = (2, -1) — lower-case names are vectors'],
+      ['AB→', 'AB→', null, null, 'calc', 'Two point names together: the vector from the first to the second (P1P2 = P2 − P1); the arrow is optional'], ['|u|', '|', '|', null, 'calc', 'Length: |u|, |AB|'],
+      ['u·v', '·', null, null, 'op', 'Dot product (also u*v)'], ['u×v', '×', null, null, 'op', 'Cross product (3-D)'],
+      ['det', 'det(', ')', null, 'calc', 'Determinant of 2 or 3 vectors: det(u, v, w)'], ['∠', 'angle(', ')', null, 'calc', 'Angle between two vectors: angle(u, v)'],
+      ['area', 'area(', ')', null, 'calc', 'Area of the triangle ABC: area(A, B, C)'], ['vol', 'volume(', ')', null, 'calc', 'Volume of the tetrahedron ABCD: volume(A, B, C, D)'],
+      ['→', '→', null, null, 'op', 'Vector arrow: u→ or AB→ (optional)'], [':=', ' := ', null, null, 'op', 'Define (or redefine) a name: k := 2'], [',', ', ', null, null, 'op', 'Separate coordinates'], ['dist', 'dist(', ')', null, 'calc', 'Distance between two points: dist(A, B)']
+    ];
     const GEO_TOOLS = [
       ['g-select', '↖', 'Select', 'Select & drag (V)'], ['g-point', '•', 'Point', 'Point'], ['g-seg', '／', 'Segment', 'Segment'], ['g-poly', '△', 'Polygon', 'Polygon — click corners, click the first to close'],
       ['g-rect', '▭', 'Rectangle', 'Rectangle — drag corner to corner'], ['g-circle', '○', 'Circle', 'Circle — centre then radius'], ['g-reg', '⬡', 'Regular', 'Regular polygon — centre then a corner'], ['eraser', '⌫', 'Erase', 'Eraser']
@@ -328,14 +362,14 @@
         <div class="tb-calc"></div>
         <div class="tb-sub">Calculus</div>
         <div class="tb-calc tb-calculus"></div>
+        <div class="tb-sub" title="Name points and vectors, then use the names in the lines below">Vectors</div>
+        <div class="tb-calc tb-calculus tb-vectors"></div>
         <div class="tb-actions">
           <button class="tb-act plot" data-act="plot" title="Plot (Enter)">📈 Plot</button>
           <button class="tb-act" data-act="place" title="Place on the board (Shift+Enter)">＋ Place</button>
           <button class="tb-act solve" data-act="solve" title="Place with its solution">= Solve</button>
           <button class="tb-act" data-act="system" title="System of equations">{ } System</button>
           <button class="tb-act" data-act="matrix" title="Matrices and determinants">▦ Matrices</button>
-          <button class="tb-act" data-act="axes" title="New coordinate axes">⊹ Axes</button>
-          <button class="tb-act" data-act="steps" title="Step-by-step for calculus">📝 Steps</button>
         </div>
       </div>
       <div class="tb-pane" data-pane="geo" hidden>
@@ -358,6 +392,7 @@
     };
     calc.forEach(mkKey(calcEl));
     calcKeys.forEach(mkKey(el.querySelector('.tb-calculus')));
+    vecKeys.forEach(mkKey(el.querySelector('.tb-vectors')));
     el.querySelectorAll('[data-act]').forEach(b => {
       b.onmousedown = e => e.preventDefault();
       b.onclick = () => { const a = b.dataset.act; if (a === 'system') sys.toggle(); else if (a === 'matrix') { global.ui_matrix && global.ui_matrix.toggle(); } else if (a === 'axes') board.insertAxes(); else eq[a](); };

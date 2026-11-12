@@ -124,6 +124,9 @@
     for (let i = 0; i < img.data.length; i += 4) { const v = Math.random(); img.data[i + 3] = v < 0.82 ? Math.random() * 40 : 140 + Math.random() * 100; }
     g.putImageData(img, 0, 0); return c;
   }
+  const SUBS = '₀₁₂₃₄₅₆₇₈₉';
+  /** "P1" → "P₁", "P1P2" → "P₁P₂" (canvas labels) */
+  const vecLabel = n => String(n || '').replace(/_?\{?(\d+)\}?/g, (m, d) => [...d].map(x => SUBS[+x]).join(''));
   const niceNum = v => { if (!isFinite(v)) return '—'; const r = Math.round(v * 100) / 100; return (Math.abs(r) < 1e-9 ? 0 : r).toString(); };
 
   class SmartBoard {
@@ -520,7 +523,7 @@
             }
           }
           const m = { type: 'math', id: uid++, x: g.bb.minX, y: g.bb.cy, size: clamp(H * 1.25, 16, 110), color, ascii };
-          try { global.MathCore.analyze(ascii); } catch (e) { m.error = true; }
+          try { global.MathCore.analyze(ascii); } catch (e) { m.error = !this.readable(ascii); }
           if (y === 'plot') {
             return { objs: [m], status: global.tr('Plotted {x}', { x: ascii }), after: () => { m.plotted = true; this.plotEquation(ascii, { color: color === COLORS.chalk ? null : color, near: m, noLabel: true, gid: m.gid }); } };
           }
@@ -659,10 +662,39 @@
     }
     getAxes(near) {
       const all = this.objects.filter(o => o.type === 'axes' && !o.hidden);
+      const chosen = all.find(a => a.id === this.plotAxes); if (chosen) return chosen;   // picked in the Graphs panel
       if (all.length) return near ? all.sort((a, b) => dist({ x: a.ox, y: a.oy }, near) - dist({ x: b.ox, y: b.oy }, near))[0] : all[all.length - 1];
       const ax = this.newAxes(); ax.anim = { start: performance.now(), dur: 500 }; this.objects.push(ax); return ax;
     }
-    insertAxes() { this.pushHistory(); const ax = this.newAxes(); ax.anim = { start: performance.now(), dur: 500 }; this.objects.push(ax); this.render(); }
+    /** the visible axes, numbered 1, 2, … in the order they were made */
+    axesList() { return this.objects.filter(o => o.type === 'axes' && !o.hidden); }
+    /** where new graphs go: the axes picked in the Graphs panel, else the newest */
+    targetAxes() { const all = this.axesList(); return all.find(a => a.id === this.plotAxes) || all[all.length - 1] || null; }
+    setPlotAxes(id) { this.plotAxes = id; this.render(); }
+    /** move a graph (with its label, tangent points and area) onto other axes */
+    moveGraph(id, axId) {
+      const g = this.objects.find(o => o.id === id), ax = this.objects.find(o => o.id === axId);
+      if (!g || !ax || g.axes === axId) return;
+      this.pushHistory();
+      const label = this.objects.find(o => o.labelOf === id);
+      g.axes = axId;
+      if (label) { const nl = this.makeLabel(ax, g); delete nl.anim; Object.assign(label, { x: nl.x, y: nl.y, alignRight: nl.alignRight, labelAxes: axId }); }
+      this.implicitCache.clear(); this.render();
+    }
+    insertAxes() {
+      this.pushHistory();
+      const others = this.axesList();
+      let ax = this.newAxes();
+      if (others.length) {   // beside the axes already there, not on top of them
+        const hw = Math.min(this.W * 0.22, 220), hh = Math.min(this.H * 0.3, 200);
+        const cands = [[0.75, 0.5], [0.25, 0.5], [0.75, 0.27], [0.75, 0.73], [0.25, 0.27], [0.25, 0.73], [0.5, 0.5]].map(([fx, fy]) => this.newAxes({ cx: this.W * fx, cy: this.H * fy, hw, hh, unit: 24 }));
+        const overlap = a => others.reduce((s, b) => s + Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)) * Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0)), 0);
+        ax = cands.sort((a, b) => overlap(a) - overlap(b))[0];
+      }
+      ax.anim = { start: performance.now(), dur: 500 }; this.objects.push(ax);
+      this.plotAxes = ax.id;   // new graphs go on the new axes (the Graphs panel can change it)
+      this.render();
+    }
     zoomAxes(ax, f, at) {   // at: keep this board point fixed (the cursor); default the origin
       const u0 = ax.unit, u = clamp(u0 * f, 4, ax.uy ? 4000 : 240), k = u / u0;
       if (at) { ax.ox = at.x - (at.x - ax.ox) * k; ax.oy = at.y - (at.y - ax.oy) * k; }
@@ -683,6 +715,10 @@
     /** Plot "y = …", "f(x) = …", a bare expression in x, or any relation in x and y (implicit). */
     plotEquation(ascii, opts = {}) {
       let src = ascii.trim(); if (!src) throw new Error('Type an equation first');
+      // points, vectors and names defined on the board (js/vectors.js)
+      const vr = this.vecAnalyze(src, opts.near && opts.near.type === 'math' ? opts.near : null);
+      if (vr && vr.delegate) src = vr.delegate;
+      else if (vr) return this.plotVec(vr, opts);
       let info = global.MathCore.analyze(src);
       if (info.kind === 'tangent') return this.plotTangent(info.tangent, opts);
       if (info.kind === 'derivative') { if (info.plotVar !== 'x') throw new Error('Plotting works with x as the variable'); src = 'y=' + info.derivAscii; info = global.MathCore.analyze(src); }
@@ -704,6 +740,39 @@
       if (!opts.noLabel) this.objects.push(this.makeLabel(ax, gr));
       this.implicitCache.clear(); this.requestFrame();
       return gr;
+    }
+    // =========================================================== worksheet: points, vectors, named results (js/vectors.js)
+    /** the typed lines that make up the worksheet, top to bottom in the order they were placed */
+    mathLines() { return this.objects.filter(o => o.type === 'math' && !o.hidden && !o.fixed && !o.system && !o.isLabel && !o.error && o.ascii); }
+    /** the definitions on the whole board, wherever they are written; for the line that makes a definition, without
+        that one (so it still reads as a definition, and is not an equation about itself) */
+    vecScope(m) {
+      const L = this.mathLines(), sc = global.VecCore.scope(L.map(o => o.ascii)), i = m ? L.indexOf(m) : -1;
+      if (i < 0) return sc;
+      // an equation keeps showing its solutions after one of them was written on the board from it (a = 3)
+      const drop = [...sc.defs].filter(([n, d]) => n === sc.lineDefs[i] || (L[d.line] && L[d.line].solvedFrom === m.id)).map(([n]) => n);
+      if (!drop.length) return sc;
+      const defs = new Map(sc.defs); drop.forEach(n => defs.delete(n)); return { defs, lineDefs: sc.lineDefs };
+    }
+    vecAnalyze(ascii, m) { if (!global.VecCore) return null; try { return global.VecCore.analyze(ascii, this.vecScope(m)); } catch (e) { return null; } }
+    /** can either engine read this line? */
+    readable(ascii) {
+      const vr = this.vecAnalyze(ascii);
+      if (vr && !vr.delegate) return true;   // a worksheet line (an error is shown beside it)
+      try { global.MathCore.analyze(vr && vr.delegate ? vr.delegate : ascii); return true; } catch (e) { return false; }
+    }
+    /** draw a 2-D point or vector that a worksheet line gives */
+    plotVec(vr, opts = {}) {
+      const d = vr.drawable;
+      if (!d) throw new Error(vr.kind === 'error' ? vr.error : global.tr('Only 2-D points and vectors can be drawn on the axes'));
+      if (!opts.noHistory) this.pushHistory();
+      const ax = opts.axes || this.getAxes(opts.near);
+      const color = opts.color || this.nextPlotColor(), label = vecLabel(d.label), now = performance.now();
+      let o;
+      if (d.type === 'point') o = { type: 'point', id: uid++, axes: ax.id, x: d.x, y: d.y, color, label, anim: { start: now, dur: 400 } };
+      else o = { type: 'vec', id: uid++, axes: ax.id, x1: d.x1, y1: d.y1, x2: d.x2, y2: d.y2, color, label, anim: { start: now, dur: 600 } };
+      if (opts.near && opts.near.type === 'math') o.from = opts.near.id;
+      this.objects.push(o); this.requestFrame(); return o;
     }
     /** f, its tangent line at a, and the point of tangency */
     plotTangent(st, opts = {}) {
@@ -848,7 +917,8 @@
       this.cancelPlacing();
       const el = document.createElement('div'); el.className = 'ink-math placing'; el.style.fontSize = '30px'; el.style.color = this.color;
       el.innerHTML = '<span class="ink-math-body"></span>';
-      const tex = spec.tex ? spec.tex : spec.system ? casesOf(spec.system) : global.MathCore.analyze(spec.ascii).latex;
+      let tex = spec.tex ? spec.tex : spec.system ? casesOf(spec.system) : null;
+      if (!tex) { const vr = this.vecAnalyze(spec.ascii); tex = vr && vr.latex ? vr.latex : global.MathCore.analyze(vr && vr.delegate ? vr.delegate : spec.ascii).latex; }
       global.katex.render(tex, el.firstChild, { throwOnError: false });
       this.overlay.appendChild(el);
       this.placing = { spec, el };
@@ -863,15 +933,23 @@
       const m = { type: 'math', id: uid++, x: p.x + 6, y: p.y, size: 30, color: this.color, ascii: spec.ascii || '', anim: { start: performance.now(), dur: 300 } };
       if (spec.tex) { m.tex = spec.tex; m.fixed = true; m.size = 26; }   // ready-made LaTeX (matrix tools)
       else if (spec.system) { m.system = spec.system.slice(); m.ascii = spec.system.join(' ; '); m.solved = !!spec.solved; }
-      else { try { const inf = global.MathCore.analyze(m.ascii); if (spec.solved && inf.kind === 'value') m.ascii += '='; } catch (e) { m.error = true; } m.solved = !!spec.solved; }
+      else { try { const inf = global.MathCore.analyze(m.ascii); if (spec.solved && inf.kind === 'value') m.ascii += '='; } catch (e) { m.error = !this.readable(m.ascii); } m.solved = !!spec.solved; }
       this.objects.push(m); this.render();
       if (spec.plot) { try { if (spec.system) this.plotSystem(spec.system); else { m.plotted = true; this.plotEquation(m.ascii, { near: m, noHistory: true }); } } catch (e) { this.onStatus(e.message); } }
     }
     cancelPlacing() { if (!this.placing) return; this.placing.el.remove(); this.placing = null; this.root.classList.remove('is-placing'); }
     addTyped(ascii, plot) { // place directly below the previous equation (no click needed)
-      const ys = this.objects.filter(o => o.type === 'math' && !o.isLabel && !o.hidden).map(o => o.y);
-      const y = ys.length ? Math.min(this.H - 40, Math.max(...ys) + 56) : 60;
-      this.startPlacing({ ascii, plot }); this.finishPlacing({ x: 34, y });
+      // below the last line, by its real height (fractions and determinants are tall); a new column when the board is full
+      const cr = this.canvas.getBoundingClientRect();
+      const box = o => { const el = this.mathEls.get(o.id); if (!el) return { bottom: o.y + 20, right: o.x + 200 }; const r = el.getBoundingClientRect(), rb = (el.firstChild || el).getBoundingClientRect(); return { bottom: r.bottom - cr.top, right: rb.right - cr.left }; };
+      const lines = this.objects.filter(o => o.type === 'math' && !o.isLabel && !o.hidden && !o.fixed);
+      let x = 34, y = 60;
+      if (lines.length) {
+        const last = lines[lines.length - 1], col = lines.filter(o => Math.abs(o.x - last.x) < 4);
+        x = last.x - 6; y = Math.max(...col.map(o => box(o).bottom)) + 26;
+        if (y > this.H - 36) { const nx = Math.max(...col.map(o => box(o).right)) + 34 - 6; if (nx < this.W - 160) { x = nx; y = 60; } else y = this.H - 40; }
+      }
+      this.startPlacing({ ascii, plot }); this.finishPlacing({ x, y });
     }
 
     // =========================================================== scripted drawing (cheat-sheet tutorials, js/tutor.js)
@@ -929,31 +1007,54 @@
         return { tex, actions };
       }
       if (m.error) return { tex: '\\text{' + texEsc(m.ascii) + '}\\;\\textbf{?}', actions: [] };
-      let info; try { info = global.MathCore.analyze(m.ascii); } catch (e) { return { tex: '\\text{' + texEsc(m.ascii) + '}\\;?', actions: [] }; }
-      let tex = info.latex; const actions = [];
+      const vr = m.isLabel ? null : this.vecAnalyze(m.ascii, m);
+      if (vr && !vr.delegate) return this.vecContent(m, vr);
+      const src = vr && vr.delegate ? vr.delegate : m.ascii;   // defined numbers substituted
+      let info; try { info = global.MathCore.analyze(src); } catch (e) { return { tex: '\\text{' + texEsc(m.ascii) + '}\\;?', actions: [] }; }
+      let tex = (vr && vr.latex) || info.latex; const actions = [];
       if (m.isLabel) return { tex, actions };
       if (info.kind === 'evaluate') tex += '\\,\\textcolor{#f3d36b}{' + info.resultTex + '}';
       if (info.kind === 'derivative') tex += ' = \\textcolor{#f3d36b}{' + info.resultTex + '}';
       if (info.kind === 'tangent') tex += ':\\ \\textcolor{#f3d36b}{' + info.resultTex + '}';
-      const steps = () => this.opts.onCalcSteps && this.opts.onCalcSteps(m.ascii);
+      const steps = () => this.opts.onCalcSteps && this.opts.onCalcSteps(src);
       if (info.calc) {
-        const plotable = info.kind === 'derivative' ? info.plotVar === 'x' : info.kind === 'tangent' || (info.kind === 'evaluate' && /^(int|lim|∫)/.test(m.ascii.trim()));
+        const plotable = info.kind === 'derivative' ? info.plotVar === 'x' : info.kind === 'tangent' || (info.kind === 'evaluate' && /^(int|lim|∫)/.test(src.trim()));
         if (plotable && !m.plotted) actions.push(['Plot', () => { try { this.pushHistory(); m.plotted = true; this.plotEquation(m.ascii.replace(/=\s*$/, ''), { near: m, noHistory: true }); } catch (e) { this.onStatus(e.message); } this.render(); }]);
         actions.push(['Steps', steps]);
         return { tex, actions };
       }
-      if (info.kind === 'equation') { if (m.solved) tex += '\\quad\\textcolor{#f3d36b}{\\Rightarrow\\ ' + info.resultTex + '}'; else actions.push(['Solve', () => { this.pushHistory(); m.solved = true; this.render(); }]); }
+      if (info.kind === 'equation') {
+        if (m.solved) { tex += '\\quad\\textcolor{#f3d36b}{\\Rightarrow\\ ' + info.resultTex + '}'; if (global.VecCore && info.roots) this.useActions(m, info.roots.map(r => global.VecCore.useLine(info.variable, r, this.vecScope().defs)), actions); }
+        else actions.push(['Solve', () => { this.pushHistory(); m.solved = true; this.render(); }]);
+      }
       if (info.kind === 'value') actions.push(['= ?', () => { this.pushHistory(); m.ascii += '='; this.render(); }]);
       if ((info.kind === 'function' || info.kind === 'relation') && !m.plotted) actions.push(['Plot', () => { try { this.pushHistory(); m.plotted = true; this.plotEquation(m.ascii, { near: m, noHistory: true }); } catch (e) { this.onStatus(e.message); } this.render(); }]);
       return { tex, actions };
     }
+    /** a worksheet line (js/vectors.js): its LaTeX with the result, plus Plot and "use a = 3" buttons */
+    vecContent(m, vr) {
+      const actions = [];
+      if (vr.kind === 'error') return { tex: vr.latex + '\\quad\\textcolor{#ff8f8f}{\\text{' + texEsc(global.tr(vr.error || '?')) + '}}', actions };
+      if (vr.drawable && !m.plotted && !this.objects.some(o => o.from === m.id)) actions.push(['Plot', () => { try { this.pushHistory(); m.plotted = true; this.plotVec(vr, { near: m, noHistory: true }); } catch (e) { this.onStatus(e.message); } this.render(); }]);
+      if (vr.roots && vr.unknown) { const defs = this.vecScope().defs; this.useActions(m, vr.roots.map(r => global.VecCore.useLine(vr.unknown, r, defs)), actions); }
+      return { tex: vr.latex + vr.resultTex, actions };
+    }
+    /** buttons that write a solution below as a definition (a = 3), so the lines after it can use it */
+    useActions(m, lines, actions) {
+      const have = new Set(this.mathLines().map(o => o.ascii.replace(/\s+/g, '')));
+      lines.slice(0, 4).forEach(line => {
+        if (have.has(line.replace(/\s+/g, ''))) return;
+        actions.push([line.replace(/\*/g, '·').replace(/sqrt/g, '√'), () => { this.addTyped(line); const made = this.mathLines().pop(); if (made) { made.solvedFrom = m.id; this.render(); } this.onStatus(global.tr('{x} is now defined: the lines you add below use it', { x: line })); }]);
+      });
+    }
     syncMath(now) {
       const alive = new Set();
+      const sheet = global.VecCore ? this.mathLines().map(o => o.ascii).join('\n') : '';   // a definition changed → every line may change
       this.objects.filter(o => o.type === 'math' && !o.hidden).forEach(m => {
         alive.add(m.id);
         let el = this.mathEls.get(m.id);
         const canChange = m.gid && this.objects.some(o => o.type === 'ink' && o.hidden && o.gid === m.gid);
-        const key = [m.ascii, m.tex, m.solved, m.plotted, m.size, m.color, m.error, canChange, global.I18N ? global.I18N.lang : ''].join('|');
+        const key = [m.ascii, m.tex, m.solved, m.plotted, m.size, m.color, m.error, canChange, global.I18N ? global.I18N.lang : '', m.fixed || m.isLabel ? '' : sheet, this.objects.some(o => o.from === m.id)].join('|');
         if (!el) { el = document.createElement('div'); el.className = 'ink-math'; this.overlay.appendChild(el); this.mathEls.set(m.id, el); }
         if (el._key !== key) {
           el._key = key;
@@ -1001,7 +1102,7 @@
       if (!this.objects.includes(m)) { this.render(); return false; }
       if (v && v !== m.ascii) {
         this.pushHistory(); m.ascii = v; m.error = false; m.solved = false; m.mathKey = null;
-        try { global.MathCore.analyze(m.ascii); } catch (e) { m.error = true; }
+        m.error = !this.readable(m.ascii);
         if (m.isLabel && m.labelOf) { const gr = this.objects.find(o => o.id === m.labelOf); if (gr) { gr.eq = v; gr.rhs = v.replace(/^\s*(y|f\s*\(\s*x\s*\))\s*=/, ''); this.implicitCache.clear(); } }
       }
       if (!v) { this.pushHistory(); this.objects = this.objects.filter(o => o !== m); }
@@ -1025,6 +1126,7 @@
           if (o.mode === 'explicit') { const y = this.compile(o.rhs)((p.x - ax.ox) / ax.unit); return Math.abs(ax.oy - y * UY(ax) - p.y) < r + 2; }
           const F = this.compileImplicit(o.eq), m = this.toMath(ax, p), e = 1e-4; const v = F(m.x, m.y), gx = (F(m.x + e, m.y) - v) / e, gy = (F(m.x, m.y + e) - v) / e; return Math.abs(v) / (Math.hypot(gx, gy) || 1) * ax.unit < r + 2; }
         case 'point': { const ax = this.objects.find(a => a.id === o.axes); return ax && dist(p, this.toPx(ax, o)) < r; }
+        case 'vec': { const ax = this.objects.find(a => a.id === o.axes); return ax && segDist(p, this.toPx(ax, { x: o.x1, y: o.y1 }), this.toPx(ax, { x: o.x2, y: o.y2 })) < r; }
         case 'math': return this.hitMath(o, p);
       }
       return false;
@@ -1045,7 +1147,7 @@
         case 'line': mv(o.a); mv(o.b); break;
         case 'circle': case 'ellipse': mv(o.c); break;
         case 'axes': o.ox += dx; o.oy += dy; o.x0 += dx; o.x1 += dx; o.y0 += dy; o.y1 += dy; this.objects.filter(l => l.isLabel && l.labelAxes === o.id).forEach(l => { l.x += dx; l.y += dy; }); break;
-        case 'graph': case 'point': { const ax = this.objects.find(a => a.id === o.axes); if (ax) this.translate(ax, dx, dy); break; }
+        case 'graph': case 'point': case 'vec': { const ax = this.objects.find(a => a.id === o.axes); if (ax) this.translate(ax, dx, dy); break; }
         case 'math': o.x += dx; o.y += dy; break;
       }
     }
@@ -1124,10 +1226,18 @@
         case 'axes': this.drawAxes(c, o, p); break;
         case 'graph': this.drawGraph(c, o, p); break;
         case 'point': this.drawPoint(c, o, p); break;
+        case 'vec': this.drawVec(c, o, p); break;
       }
     }
     drawAxes(c, a, p) {
       const ux = a.unit, uy = UY(a);
+      const all = this.axesList();
+      if (all.length > 1 && !a.uy) {   // several axes: number them (the Graphs panel uses the numbers)
+        const n = all.indexOf(a) + 1, on = (this.targetAxes() || {}).id === a.id;
+        c.save(); c.globalAlpha *= p; c.font = '700 13px system-ui, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+        c.fillStyle = on ? '#f3d36b' : 'rgba(246,233,214,.25)'; c.beginPath(); c.arc(a.x0 + 12, a.y0 + 12, 10, 0, Math.PI * 2); c.fill();
+        c.fillStyle = on ? '#3b2814' : '#f6e9d6'; c.fillText(String(n), a.x0 + 12, a.y0 + 12.5); c.restore();
+      }
       // tick and label steps: whole numbers on the normal board, decimals too when a tutorial zooms in
       const NICE = [0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000];
       const steps = u => {
@@ -1199,6 +1309,24 @@
       c.globalAlpha *= p; c.fillStyle = o.hollow ? '#1f3329' : o.color; c.beginPath(); c.arc(q.x, q.y, 5.5, 0, Math.PI * 2); c.fill();
       c.strokeStyle = o.hollow ? o.color : '#23382f'; c.lineWidth = o.hollow ? 2.2 : 1.5; c.stroke();
       if (o.label) { c.font = '15px Kalam, cursive'; c.fillStyle = o.color; c.textAlign = 'left'; c.fillText(o.label, q.x + 9, q.y - 9); }
+    }
+    drawVec(c, o, p) {
+      const a = this.objects.find(x => x.id === o.axes); if (!a || a.hidden) return;
+      const A = this.toPx(a, { x: o.x1, y: o.y1 }), B0 = this.toPx(a, { x: o.x2, y: o.y2 });
+      const B = { x: A.x + (B0.x - A.x) * p, y: A.y + (B0.y - A.y) * p }, L = dist(A, B);
+      c.save(); c.beginPath(); c.rect(a.x0, a.y0, a.x1 - a.x0, a.y1 - a.y0); c.clip();
+      c.lineWidth = 2.8; c.beginPath(); c.moveTo(A.x, A.y); c.lineTo(B.x, B.y); c.stroke();
+      if (L > 2) {
+        const ang = Math.atan2(B.y - A.y, B.x - A.x), h = Math.min(13, L * 0.45);
+        c.beginPath(); c.moveTo(B.x, B.y); c.lineTo(B.x - h * Math.cos(ang - 0.42), B.y - h * Math.sin(ang - 0.42)); c.lineTo(B.x - h * Math.cos(ang + 0.42), B.y - h * Math.sin(ang + 0.42)); c.closePath(); c.fill();
+      }
+      if (o.label && p > 0.6) {   // the name beside the middle of the arrow, on its left
+        const nx = -(B0.y - A.y) / (dist(A, B0) || 1), ny = (B0.x - A.x) / (dist(A, B0) || 1), mx = (A.x + B0.x) / 2, my = (A.y + B0.y) / 2;
+        c.font = 'italic 17px Kalam, cursive'; c.textAlign = 'center'; c.textBaseline = 'middle';
+        const tx = mx - nx * 14, ty = my - ny * 14; c.fillText(o.label, tx, ty);
+        const w = c.measureText(o.label).width; c.lineWidth = 1.4; c.beginPath(); c.moveTo(tx - w / 2, ty - 11); c.lineTo(tx + w / 2, ty - 11); c.lineTo(tx + w / 2 - 4, ty - 14); c.stroke();
+      }
+      c.restore();
     }
     drawKeyPoints(c) {
       if (!this.showKeyPoints) return;

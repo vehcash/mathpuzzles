@@ -77,6 +77,7 @@ AI assistants can teach on the blackboard: they draw an explanation step by step
 - `js/ui.js` — equation bar + keypad, system-of-equations panel, graph list, geometry panel, ask settings.
 - `js/recognizer.js` — offline handwriting recogniser ($P point clouds + layout analysis for fractions, roots, exponents, sin/cos/tan/log/ln, degrees).
 - `js/mathcore.js` — parser, evaluator, solver, LaTeX printer and curve fitting.
+- `js/vectors.js` — the board as one worksheet: points, vectors and named results shared by every typed line (see Worksheet syntax).
 - `js/app.js` — UI glue: categories, answers, confirmation, step-by-step solution.
 - `js/live.js` — live lessons: plays an AI's board commands on the smart board (see the MCP section).
 
@@ -86,6 +87,15 @@ AI assistants can teach on the blackboard: they draw an explanation step by step
 - △ Geometry: draw figures, select them to measure and add constraints; drag points and the figure keeps its constraints.
 - Drag any equation, axes origin or point to move it. Double-click an equation to edit it.
 - ✨ Ask an AI (puzzle card / System panel) opens the problem in ChatGPT, Copilot, Claude, Perplexity, Le Chat, Gemini or DeepSeek.
+
+## Worksheet syntax (points, vectors, names)
+Every typed line on the board can use what the others define, wherever they are on the board:
+- `P1 = (1, 1, 1)` or `P1(1, 1, 1)` — a point (capital name; 2-D or 3-D). `u = (2, -1)`, `v = [1, 3]` — vectors (lower-case).
+- `P1P2` (also `P1P2→`, `→P1P2`, `vec(P1, P2)`) — the vector from P1 to P2; `P1P2 = P2 - P1` gives it its own definition.
+- `a = 2`, `x = 3 + a`, `y = x*b` — numbers and expressions; unknowns stay letters (`y` shows `ab + 3b`). `k := 5` (re)defines anything.
+- `u·v` / `u*v` / `dot(u,v)`, `u×v` / `cross(u,v)`, `|u|`, `det(u,v,w)`, `angle(u,v)`, `unit(u)`, `proj(u,v)`, `dist(A,B)`, `mid(A,B)`, `area(A,B,C)`, `volume(A,B,C,D)`.
+- A defined name used again with `=` is an equation: `V = |det(P1P2, P1P3, P1P4)|/6` then `V = 1` ⇒ `a ∈ {3, 15}`, with buttons that write `a = 3` on the board. `|P1P4| <= 10` is checked ✓/✗.
+- 2-D points and vectors are drawn on the axes (Enter); lines that only use defined numbers go to MathCore with the numbers substituted (`y = k x + 1` plots).
 
 ## Calculus syntax
 `17 mod 5` (also `%`; exact for big powers like `2^100 mod 7`), `d/dx(x^2 sin(x))`, `diff(f, x, 2)`, `diff(f, x=2)`, `lim(sin(x)/x, x→0)` (`x→0+` one-sided, `x→∞`), `int(x^2, 0, 3)`, `tangent(x^2, 1)` — results show automatically; **Steps** explains them; **Plot** draws them. Plotted curves get **f′**, **tangent** and **∫ area** buttons in the Graphs panel.
