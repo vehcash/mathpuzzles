@@ -29,7 +29,11 @@
       const info = MathCore.analyze(ascii);
       let hint = '';
       if (info.kind === 'evaluate' || info.kind === 'value') hint = (/=\s*$/.test(info.latex) ? '' : '= ') + info.resultTex;
-      else if (info.kind === 'equation') hint = '\\Rightarrow ' + info.resultTex;
+      else if (info.kind === 'equation') {
+        hint = '\\Rightarrow ' + info.resultTex;
+        const cr = !(info.roots && info.roots.length) && window.VecCore && VecCore.complexRoots ? VecCore.complexRoots(ascii, board && board.vecScope ? board.vecScope() : null) : null;
+        if (cr) hint = cr.resultTex.replace(/^\\quad/, '');
+      }
       else if (info.kind === 'derivative') hint = '= ' + info.resultTex;
       else if (info.kind === 'tangent') hint = info.resultTex;
       const calcPlot = info.kind === 'derivative' ? info.plotVar === 'x' : info.kind === 'tangent' || (info.calc && info.kind === 'evaluate' && /^\s*(int|lim|∫)/.test(ascii));
@@ -40,12 +44,27 @@
   // ======================================================= equation bar
   function EqBar(board, root) {
     const inp = $('#eq-input', root), pv = $('#eq-preview', root), keypad = $('#eq-keypad', root);
+    // icon-only action buttons (the name stays for screen readers and in the tooltip)
+    const ICONS = {
+      'eq-plot': '<path d="M4 4v16h16"/><path d="M7 15c2.5-6 4.5-6 6.5-2.5S17.5 13 20 6"/>',
+      'eq-place': '<path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2"/><path d="M12 8.5v7M8.5 12h7"/>',
+      'eq-solve': '<path d="M3 9h9M3 15h9"/><path d="m14 12.5 3 3 5-7"/>',
+      'eq-steps': '<path d="M3 20h5v-5h5v-5h5V5h3"/>'
+    };
+    const keysBtn = $('#eq-keys', root);   // the toolbox toggle: icon only too
+    if (keysBtn) { keysBtn.querySelector('.lbl') && keysBtn.querySelector('.lbl').classList.add('sr'); keysBtn.classList.add('ico'); keysBtn.setAttribute('aria-label', 'Toolbox'); }
+    Object.keys(ICONS).forEach(id => {
+      const b = $('#' + id, root); if (!b) return;
+      const name = (b.querySelector('.lbl') || b).textContent.replace(/^[^A-Za-z]+/, '').trim() || id;
+      b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[id] + '</svg><span class="lbl sr">' + name + '</span>';
+      b.classList.add('ico'); if (!b.getAttribute('aria-label')) b.setAttribute('aria-label', name);
+    });
     KEYS.forEach(([label, text, close]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'key'; b.innerHTML = label; b.onmousedown = e => e.preventDefault(); b.onclick = () => insertAt(inp, text, close); keypad.appendChild(b); });
     const update = () => {
       const v = inp.value.trim();
-      if (!v) { pv.innerHTML = '<span class="muted">live preview</span>'; root.classList.remove('can-plot', 'can-solve'); return; }
+      if (!v) { pv.innerHTML = '<span class="muted">live preview</span>'; root.classList.remove('can-plot', 'can-solve', 'can-steps'); return; }
       const d = describe(v, board, editing);
-      if (!d.ok) { pv.innerHTML = '<span class="err">' + esc(d.err) + '</span>'; root.classList.remove('can-plot', 'can-solve'); return; }
+      if (!d.ok) { pv.innerHTML = '<span class="err">' + esc(d.err) + '</span>'; root.classList.remove('can-plot', 'can-solve', 'can-steps'); return; }
       pv.innerHTML = K(d.tex) + (d.hint ? ' <span class="hint">' + K(I18N.tex(d.hint)) + '</span>' : '');
       root.classList.toggle('can-plot', d.plottable); root.classList.toggle('can-solve', d.solvable); root.classList.toggle('can-steps', d.calc);
     };
@@ -320,12 +339,8 @@
       ['sin', 'sin('], ['cos', 'cos('], ['tan', 'tan('], ['°', '°'],
       ['ln', 'ln('], ['log', 'log('], ['eˣ', 'exp('], ['n!', '!'],
       ['mod', ' mod ', null, null, 'op'], ['%', '%', null, null, 'op'], ['<', '<', null, null, 'op'], ['>', '>', null, null, 'op'],
-      ['(', '('], [')', ')'], ['⌫', null, null, 'back', 'fn'], ['C', null, null, 'clear', 'fn danger'],
-      ['7', '7', null, null, 'num'], ['8', '8', null, null, 'num'], ['9', '9', null, null, 'num'], ['÷', '/', null, null, 'op'],
-      ['4', '4', null, null, 'num'], ['5', '5', null, null, 'num'], ['6', '6', null, null, 'num'], ['×', '*', null, null, 'op'],
-      ['1', '1', null, null, 'num'], ['2', '2', null, null, 'num'], ['3', '3', null, null, 'num'], ['−', '-', null, null, 'op'],
-      ['0', '0', null, null, 'num'], ['.', '.', null, null, 'num'], ['=', '=', null, null, 'op eq'], ['+', '+', null, null, 'op'],
-      ['◀', null, null, 'left', 'fn'], ['▶', null, null, 'right', 'fn'], ['≤', '<=', null, null, 'op'], ['≥', '>=', null, null, 'op']
+      // digits, + − × ÷ =, brackets, cursor and delete keys are left to the keyboard
+      ['≤', '<=', null, null, 'op'], ['≥', '>=', null, null, 'op']
     ];
     const calcKeys = [
       ['d/dx', 'd/dx(', ')', null, 'calc', 'Derivative: d/dx(x^2 sin(x))'], ['d²/dx²', 'diff(', ', x, 2)', null, 'calc', 'Second derivative'],
@@ -341,6 +356,10 @@
       ['det', 'det(', ')', null, 'calc', 'Determinant of 2 or 3 vectors: det(u, v, w)'], ['∠', 'angle(', ')', null, 'calc', 'Angle between two vectors: angle(u, v)'],
       ['area', 'area(', ')', null, 'calc', 'Area of the triangle ABC: area(A, B, C)'], ['vol', 'volume(', ')', null, 'calc', 'Volume of the tetrahedron ABCD: volume(A, B, C, D)'],
       ['→', '→', null, null, 'op', 'Vector arrow: u→ or AB→ (optional)'], [':=', ' := ', null, null, 'op', 'Define (or redefine) a name: k := 2'], [',', ', ', null, null, 'op', 'Separate coordinates'], ['dist', 'dist(', ')', null, 'calc', 'Distance between two points: dist(A, B)']
+    ];
+    const cxKeys = [   // complex numbers (js/vectors.js)
+      ['i', 'i', null, null, 'calc', 'Imaginary unit: z = 3 + 4i'], ['z̄', 'conj(', ')', null, 'calc', 'Conjugate: conj(z)'], ['|z|', '|', '|', null, 'calc', 'Modulus: |z|'], ['arg', 'arg(', ')', null, 'calc', 'Argument (angle): arg(z)'],
+      ['Re', 'Re(', ')', null, 'calc', 'Real part: Re(z)'], ['Im', 'Im(', ')', null, 'calc', 'Imaginary part: Im(z)'], ['cis', 'cis(', ')', null, 'calc', 'cis θ = cos θ + i sin θ: z = 2 cis(pi/3)'], ['eⁱᶿ', 'e^(i*', ')', null, 'calc', 'Polar form: r e^(iθ)']
     ];
     const GEO_TOOLS = [
       ['g-select', '↖', 'Select', 'Select & drag (V)'], ['g-point', '•', 'Point', 'Point'], ['g-seg', '／', 'Segment', 'Segment'], ['g-poly', '△', 'Polygon', 'Polygon — click corners, click the first to close'],
@@ -364,6 +383,8 @@
         <div class="tb-calc tb-calculus"></div>
         <div class="tb-sub" title="Name points and vectors, then use the names in the lines below">Vectors</div>
         <div class="tb-calc tb-calculus tb-vectors"></div>
+        <div class="tb-sub" title="z = 3 + 4i — equations in z are solved over the complex numbers; Plot draws them on the complex plane">Complex numbers</div>
+        <div class="tb-calc tb-calculus tb-complex"></div>
         <div class="tb-actions">
           <button class="tb-act plot" data-act="plot" title="Plot (Enter)">📈 Plot</button>
           <button class="tb-act" data-act="place" title="Place on the board (Shift+Enter)">＋ Place</button>
@@ -393,6 +414,7 @@
     calc.forEach(mkKey(calcEl));
     calcKeys.forEach(mkKey(el.querySelector('.tb-calculus')));
     vecKeys.forEach(mkKey(el.querySelector('.tb-vectors')));
+    cxKeys.forEach(mkKey(el.querySelector('.tb-complex')));
     el.querySelectorAll('[data-act]').forEach(b => {
       b.onmousedown = e => e.preventDefault();
       b.onclick = () => { const a = b.dataset.act; if (a === 'system') sys.toggle(); else if (a === 'matrix') { global.ui_matrix && global.ui_matrix.toggle(); } else if (a === 'axes') board.insertAxes(); else eq[a](); };

@@ -95,6 +95,7 @@ Every typed line on the board can use what the others define, wherever they are 
 - `a = 2`, `x = 3 + a`, `y = x*b` — numbers and expressions; unknowns stay letters (`y` shows `ab + 3b`). `k := 5` (re)defines anything.
 - `u·v` / `u*v` / `dot(u,v)`, `u×v` / `cross(u,v)`, `|u|`, `det(u,v,w)`, `angle(u,v)`, `unit(u)`, `proj(u,v)`, `dist(A,B)`, `mid(A,B)`, `area(A,B,C)`, `volume(A,B,C,D)`.
 - A defined name used again with `=` is an equation: `V = |det(P1P2, P1P3, P1P4)|/6` then `V = 1` ⇒ `a ∈ {3, 15}`, with buttons that write `a = 3` on the board. `|P1P4| <= 10` is checked ✓/✗.
+- Complex numbers: `z = 3 + 4i`, `w = 2 cis(pi/3)` or `2 e^(i*pi/3)`; `z*w`, `z/w`, `z^5`, `conj(z)`, `|z|`, `arg(z)`, `Re(z)`, `Im(z)`, `sqrt(-9)`. Results show their modulus and argument. Equations in `z` or `w` (or that use `i`) are solved over ℂ (`z^3 = 1` gives the three cube roots); an ordinary equation with no real root shows its complex roots after Solve. Plot draws them on the complex plane (axes Re, Im), with dashed lines to the real and imaginary parts.
 - 2-D points and vectors are drawn on the axes (Enter); lines that only use defined numbers go to MathCore with the numbers substituted (`y = k x + 1` plots).
 
 ## Calculus syntax

@@ -126,7 +126,7 @@
   }
   const SUBS = '₀₁₂₃₄₅₆₇₈₉';
   /** "P1" → "P₁", "P1P2" → "P₁P₂" (canvas labels) */
-  const vecLabel = n => String(n || '').replace(/_?\{?(\d+)\}?/g, (m, d) => [...d].map(x => SUBS[+x]).join(''));
+  const vecLabel = n => String(n || '').replace(/([A-Za-z])_?\{?(\d+)\}?/g, (m, l, d) => l + [...d].map(x => SUBS[+x]).join(''));
   const niceNum = v => { if (!isFinite(v)) return '—'; const r = Math.round(v * 100) / 100; return (Math.abs(r) < 1e-9 ? 0 : r).toString(); };
 
   class SmartBoard {
@@ -710,7 +710,7 @@
       if (!fit) return null;
       return { ascii: fitToAscii(fit), tex: fit.tex };
     }
-    nextPlotColor() { const used = this.objects.filter(o => o.type === 'graph').length; return PLOT_COLORS[used % PLOT_COLORS.length]; }
+    nextPlotColor() { const used = this.objects.filter(o => o.type === 'graph' || o.type === 'vec' || (o.type === 'point' && o.from)).length; return PLOT_COLORS[used % PLOT_COLORS.length]; }
 
     /** Plot "y = …", "f(x) = …", a bare expression in x, or any relation in x and y (implicit). */
     plotEquation(ascii, opts = {}) {
@@ -736,6 +736,7 @@
         gr = { type: 'graph', id: uid++, axes: ax.id, eq: src, mode: 'implicit', color };
       } else throw new Error('Only equations in x and y can be plotted (e.g. y = 2x + 1, x² + y² = 9)');
       gr.anim = { start: performance.now(), dur: 900 }; if (opts.gid) gr.gid = opts.gid;
+      if (ax.complex) ax.complex = false;
       this.objects.push(gr);
       if (!opts.noLabel) this.objects.push(this.makeLabel(ax, gr));
       this.implicitCache.clear(); this.requestFrame();
@@ -763,16 +764,22 @@
     }
     /** draw a 2-D point or vector that a worksheet line gives */
     plotVec(vr, opts = {}) {
-      const d = vr.drawable;
-      if (!d) throw new Error(vr.kind === 'error' ? vr.error : global.tr('Only 2-D points and vectors can be drawn on the axes'));
+      const list = vr.drawables || (vr.drawable ? [vr.drawable] : []);
+      if (!list.length) throw new Error(vr.kind === 'error' ? vr.error : global.tr('Only 2-D points and vectors can be drawn on the axes'));
       if (!opts.noHistory) this.pushHistory();
       const ax = opts.axes || this.getAxes(opts.near);
-      const color = opts.color || this.nextPlotColor(), label = vecLabel(d.label), now = performance.now();
+      // complex numbers: the axes become the complex plane (Re, Im) unless they already carry graphs
+      if (list.some(d => d.complex) && !this.graphs().some(g => g.axes === ax.id)) ax.complex = true;
+      const color = opts.color || this.nextPlotColor(), now = performance.now();
       let o;
-      if (d.type === 'point') o = { type: 'point', id: uid++, axes: ax.id, x: d.x, y: d.y, color, label, anim: { start: now, dur: 400 } };
-      else o = { type: 'vec', id: uid++, axes: ax.id, x1: d.x1, y1: d.y1, x2: d.x2, y2: d.y2, color, label, anim: { start: now, dur: 600 } };
-      if (opts.near && opts.near.type === 'math') o.from = opts.near.id;
-      this.objects.push(o); this.requestFrame(); return o;
+      list.forEach((d, k) => {
+        const label = vecLabel(d.label), anim = { start: now + k * 150, dur: d.type === 'point' ? 400 : 600 };
+        if (d.type === 'point') o = { type: 'point', id: uid++, axes: ax.id, x: d.x, y: d.y, color, label, anim };
+        else o = { type: 'vec', id: uid++, axes: ax.id, x1: d.x1, y1: d.y1, x2: d.x2, y2: d.y2, color, label, proj: !!d.complex, anim };
+        if (opts.near && opts.near.type === 'math') o.from = opts.near.id;
+        this.objects.push(o);
+      });
+      this.requestFrame(); return o;
     }
     /** f, its tangent line at a, and the point of tangency */
     plotTangent(st, opts = {}) {
@@ -1024,7 +1031,12 @@
         return { tex, actions };
       }
       if (info.kind === 'equation') {
-        if (m.solved) { tex += '\\quad\\textcolor{#f3d36b}{\\Rightarrow\\ ' + info.resultTex + '}'; if (global.VecCore && info.roots) this.useActions(m, info.roots.map(r => global.VecCore.useLine(info.variable, r, this.vecScope().defs)), actions); }
+        const cr = m.solved && !(info.roots && info.roots.length) && global.VecCore && global.VecCore.complexRoots ? global.VecCore.complexRoots(src, this.vecScope(m)) : null;
+        if (cr) {   // no real root: the complex ones, with Plot (on the complex plane) and "use" buttons
+          tex += cr.resultTex;
+          if (!m.plotted && !this.objects.some(o => o.from === m.id)) actions.push(['Plot', () => { try { this.pushHistory(); m.plotted = true; this.plotVec(cr, { near: m, noHistory: true }); } catch (e) { this.onStatus(e.message); } this.render(); }]);
+          this.useActions(m, cr.use, actions);
+        } else if (m.solved) { tex += '\\quad\\textcolor{#f3d36b}{\\Rightarrow\\ ' + info.resultTex + '}'; if (global.VecCore && info.roots) this.useActions(m, info.roots.map(r => global.VecCore.useLine(info.variable, r, this.vecScope().defs)), actions); }
         else actions.push(['Solve', () => { this.pushHistory(); m.solved = true; this.render(); }]);
       }
       if (info.kind === 'value') actions.push(['= ?', () => { this.pushHistory(); m.ascii += '='; this.render(); }]);
@@ -1035,7 +1047,7 @@
     vecContent(m, vr) {
       const actions = [];
       if (vr.kind === 'error') return { tex: vr.latex + '\\quad\\textcolor{#ff8f8f}{\\text{' + texEsc(global.tr(vr.error || '?')) + '}}', actions };
-      if (vr.drawable && !m.plotted && !this.objects.some(o => o.from === m.id)) actions.push(['Plot', () => { try { this.pushHistory(); m.plotted = true; this.plotVec(vr, { near: m, noHistory: true }); } catch (e) { this.onStatus(e.message); } this.render(); }]);
+      if ((vr.drawable || vr.drawables) && !m.plotted && !this.objects.some(o => o.from === m.id)) actions.push(['Plot', () => { try { this.pushHistory(); m.plotted = true; this.plotVec(vr, { near: m, noHistory: true }); } catch (e) { this.onStatus(e.message); } this.render(); }]);
       if (vr.roots && vr.unknown) { const defs = this.vecScope().defs; this.useActions(m, vr.roots.map(r => global.VecCore.useLine(vr.unknown, r, defs)), actions); }
       return { tex: vr.latex + vr.resultTex, actions };
     }
@@ -1268,7 +1280,7 @@
         const v = k * SY.tick; if (Math.abs(v) < 1e-12) continue; const y = a.oy - v * uy; c.beginPath(); c.moveTo(ox - 3, y); c.lineTo(ox + 3, y); c.stroke();
         if (on(v, SY.lab)) { c.globalAlpha = 0.65; c.fillText(fmt(v), ox - 7, y); c.globalAlpha = 0.9; }
       }
-      c.font = 'italic 18px "Times New Roman", serif'; c.textAlign = 'left'; c.fillText('x', a.x1 + 4, oy + 12); c.fillText('y', ox + 10, a.y0 + 4);
+      c.font = 'italic 18px "Times New Roman", serif'; c.textAlign = 'left'; c.fillText(a.complex ? 'Re' : 'x', a.x1 + 4, oy + 12); c.fillText(a.complex ? 'Im' : 'y', ox + 10, a.y0 + 4);
     }
     drawGraph(c, o, p) {
       const a = this.objects.find(x => x.id === o.axes); if (!a || a.hidden) return;
@@ -1315,12 +1327,19 @@
       const A = this.toPx(a, { x: o.x1, y: o.y1 }), B0 = this.toPx(a, { x: o.x2, y: o.y2 });
       const B = { x: A.x + (B0.x - A.x) * p, y: A.y + (B0.y - A.y) * p }, L = dist(A, B);
       c.save(); c.beginPath(); c.rect(a.x0, a.y0, a.x1 - a.x0, a.y1 - a.y0); c.clip();
+      if (o.proj && p > 0.9) {   // complex number: dashed lines to its real and imaginary parts
+        const O = this.toPx(a, { x: 0, y: 0 });
+        c.save(); c.setLineDash([4, 5]); c.lineWidth = 1.3; c.globalAlpha *= 0.6; c.beginPath(); c.moveTo(B0.x, B0.y); c.lineTo(B0.x, O.y); c.moveTo(B0.x, B0.y); c.lineTo(O.x, B0.y); c.stroke(); c.restore();
+      }
       c.lineWidth = 2.8; c.beginPath(); c.moveTo(A.x, A.y); c.lineTo(B.x, B.y); c.stroke();
       if (L > 2) {
         const ang = Math.atan2(B.y - A.y, B.x - A.x), h = Math.min(13, L * 0.45);
         c.beginPath(); c.moveTo(B.x, B.y); c.lineTo(B.x - h * Math.cos(ang - 0.42), B.y - h * Math.sin(ang - 0.42)); c.lineTo(B.x - h * Math.cos(ang + 0.42), B.y - h * Math.sin(ang + 0.42)); c.closePath(); c.fill();
       }
-      if (o.label && p > 0.6) {   // the name beside the middle of the arrow, on its left
+      if (o.label && o.proj && p > 0.6) {   // complex number: its value beside the tip
+        c.font = 'italic 16px Kalam, cursive'; c.textAlign = B0.x >= A.x ? 'left' : 'right'; c.textBaseline = 'middle';
+        c.fillText(o.label, B0.x + (B0.x >= A.x ? 10 : -10), B0.y - 12);
+      } else if (o.label && p > 0.6) {   // the name beside the middle of the arrow, on its left
         const nx = -(B0.y - A.y) / (dist(A, B0) || 1), ny = (B0.x - A.x) / (dist(A, B0) || 1), mx = (A.x + B0.x) / 2, my = (A.y + B0.y) / 2;
         c.font = 'italic 17px Kalam, cursive'; c.textAlign = 'center'; c.textBaseline = 'middle';
         const tx = mx - nx * 14, ty = my - ny * 14; c.fillText(o.label, tx, ty);
