@@ -51,12 +51,21 @@
       'eq-solve': '<path d="M3 9h9M3 15h9"/><path d="m14 12.5 3 3 5-7"/>',
       'eq-steps': '<path d="M3 20h5v-5h5v-5h5V5h3"/>'
     };
+    // visually hidden (inline, so it works even with an older cached style sheet)
+    const SR = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap';
     const keysBtn = $('#eq-keys', root);   // the toolbox toggle: icon only too
-    if (keysBtn) { keysBtn.querySelector('.lbl') && keysBtn.querySelector('.lbl').classList.add('sr'); keysBtn.classList.add('ico'); keysBtn.setAttribute('aria-label', 'Toolbox'); }
+    if (keysBtn) {
+      const l = keysBtn.querySelector('.lbl'); if (l) { l.classList.add('sr'); l.style.cssText = SR; }
+      else [...keysBtn.childNodes].forEach(n => { if (n.nodeType === 3 && n.textContent.trim()) { const sp = document.createElement('span'); sp.className = 'lbl sr'; sp.style.cssText = SR; sp.textContent = n.textContent.replace(/^[^A-Za-z]+/, '').trim(); n.replaceWith(sp); } });
+      if (!keysBtn.querySelector('svg')) keysBtn.insertAdjacentHTML('afterbegin', '<svg viewBox="0 0 24 24" aria-hidden="true" style="width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h1M11 10h2M16 10h1M7 14h10"/></svg>');
+      keysBtn.classList.add('ico'); keysBtn.setAttribute('aria-label', 'Toolbox');
+      Object.assign(keysBtn.style, { width: '34px', padding: '0', justifyContent: 'center' });
+    }
     Object.keys(ICONS).forEach(id => {
       const b = $('#' + id, root); if (!b) return;
       const name = (b.querySelector('.lbl') || b).textContent.replace(/^[^A-Za-z]+/, '').trim() || id;
-      b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[id] + '</svg><span class="lbl sr">' + name + '</span>';
+      b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" style="width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round">' + ICONS[id] + '</svg><span class="lbl sr" style="' + SR + '">' + name + '</span>';
+      Object.assign(b.style, { width: id === 'eq-plot' ? '40px' : '34px', padding: '0', justifyContent: 'center' });
       b.classList.add('ico'); if (!b.getAttribute('aria-label')) b.setAttribute('aria-label', name);
     });
     KEYS.forEach(([label, text, close]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'key'; b.innerHTML = label; b.onmousedown = e => e.preventDefault(); b.onclick = () => insertAt(inp, text, close); keypad.appendChild(b); });
