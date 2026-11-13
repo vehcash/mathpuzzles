@@ -384,6 +384,38 @@
       ['◎', 'Incircle', ['incircle']], ['◯', 'Circumcircle', ['circumcircle', 'circleThrough']], ['⊾', 'Perp. foot', ['foot']], ['⊥', 'Bisector', ['perpBisector']],
       ['△', 'Altitudes', ['altitudes']], ['⋀', 'Medians', ['medians']], ['／', 'Join', ['join']], ['▲', 'Triangle', ['triangleOf']]
     ];
+    // line icons for the geometry palette (24 × 24, drawn in the button's colour; .d = filled dot, .f = soft fill, .h = dashed helper)
+    const GI = {
+      Select: '<path d="M6 3.5 18 12l-5.2 1.1 2.9 5.6-2.2 1.1-2.9-5.6L6.8 18z" class="f"/>',
+      Point: '<circle cx="12" cy="12" r="6.5" class="h"/><circle cx="12" cy="12" r="2.6" class="d"/>',
+      Segment: '<path d="M5.5 18.5 18.5 5.5"/><circle cx="5.5" cy="18.5" r="2" class="d"/><circle cx="18.5" cy="5.5" r="2" class="d"/>',
+      Polygon: '<path d="M6 18 4 9.5l7-5.5 8.5 4-1.5 10z" class="f"/><circle cx="6" cy="18" r="1.6" class="d"/><circle cx="4" cy="9.5" r="1.6" class="d"/><circle cx="11" cy="4" r="1.6" class="d"/><circle cx="19.5" cy="8" r="1.6" class="d"/><circle cx="18" cy="18" r="1.6" class="d"/>',
+      Rectangle: '<rect x="3.5" y="6.5" width="17" height="11" rx=".5" class="f"/><circle cx="3.5" cy="6.5" r="1.6" class="d"/><circle cx="20.5" cy="17.5" r="1.6" class="d"/>',
+      Circle: '<circle cx="12" cy="12" r="8" class="f"/><path d="M12 12h8"/><circle cx="12" cy="12" r="1.7" class="d"/>',
+      Regular: '<path d="m12 3.5 7.4 4.25v8.5L12 20.5l-7.4-4.25v-8.5z" class="f"/>',
+      Erase: '<path d="M7.5 20H20"/><path d="M4.6 15.4a2 2 0 0 1 0-2.8l8-8a2 2 0 0 1 2.8 0l4 4a2 2 0 0 1 0 2.8L11 20H8.2a2 2 0 0 1-1.4-.6Z"/><path d="m9 8 7 7"/>',
+      Length: '<path d="M4 15h16M4 12v6M20 12v6"/><path d="m7 13 -2 2 2 2M17 13l2 2-2 2"/><path d="M9 8.5h6" class="h"/>',
+      Horizontal: '<path d="M4 12h16"/><circle cx="4.5" cy="12" r="1.8" class="d"/><circle cx="19.5" cy="12" r="1.8" class="d"/><path d="M8 17h8" class="h"/>',
+      Vertical: '<path d="M12 4v16"/><circle cx="12" cy="4.5" r="1.8" class="d"/><circle cx="12" cy="19.5" r="1.8" class="d"/><path d="M17 8v8" class="h"/>',
+      Perpendicular: '<path d="M4 19h16M12 19V5"/><path d="M12 15h4v4"/>',
+      Parallel: '<path d="M5 18 13 5M11 19l8-13"/>',
+      Equal: '<path d="M4 8.5h16M4 15.5h16"/><path d="M11 6.5v4M13 6.5v4M11 13.5v4M13 13.5v4"/>',
+      Angle: '<path d="M4 19h16M4 19 15 6"/><path d="M10 19a6 6 0 0 0-2-4.6"/>',
+      Tangent: '<circle cx="11" cy="11" r="6" class="f"/><path d="M3 17h18"/><circle cx="11" cy="17" r="1.6" class="d"/>',
+      'On line': '<path d="M3 17 21 7"/><circle cx="12" cy="12" r="2.4" class="d"/><path d="M12 12v-6" class="h"/>',
+      Midpoint: '<path d="M3.5 15h17"/><circle cx="3.5" cy="15" r="1.6" class="d"/><circle cx="20.5" cy="15" r="1.6" class="d"/><circle cx="12" cy="15" r="2.4" class="d"/><path d="M7.5 12.5v5M16.5 12.5v5"/>',
+      Fix: '<rect x="5" y="10.5" width="14" height="10" rx="2" class="f"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><circle cx="12" cy="15.5" r="1.4" class="d"/>',
+      'Regular ': '<path d="m12 3.5 7.4 4.25v8.5L12 20.5l-7.4-4.25v-8.5z"/><path d="M15.5 4.6l-.9 1.6M20 12h-1.8M15.5 19.4l-.9-1.6M8.5 19.4l.9-1.6M4 12h1.8M8.5 4.6l.9 1.6"/>',
+      Incircle: '<path d="M12 3 21 19.5H3z"/><circle cx="12" cy="14" r="4.6" class="f"/>',
+      Circumcircle: '<circle cx="12" cy="12" r="8.8" class="f"/><path d="M12 3.2 19.6 16.4H4.4z"/>',
+      'Perp. foot': '<path d="M3 19h18"/><path d="M12 5v14" class="h"/><circle cx="12" cy="5" r="2" class="d"/><path d="M12 15.5h3.5V19"/><circle cx="12" cy="19" r="1.8" class="d"/>',
+      Bisector: '<path d="M4 15h16"/><circle cx="4" cy="15" r="1.6" class="d"/><circle cx="20" cy="15" r="1.6" class="d"/><path d="M12 3v18" class="h"/><path d="M12 11.5h3.5V15"/>',
+      Altitudes: '<path d="M9 4 21 19.5H3z"/><path d="M9 4v15.5" class="h"/><path d="M9 16.5h2.8v3"/>',
+      Medians: '<path d="M12 3.5 21 19.5H3z"/><path d="M12 3.5v16M3 19.5l13.5-8M21 19.5l-13.5-8" class="h"/>',
+      Join: '<path d="M5 17 19 7"/><circle cx="5" cy="17" r="2.4" class="d"/><circle cx="19" cy="7" r="2.4" class="d"/>',
+      Triangle: '<path d="M12 4 20 19H4z" class="f"/><circle cx="12" cy="4" r="1.8" class="d"/><circle cx="20" cy="19" r="1.8" class="d"/><circle cx="4" cy="19" r="1.8" class="d"/>'
+    };
+    const gicon = (name, fallback) => GI[name] ? '<svg viewBox="0 0 24 24" aria-hidden="true">' + GI[name] + '</svg>' : fallback;
     el.innerHTML = `
       <div class="tb-pane" data-pane="eq">
         <div class="tb-title">Calculator</div>
@@ -406,6 +438,7 @@
         <div class="tb-title">Draw</div>
         <div class="tb-tools"></div>
         <label class="tb-n">sides <button data-n="-1">−</button><span class="n">6</span><button data-n="1">+</button></label>
+        <label class="tb-snap" title="Circles snap to the sides of polygons (tangent) and into corners · hold Alt to drag freely"><input type="checkbox" class="tb-snap-in"> Snap circles to sides</label>
         <div class="tb-title">Constrain</div>
         <div class="tb-cons"></div>
         <div class="tb-title">Construct</div>
@@ -433,13 +466,15 @@
     const toolsEl = el.querySelector('.tb-tools');
     GEO_TOOLS.forEach(([t, ic, label, tip]) => {
       const b = document.createElement('button'); b.className = 'tb-tool'; b.dataset.gtool = t; b.title = tip;
-      b.innerHTML = '<span class="ic">' + ic + '</span><span class="lb">' + label + '</span>';
+      b.innerHTML = '<span class="ic">' + gicon(label, ic) + '</span><span class="lb">' + label + '</span>';
       b.onclick = () => { const btn = document.querySelector('.toolbar button[data-tool="' + t + '"], .geobar button[data-tool="' + t + '"]'); if (btn) btn.click(); else board.setTool(t); sync(); };
       toolsEl.appendChild(b);
     });
     el.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { board.regularN = Math.max(3, Math.min(12, (board.regularN || 6) + +b.dataset.n)); el.querySelector('.tb-n .n').textContent = board.regularN; const ri = document.getElementById('reg-n'); if (ri) ri.value = board.regularN; });
+    const snapIn = el.querySelector('.tb-snap-in');
+    if (snapIn) { snapIn.checked = board.snap !== false; snapIn.onchange = () => { board.snap = snapIn.checked; const g = document.getElementById('geo-snap'); if (g) g.checked = snapIn.checked; }; document.addEventListener('change', e => { if (e.target && e.target.id === 'geo-snap') snapIn.checked = e.target.checked; }); }
     const mkPal = (host, defs) => defs.map(([ic, label, types]) => {
-      const b = document.createElement('button'); b.className = 'tb-tool small'; b.innerHTML = '<span class="ic">' + ic + '</span><span class="lb">' + label + '</span>';
+      const b = document.createElement('button'); b.className = 'tb-tool small'; b.innerHTML = '<span class="ic">' + gicon(host.classList.contains('tb-cons') && label === 'Regular' ? 'Regular ' : label, ic) + '</span><span class="lb">' + label + '</span>';
       b.onclick = () => run(types, label); host.appendChild(b); return { b, types };
     });
     const consBtns = mkPal(el.querySelector('.tb-cons'), GEO_CONS), buildBtns = mkPal(el.querySelector('.tb-build'), GEO_BUILD);

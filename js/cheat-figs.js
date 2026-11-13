@@ -363,6 +363,27 @@
         `<text x="${mx + 34}" y="${my + 16}" class="lab">(x̄, ȳ)</text>` + `<text x="196" y="22" class="lab">ŷ = â + b̂x</text>`);
     },
     // linear programming: feasible region and the best vertex
+    // (a + b)² as tiles: a², b² and two ab strips
+    sqsum(lang) {
+      const a = 84, b = 42, x = 70, y = 12, R = (x0, y0, w_, h, c, t) => `<rect x="${x0}" y="${y0}" width="${w_}" height="${h}" class="${c}"/><rect x="${x0}" y="${y0}" width="${w_}" height="${h}" class="ln"/>` + T(x0 + w_ / 2, y0 + h / 2, t);
+      return svg(260, 162, R(x, y + b, a, a, 'fl', 'a²') + R(x + a, y + b, b, a, 'fl2', 'ab') + R(x, y, a, b, 'fl2', 'ab') + R(x + a, y, b, b, 'fl', 'b²') +
+        T(x + a / 2, y + a + b + 10, 'a', 'sm') + T(x + a + b / 2, y + a + b + 10, 'b', 'sm') + T(x - 10, y + b + a / 2, 'a', 'sm') + T(x - 10, y + b / 2, 'b', 'sm'));
+    },
+    // a² − b²: the L-shape cut and re-glued into (a + b)(a − b)
+    diffsq(lang) {
+      const a = 66, b = 26, d = a - b, x = 22, y = 18, R = (x0, y0, w_, h, c) => `<rect x="${x0}" y="${y0}" width="${w_}" height="${h}" class="${c}"/><rect x="${x0}" y="${y0}" width="${w_}" height="${h}" class="ln"/>`;
+      const X = 138, Y = 18 + b;
+      return svg(270, 110, R(x, y + b, a, d, 'fl') + R(x, y, d, b, 'fl2') + `<rect x="${x + d}" y="${y}" width="${b}" height="${b}" class="th"/>` + T(x + d + b / 2, y + b / 2, 'b²', 'sm') +
+        L(x + a + 10, y + a / 2, X - 8, Y + d / 2, 'ac', 'marker-end="ARROW"') + R(X, Y, a, d, 'fl') + R(X + a, Y, b, d, 'fl2') +
+        T(X + (a + b) / 2, Y + d + 12, 'a + b', 'sm') + T(X + a + b + 24, Y + d / 2, 'a − b', 'sm') + T(x + a / 2, y + a + 12, 'a', 'sm'));
+    },
+    // AM ≥ GM: in a half-circle of diameter a + b the height √ab never beats the radius
+    amgm(lang) {
+      const O = [130, 120], r = 96, A = 210 - 34, h = Math.sqrt((A - (O[0] - r)) * (O[0] + r - A));
+      return svg(260, 140, `<path d="M${O[0] - r},${O[1]}A${r},${r} 0 0 1 ${O[0] + r},${O[1]}Z" class="fl"/>` + `<path d="M${O[0] - r},${O[1]}A${r},${r} 0 0 1 ${O[0] + r},${O[1]}Z" class="ln"/>` +
+        L(A, O[1], A, O[1] - h, 'ac2') + L(O[0], O[1], O[0], O[1] - r, 'ac') + D(...O) + T(A + 22, O[1] - h / 2, '√ab', 'sm') + T(O[0] - 30, O[1] - r / 2, '(a+b)/2', 'sm') +
+        T((O[0] - r + A) / 2, O[1] + 12, 'a', 'sm') + T((A + O[0] + r) / 2, O[1] + 12, 'b', 'sm'));
+    },
     lp(lang) {
       const O = [34, 136], S = 22, P = (x, y) => [O[0] + x * S, O[1] - y * S];
       const V = [[0, 0], [0, 5], [3, 3], [5, 0]];

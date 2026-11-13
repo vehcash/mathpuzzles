@@ -197,20 +197,25 @@
   }
 
   // ------------------------------------------------------------------ draggable floating panels
+  // handle: an element, or a CSS selector for a header that the panel re-renders (e.g. the geometry panel's title)
   function draggable(el, handle) {
-    handle = handle || el.querySelector('header'); if (!handle || handle._drag) return; handle._drag = true;
-    handle.classList.add('drag-handle'); handle.title = handle.title || tr('Drag to move');
+    if (!el || el._draggable) return; el._draggable = true;
+    const sel = typeof handle === 'string' ? handle : null;
+    const fixed = sel ? null : (handle || el.querySelector('header'));
+    const mark = () => { const h = fixed || el.querySelector(sel); if (h && !h.classList.contains('drag-handle')) { h.classList.add('drag-handle'); if (!h.title) h.title = tr('Drag to move'); } };
+    mark(); if (sel && global.MutationObserver) new MutationObserver(mark).observe(el, { childList: true, subtree: false });
     const clampIn = () => {
       const par = el.offsetParent; if (!par || el.hidden || !el.dataset.moved) return;
       const x = Math.max(0, Math.min(par.clientWidth - el.offsetWidth, el.offsetLeft)), y = Math.max(0, Math.min(par.clientHeight - el.offsetHeight, el.offsetTop));
       el.style.left = x + 'px'; el.style.top = y + 'px';
     };
-    handle.addEventListener('pointerdown', e => {
-      if (e.button !== 0 || e.target.closest('button, input, select, a, label')) return;
+    el.addEventListener('pointerdown', e => {
+      const h = fixed ? (fixed.contains(e.target) ? fixed : null) : e.target.closest(sel);
+      if (!h || !el.contains(h) || e.button !== 0 || e.target.closest('button, input, select, a, label, textarea')) return;
       const par = el.offsetParent; if (!par) return;
-      e.preventDefault(); handle.setPointerCapture(e.pointerId);
+      e.preventDefault(); h.setPointerCapture(e.pointerId);
       const sx = e.clientX, sy = e.clientY, ox = el.offsetLeft, oy = el.offsetTop;
-      el.style.right = 'auto'; el.style.bottom = 'auto'; el.style.left = ox + 'px'; el.style.top = oy + 'px'; el.dataset.moved = '1';
+      el.style.right = 'auto'; el.style.bottom = 'auto'; el.style.transform = 'none'; el.style.left = ox + 'px'; el.style.top = oy + 'px'; el.dataset.moved = '1';
       el.classList.add('dragging');
       const mv = ev => {
         // the whole panel stays inside the board
@@ -218,8 +223,8 @@
         const y = Math.max(0, Math.min(par.clientHeight - el.offsetHeight, oy + ev.clientY - sy));
         el.style.left = x + 'px'; el.style.top = y + 'px';
       };
-      const up = () => { handle.removeEventListener('pointermove', mv); handle.removeEventListener('pointerup', up); handle.removeEventListener('pointercancel', up); el.classList.remove('dragging'); };
-      handle.addEventListener('pointermove', mv); handle.addEventListener('pointerup', up); handle.addEventListener('pointercancel', up);
+      const up = () => { h.removeEventListener('pointermove', mv); h.removeEventListener('pointerup', up); h.removeEventListener('pointercancel', up); el.classList.remove('dragging'); };
+      h.addEventListener('pointermove', mv); h.addEventListener('pointerup', up); h.addEventListener('pointercancel', up);
     });
     // bring the clicked panel to the front
     el.addEventListener('pointerdown', () => { draggable.z = (draggable.z || 20) + 1; el.style.zIndex = draggable.z; });

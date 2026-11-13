@@ -308,7 +308,7 @@ I18N.add('ja', {
 "The two one-sided limits differ": "左右の極限が異なる",
 "The values approach": "値は次に近づく",
 "The values keep oscillating — no single limit": "値が振動し続ける — 極限は1つに定まらない",
-"This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them.": "このサイトは分析・広告・トラッキング用の Cookie を使用せず、第三者のコンテンツも読み込みません。「AI にたずねる」ボタンは、クリックしたときだけ別のサイトを開きます。",
+"This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them. The optional local AI tutor downloads its model from Hugging Face and GitHub only when you switch it on; after that it runs on your own device and nothing you type is sent anywhere.": "このサイトは分析・広告・トラッキング用の Cookie を使用せず、第三者のコンテンツも読み込みません。「AI にたずねる」ボタンは、クリックしたときだけ別のサイトを開きます。 任意のローカル AI 先生は、オンにしたときだけ Hugging Face と GitHub からモデルをダウンロードします。その後はお使いの端末で動き、入力内容はどこにも送信されません。",
 "Toolbox": "ツールボックス",
 "Triangle": "三角形",
 "Trigonometry": "三角比",

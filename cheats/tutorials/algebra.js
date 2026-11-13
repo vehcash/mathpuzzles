@@ -619,5 +619,179 @@
     { a: [F(R`(2x + 1)^5`)],
       ex: { k: 'val', v: '243', q: R`Find the sum of the coefficients of $(2x + 1)^5$.|Calculez la somme des coefficients de $(2x + 1)^5$.|Halla la suma de los coeficientes de $(2x + 1)^5$.|$(2x + 1)^5$ の係数の和を求めよ。|求 $(2x + 1)^5$ 的系数之和。`, sol: [R`x = 1:\ 3^5`, R`= 243`] } });
 
+
+  // =============================== Pictures for the ideas ===============================
+  // Every identity, power rule, logarithm rule and sum gets a picture next to its formula: tiles for the
+  // identities, turnable boxes for the cubes, graphs for logarithms and polynomials, Pascal's triangle for the binomial.
+  // VIS(key, actions, caption, { replace }) adds the picture to the lesson's first step and one sentence to its text.
+  (function () {
+    const SCN = new Set(['3d', 'seg', 'vec', 'line3', 'pl', 'pt3', 'sph', 'circ3', 'lab3', 'poly3', 'ax', 'p', 'sh', 'pt', 'lbl', 'ln', 'tan']);
+    const VIS = (key, acts, cap, o = {}) => {
+      const st = L[key] && L[key][0]; if (!st) return;
+      if (o.replace) st.a = st.a.filter(a => !SCN.has(a[0]));
+      st.a = st.a.concat(acts);
+      if (cap) { const a = st.s.split('|'), b = cap.split('|'); st.s = a.map((t, i) => t + ' ' + (b[i] || b[0])).join('|'); }
+    };
+    const LBs = (p, t, c = 'chalk', size = 17) => LB(p, t, c, size);
+    const TILE = (x0, y0, x1, y1, c, lab, fill = 0.3) => [RECT(x0, y0, x1, y1, c, fill), LBs([(x0 + x1) / 2, (y0 + y1) / 2], lab)];
+    // a measured side: |—— lab ——| under (or left of) the figure
+    const DH = (x0, x1, y, lab, c = 'chalk') => [SG([x0, y], [x1, y], c, { w: 1.5 }), SG([x0, y - 0.09], [x0, y + 0.09], c, { w: 1.5 }), SG([x1, y - 0.09], [x1, y + 0.09], c, { w: 1.5 }), LBs([(x0 + x1) / 2, y - 0.26], lab, c)];
+    const DV = (y0, y1, x, lab, c = 'chalk') => [SG([x, y0], [x, y1], c, { w: 1.5 }), SG([x - 0.09, y0], [x + 0.09, y0], c, { w: 1.5 }), SG([x - 0.09, y1], [x + 0.09, y1], c, { w: 1.5 }), LBs([x - 0.3, (y0 + y1) / 2], lab, c)];
+    // a box in space (6 faces), for the cube identities
+    const BOX = (x, y, z, dx, dy, dz, c, lab, fill = 0.13) => {
+      const P = (i, j, k) => [x + i * dx, y + j * dy, z + k * dz];
+      const faces = [[P(0, 0, 0), P(1, 0, 0), P(1, 1, 0), P(0, 1, 0)], [P(0, 0, 1), P(1, 0, 1), P(1, 1, 1), P(0, 1, 1)], [P(0, 0, 0), P(1, 0, 0), P(1, 0, 1), P(0, 0, 1)],
+        [P(0, 1, 0), P(1, 1, 0), P(1, 1, 1), P(0, 1, 1)], [P(0, 0, 0), P(0, 1, 0), P(0, 1, 1), P(0, 0, 1)], [P(1, 0, 0), P(1, 1, 0), P(1, 1, 1), P(1, 0, 1)]];
+      return [...faces.map(f => ['poly3', f, { c, fill, w: 1.4 }]), ['lab3', P(0.5, 0.5, 0.5), lab, { c: 'chalk', size: 16 }]];
+    };
+    const S3D = (c, r, yaw = -0.75, pitch = 0.42) => ['3d', { c, r, yaw, pitch, axes: false }];
+    // a row of labelled factor squares
+    const FACT = (x0, y, n, lab, c, s = 0.8) => [...Array(n)].flatMap((_, i) => TILE(x0 + i * s, y, x0 + (i + 1) * s - 0.08, y + s - 0.08, c, lab, 0.32));
+    const CROSS = (x0, y0, x1, y1, c = 'p') => [SG([x0, y0], [x1, y1], c, { w: 2.4 }), SG([x0, y1], [x1, y0], c, { w: 2.4 })];
+    const LBL = (x, y, tex, c = 'y') => ['lbl', x, y, tex, { c }];
+    const LNG = (x1, y1, x2, y2, c = 'chalk', dash) => ['ln', x1, y1, x2, y2, Object.assign({ c }, dash ? { dash: true } : {})];
+    const ln2 = Math.log(2), ln3 = Math.log(3), ln6 = Math.log(6);
+
+    // ---------------- powers and roots ----------------
+    VIS('Powers and roots/Product', [S2([2.2, 1.1], 2.6), ...SEQ([...FACT(0, 1, 3, 'a', 'b'), ...FACT(2.4, 1, 2, 'a', 'y'), ...DH(0, 2.32, 0.55, 'm = 3', 'b'), ...DH(2.4, 3.92, 0.55, 'n = 2', 'y'), ...DH(0, 3.92, -0.3, 'm + n = 5', 'chalk')], 200, 70)],
+      'On the board: three blue factors and two yellow ones line up into five.|Au tableau : trois facteurs bleus et deux jaunes s’alignent en cinq.|En la pizarra: tres factores azules y dos amarillos se alinean en cinco.|黒板：青 3 個と黄 2 個の因数が並んで 5 個に。|黑板上：三个蓝色因子和两个黄色因子排成五个。');
+    VIS('Powers and roots/Quotient', [S2([2, 1], 2.6), ...SEQ([...FACT(0, 1.6, 5, 'a', 'b'), SG([-0.1, 1.38], [4.02, 1.38], 'chalk', { w: 2 }), ...FACT(0, 0.5, 2, 'a', 'p'), ...CROSS(0.05, 1.65, 1.5, 2.3), ...CROSS(0.05, 0.55, 1.5, 1.2), LBs([3.1, 0.85], '= a³', 'y', 22)], 200, 90)],
+      'On the board: each factor below cancels one above; three are left.|Au tableau : chaque facteur du bas en simplifie un du haut ; il en reste trois.|En la pizarra: cada factor de abajo cancela uno de arriba; quedan tres.|黒板：下の因数が上の因数と 1 つずつ約分され、3 つ残る。|黑板上：下面每个因子约掉上面一个，剩下三个。');
+    VIS('Powers and roots/Power of a power', [S2([1.6, 1.4], 2.4), ...SEQ([...FACT(0, 2, 3, 'a', 'b'), ...FACT(0, 1.1, 3, 'a', 'y'), LBs([2.95, 2.36], 'a³', 'b', 18), LBs([2.95, 1.46], 'a³', 'y', 18), ...DH(0, 2.32, 0.65, 'm = 3'), ...DV(1.1, 2.72, -0.35, 'n = 2'), LBs([1.2, -0.2], '(a³)² = a³ˣ² = a⁶', 'y', 19)], 200, 70)],
+      'On the board: n rows of m factors make m·n factors.|Au tableau : n lignes de m facteurs font m·n facteurs.|En la pizarra: n filas de m factores dan m·n factores.|黒板：m 個の因数が n 行で m·n 個。|黑板上：n 行、每行 m 个因子，共 m·n 个。');
+    VIS('Powers and roots/Power of a product', [S2([1.6, 1.3], 2.4), ...SEQ([...[0, 1, 2].flatMap(i => [...TILE(i * 1.05, 1.5, i * 1.05 + 0.8, 2.3, 'b', 'a', 0.32), ...TILE(i * 1.05, 0.62, i * 1.05 + 0.8, 1.42, 'p', 'b', 0.32), ['poly3', [Z(i * 1.05 - 0.08, 0.54), Z(i * 1.05 + 0.88, 0.54), Z(i * 1.05 + 0.88, 2.38), Z(i * 1.05 - 0.08, 2.38)], { c: 'chalk', fill: 0, w: 1.2 }]]),
+      LBs([3.55, 1.9], 'a³', 'b', 20), LBs([3.55, 1.02], 'b³', 'p', 20), LBs([1.45, 0.1], '(ab)³', 'chalk', 19)], 200, 60)],
+      'On the board: each column is one factor ab; read the rows instead and you get aⁿ and bⁿ.|Au tableau : chaque colonne est un facteur ab ; lues en lignes, on obtient aⁿ et bⁿ.|En la pizarra: cada columna es un factor ab; leyendo por filas salen aⁿ y bⁿ.|黒板：各列が因数 ab。行ごとに読むと aⁿ と bⁿ。|黑板上：每一列是一个因子 ab；按行读就是 aⁿ 和 bⁿ。');
+    VIS('Powers and roots/Fractional exponents', [AX([-0.5, 4.2], [-0.5, 4.2]), P('x^2', 'b'), P('sqrt(x)', 'y'), P('x', 'chalk', { dash: true }), PTG(4, 2, '(4, 2)', 'y'), PTG(2, 4, '(2, 4)', 'b')],
+      'On the graph: $x^{1/2} = \sqrt x$ undoes $x^2$ — the two curves are mirror images in $y = x$.|Sur le graphique : $x^{1/2} = \sqrt x$ défait $x^2$ — les deux courbes sont symétriques par rapport à $y = x$.|En la gráfica: $x^{1/2} = \sqrt x$ deshace $x^2$; las curvas son simétricas respecto a $y = x$.|グラフ：$x^{1/2} = \sqrt x$ は $x^2$ の逆。2 曲線は $y = x$ について対称。|图像：$x^{1/2} = \sqrt x$ 是 $x^2$ 的逆，两曲线关于 $y = x$ 对称。');
+    VIS('Powers and roots/Roots', [S2([1.9, 1.9], 2.5), ...SEQ([...[0, 1, 2].flatMap(i => [0, 1, 2].flatMap(j => TILE(i * 1.25, j * 1.25, i * 1.25 + 1.17, j * 1.25 + 1.17, (i + j) % 2 ? 'b' : 'y', '4', 0.3))), ...DH(0, 3.67, -0.3, '√36 = 6 = 2·3'), LBs([1.85, 4.15], '36 = 4·9', 'y', 18)], 200, 50)],
+      'On the board: an area of $4\cdot 9 = 36$ made of nine squares of area 4 — its side is $\sqrt4\cdot\sqrt9 = 2\cdot 3$.|Au tableau : une aire $4\cdot 9 = 36$ faite de neuf carrés d’aire 4 — son côté vaut $\sqrt4\cdot\sqrt9 = 2\cdot 3$.|En la pizarra: un área $4\cdot 9 = 36$ hecha de nueve cuadrados de área 4; su lado es $\sqrt4\cdot\sqrt9 = 2\cdot 3$.|黒板：面積 4 の正方形 9 個で面積 36。1 辺は $\sqrt4\cdot\sqrt9 = 2\cdot 3$。|黑板上：九个面积为 4 的正方形拼成面积 36，边长为 $\sqrt4\cdot\sqrt9 = 2\cdot 3$。');
+
+    // ---------------- logarithms ----------------
+    VIS('Logarithms/Product and quotient', [AX([-0.3, 7], [-0.6, 2.3]), P('ln(x)', 'y'), LNG(2, 0, 2, ln2, 'b'), LNG(3, 0, 3, ln3, 'p'), LNG(6, 0, 6, ln2, 'b'), LNG(6, ln2, 6, ln6, 'p'), PTG(2, ln2, 'ln 2', 'b'), PTG(3, ln3, 'ln 3', 'p'), PTG(6, ln6, 'ln 6', 'y')],
+      'On the graph of $\ln x$: the height at 6 is the height at 2 stacked on the height at 3.|Sur le graphe de $\ln x$ : la hauteur en 6 est celle en 2 empilée sur celle en 3.|En la gráfica de $\ln x$: la altura en 6 es la de 2 apilada sobre la de 3.|$\ln x$ のグラフ：6 での高さ ＝ 2 での高さ ＋ 3 での高さ。|在 $\ln x$ 的图像上：6 处的高度等于 2 处与 3 处高度之和。');
+    VIS('Logarithms/Power', [AX([-0.4, 9], [-0.6, 3.6]), P('ln(x)/ln(2)', 'y'), PTG(2, 1, '(2, 1)', 'b'), PTG(4, 2, '(4, 2)', 'b'), PTG(8, 3, '(8, 3)', 'b'), LNG(2, 0, 2, 1, 'b', true), LNG(4, 0, 4, 2, 'b', true), LNG(8, 0, 8, 3, 'b', true)],
+      'On the graph of $\log_2 x$: squaring or cubing $x$ doubles or triples the height.|Sur le graphe de $\log_2 x$ : élever $x$ au carré ou au cube double ou triple la hauteur.|En la gráfica de $\log_2 x$: elevar $x$ al cuadrado o al cubo duplica o triplica la altura.|$\log_2 x$ のグラフ：$x$ を 2 乗・3 乗すると高さが 2 倍・3 倍。|在 $\log_2 x$ 的图像上：把 $x$ 平方或立方，高度变为 2 倍或 3 倍。');
+    VIS('Logarithms/Change of base', [AX([-0.3, 9], [-1.2, 3.4]), P('ln(x)/ln(2)', 'y'), P('ln(x)', 'b'), P('ln(x)/ln(10)', 'p'), LBL(8.1, 3, R`\log_2`, 'y'), LBL(8.1, 2.08, R`\ln`, 'b'), LBL(8.1, 0.9, R`\log_{10}`, 'p')],
+      'On the graph: every logarithm is the same curve stretched vertically by a constant factor $\tfrac{1}{\ln a}$.|Sur le graphique : tous les logarithmes sont la même courbe étirée verticalement d’un facteur constant $\tfrac{1}{\ln a}$.|En la gráfica: todos los logaritmos son la misma curva estirada verticalmente por un factor constante $\tfrac{1}{\ln a}$.|グラフ：どの対数も同じ曲線を定数倍 $\tfrac{1}{\ln a}$ だけ縦に伸ばしたもの。|图像：所有对数都是同一曲线沿竖直方向乘以常数 $\tfrac{1}{\ln a}$。');
+    VIS('Logarithms/Inverse of the power', [AX([-2.5, 4.5], [-2.5, 4.5]), P('2^x', 'b'), P('ln(x)/ln(2)', 'y'), P('x', 'chalk', { dash: true }), PTG(1, 2, '(1, 2)', 'b'), PTG(2, 1, '(2, 1)', 'y'), LBL(2.6, 4.1, R`2^x`, 'b'), LBL(3.6, 1.6, R`\log_2 x`, 'y')],
+      'On the graph: $2^x$ and $\log_2 x$ swap $x$ and $y$, so each undoes the other — mirror images in $y = x$.|Sur le graphique : $2^x$ et $\log_2 x$ échangent $x$ et $y$ ; chacune défait l’autre — symétriques par rapport à $y = x$.|En la gráfica: $2^x$ y $\log_2 x$ intercambian $x$ e $y$; cada una deshace la otra, simétricas respecto a $y = x$.|グラフ：$2^x$ と $\log_2 x$ は $x$ と $y$ を入れ替えた関係で、$y = x$ について対称。|图像：$2^x$ 与 $\log_2 x$ 交换了 $x$ 与 $y$，互为反函数，关于 $y = x$ 对称。');
+
+    // ---------------- identities ----------------
+    const a = 2.2, b = 1.1;
+    VIS('Identities/Square of a sum', [S2([1.5, 1.5], 2.25), ...SEQ([...TILE(0, 0, a, a, 'b', 'a²'), ...TILE(a, 0, a + b, a, 'y', 'ab'), ...TILE(0, a, a, a + b, 'y', 'ab'), ...TILE(a, a, a + b, a + b, 'p', 'b²'),
+      ...DH(0, a, -0.3, 'a', 'b'), ...DH(a, a + b, -0.3, 'b', 'p'), ...DV(0, a, -0.3, 'a', 'b'), ...DV(a, a + b, -0.3, 'b', 'p')], 200, 110)],
+      'On the board: the square of side $a + b$ is one $a^2$, one $b^2$ and two yellow $ab$ strips.|Au tableau : le carré de côté $a + b$ contient un $a^2$, un $b^2$ et deux bandes jaunes $ab$.|En la pizarra: el cuadrado de lado $a + b$ tiene un $a^2$, un $b^2$ y dos franjas amarillas $ab$.|黒板：1 辺 $a + b$ の正方形 ＝ $a^2$ ＋ $b^2$ ＋ 黄色の $ab$ が 2 枚。|黑板上：边长 $a + b$ 的正方形由一个 $a^2$、一个 $b^2$ 和两条黄色的 $ab$ 组成。', { replace: true });
+    {
+      const A = 3, B = 1.2, D = A - B, y2 = -2.6;
+      VIS('Identities/Difference of squares', [S2([2.1, 0.4], 3.1), ...SEQ([...TILE(0, 0, A, D, 'b', 'a(a − b)'), ...TILE(0, D, D, A, 'y', '(a − b)b'), ['poly3', [Z(D, D), Z(A, D), Z(A, A), Z(D, A)], { c: 'p', fill: 0, w: 1.4 }], LBs([D + B / 2, D + B / 2], 'b²', 'p'),
+        ...DH(0, A, -0.3, 'a'), LBs([2.1, -1.0], '↓', 'chalk', 24),
+        ...TILE(0, y2, A, y2 + D, 'b', 'a(a − b)'), ...TILE(A, y2, A + B, y2 + D, 'y', 'b(a − b)'), ...DH(0, A + B, y2 - 0.3, 'a + b'), ...DV(y2, y2 + D, -0.3, 'a − b')], 200, 120)],
+        'On the board: take the square $a^2$, cut away $b^2$, then move the yellow strip — the L-shape becomes a rectangle $(a + b)(a - b)$.|Au tableau : du carré $a^2$ on enlève $b^2$, puis on déplace la bande jaune — le L devient un rectangle $(a + b)(a - b)$.|En la pizarra: al cuadrado $a^2$ se le quita $b^2$ y se mueve la franja amarilla: la L se convierte en un rectángulo $(a + b)(a - b)$.|黒板：$a^2$ から $b^2$ を切り取り、黄色の帯を移すと L 字が長方形 $(a + b)(a - b)$ に。|黑板上：从 $a^2$ 中去掉 $b^2$，再把黄色长条移过去，L 形变成长方形 $(a + b)(a - b)$。');
+    }
+    {
+      const A = 2, B = 1, G = 0.45, at = [0, A + G], len = [A, B];
+      const boxes = [];
+      for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) for (let k = 0; k < 2; k++) {
+        const nb = i + j + k, c = ['b', 'y', 'g', 'p'][nb], lab = ['a³', 'a²b', 'ab²', 'b³'][nb];
+        boxes.push(...BOX(at[i], at[j], at[k], len[i], len[j], len[k], c, lab, nb === 0 ? 0.1 : 0.16));
+      }
+      VIS('Identities/Cube of a sum', [S3D([1.7, 1.7, 1.6], 2.6), ...SEQ(boxes, 200, 25)],
+        'On the board: the cube of side $a + b$ pulled apart — one $a^3$ (blue), three $a^2b$ (yellow), three $ab^2$ (green), one $b^3$ (pink). Drag it to turn it.|Au tableau : le cube de côté $a + b$ éclaté — un $a^3$ (bleu), trois $a^2b$ (jaune), trois $ab^2$ (vert), un $b^3$ (rose). Faites-le tourner en le glissant.|En la pizarra: el cubo de lado $a + b$ separado: un $a^3$ (azul), tres $a^2b$ (amarillo), tres $ab^2$ (verde), un $b^3$ (rosa). Arrástralo para girarlo.|黒板：1 辺 $a + b$ の立方体を分解 — $a^3$（青）1 個、$a^2b$（黄）3 個、$ab^2$（緑）3 個、$b^3$（桃）1 個。ドラッグで回転。|黑板上：把边长 $a + b$ 的立方体拆开——一个 $a^3$（蓝）、三个 $a^2b$（黄）、三个 $ab^2$（绿）、一个 $b^3$（粉）。拖动可旋转。');
+    }
+    {
+      const A = 2.4, B = 1.1, D = A - B, g = 0.4;
+      const cut = [[D, D, D], [A, D, D], [A, A, D], [D, A, D], [D, D, A], [A, D, A], [A, A, A], [D, A, A]];
+      const e = [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]].map(([p, q]) => ['seg', cut[p].map((v, i) => v + (i === 2 ? g : 0) + (i === 0 ? g : 0)), cut[q].map((v, i) => v + (i === 2 ? g : 0) + (i === 0 ? g : 0)), { c: 'p', dash: true, w: 1.2 }]);
+      VIS('Identities/Sum and difference of cubes', [S3D([1.4, 1.4, 1.5], 2.6), ...SEQ([...BOX(0, 0, 0, A, A, D, 'b', 'a²(a − b)'), ...BOX(0, 0, D + g, D, A, B, 'y', 'ab(a − b)'), ...BOX(D + g, 0, D + g, B, D, B, 'g', 'b²(a − b)'), ...e, ['lab3', [A + g + 0.1, A + 0.3, A + g + 0.2], 'b³', { c: 'p', size: 16 }]], 200, 25)],
+        'On the board: a cube $a^3$ with the small cube $b^3$ (dashed) removed falls into three boxes, all with one side $a - b$: $a^2$, $ab$ and $b^2$ times $(a - b)$.|Au tableau : le cube $a^3$ privé du petit cube $b^3$ (pointillé) se découpe en trois pavés ayant tous une arête $a - b$ : $a^2$, $ab$ et $b^2$ fois $(a - b)$.|En la pizarra: el cubo $a^3$ sin el cubito $b^3$ (discontinuo) se parte en tres cajas con una arista $a - b$: $a^2$, $ab$ y $b^2$ por $(a - b)$.|黒板：$a^3$ から小立方体 $b^3$（点線）を除くと、どれも 1 辺が $a - b$ の 3 つの直方体 $a^2$、$ab$、$b^2$ ×$(a - b)$ に分かれる。|黑板上：从 $a^3$ 中去掉小立方体 $b^3$（虚线），剩下三个长方体，都有一条棱为 $a - b$：$a^2$、$ab$、$b^2$ 乘 $(a - b)$。');
+    }
+    {
+      const s = [0, 2, 3.2, 4.0], n = ['a', 'b', 'c'], col = [['b', 'y', 'o'], ['y', 'p', 'g'], ['o', 'g', 'chalk']];
+      const t = []; for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) t.push(...TILE(s[i], s[j], s[i + 1], s[j + 1], col[i][j], i === j ? n[i] + '²' : n[Math.min(i, j)] + n[Math.max(i, j)], 0.28));
+      VIS('Identities/Three terms', [S2([2, 2], 2.6), ...SEQ([...t, ...DH(0, 2, -0.3, 'a'), ...DH(2, 3.2, -0.3, 'b'), ...DH(3.2, 4, -0.3, 'c')], 200, 60)],
+        'On the board: the square of side $a + b + c$ — three squares on the diagonal, and each product $ab, bc, ca$ appears twice.|Au tableau : le carré de côté $a + b + c$ — trois carrés sur la diagonale, et chaque produit $ab, bc, ca$ apparaît deux fois.|En la pizarra: el cuadrado de lado $a + b + c$: tres cuadrados en la diagonal y cada producto $ab, bc, ca$ aparece dos veces.|黒板：1 辺 $a + b + c$ の正方形。対角に 3 つの平方、$ab, bc, ca$ はそれぞれ 2 回。|黑板上：边长 $a + b + c$ 的正方形——对角线上三个平方，$ab, bc, ca$ 各出现两次。');
+    }
+
+    // ---------------- quadratics and polynomials ----------------
+    VIS('Quadratic equations/Vieta’s formulas', [AX([-1, 6], [-3, 5]), P('x^2-5x+4', 'y'), PTG(1, 0, 'x₁ = 1', 'b'), PTG(4, 0, 'x₂ = 4', 'b'), PTG(0, 4, 'c = 4', 'p'), LBL(2.6, 4.4, R`y = x^2 - 5x + 4`, 'y')],
+      'On the graph of $x^2 - 5x + 4$: the roots 1 and 4 add up to 5 $= -\tfrac ba$ and multiply to 4 $= \tfrac ca$, the height where the curve meets the $y$-axis.|Sur le graphe de $x^2 - 5x + 4$ : les racines 1 et 4 ont pour somme 5 $= -\tfrac ba$ et pour produit 4 $= \tfrac ca$, l’ordonnée à l’origine.|En la gráfica de $x^2 - 5x + 4$: las raíces 1 y 4 suman 5 $= -\tfrac ba$ y su producto es 4 $= \tfrac ca$, el corte con el eje $y$.|$x^2 - 5x + 4$ のグラフ：解 1 と 4 の和 5 $= -\tfrac ba$、積 4 $= \tfrac ca$（$y$ 切片）。|$x^2 - 5x + 4$ 的图像：根 1 与 4 之和 5 $= -\tfrac ba$，积 4 $= \tfrac ca$（与 $y$ 轴交点）。');
+    VIS('Quadratic equations/Factored form', [AX([-2.5, 4.5], [-9, 4]), P('2(x+1)(x-3)', 'y'), P('(x+1)(x-3)', 'b', { dash: true }), PTG(-1, 0, 'x₁', 'p'), PTG(3, 0, 'x₂', 'p')],
+      'On the graph: the factors are zero at the roots; $a$ only stretches the parabola (dashed: $a = 1$, yellow: $a = 2$) — the roots stay put.|Sur le graphique : les facteurs s’annulent aux racines ; $a$ étire seulement la parabole (pointillé : $a = 1$, jaune : $a = 2$) — les racines ne bougent pas.|En la gráfica: los factores se anulan en las raíces; $a$ solo estira la parábola (discontinua: $a = 1$, amarilla: $a = 2$); las raíces no se mueven.|グラフ：因数は解で 0。$a$ は放物線を伸ばすだけ（点線 $a = 1$、黄 $a = 2$）で解は動かない。|图像：因式在根处为零；$a$ 只拉伸抛物线（虚线 $a = 1$，黄色 $a = 2$），根不变。');
+    VIS('Polynomials/Remainder theorem', [AX([-2.5, 3], [-2, 7]), P('x^3-3x+3', 'y'), LNG(2, 0, 2, 5, 'p', true), PTG(2, 5, 'P(2) = 5', 'p'), LBL(-2.3, 6.2, R`P(x) = x^3 - 3x + 3`, 'y')],
+      'On the graph: the remainder of dividing by $x - 2$ is just the height $P(2)$.|Sur le graphique : le reste de la division par $x - 2$ est simplement la hauteur $P(2)$.|En la gráfica: el resto de dividir entre $x - 2$ es simplemente la altura $P(2)$.|グラフ：$x - 2$ で割った余りは高さ $P(2)$ そのもの。|图像：除以 $x - 2$ 的余数就是高度 $P(2)$。');
+    VIS('Polynomials/Vieta for a cubic', [AX([-2, 4], [-4, 6]), P('(x+1)(x-1)(x-3)', 'y'), PTG(-1, 0, '−1', 'b'), PTG(1, 0, '1', 'b'), PTG(3, 0, '3', 'b'), PTG(0, 3, '−d/a = 3', 'p')],
+      'On the graph of $(x + 1)(x - 1)(x - 3)$: roots $-1, 1, 3$; their sum $3 = -\tfrac ba$, their product $3 = -\tfrac da$.|Sur le graphe de $(x + 1)(x - 1)(x - 3)$ : racines $-1, 1, 3$ ; somme $3 = -\tfrac ba$, produit $3 = -\tfrac da$.|En la gráfica de $(x + 1)(x - 1)(x - 3)$: raíces $-1, 1, 3$; suma $3 = -\tfrac ba$, producto $3 = -\tfrac da$.|$(x + 1)(x - 1)(x - 3)$ のグラフ：解 $-1, 1, 3$、和 $3 = -\tfrac ba$、積 $3 = -\tfrac da$。|$(x + 1)(x - 1)(x - 3)$ 的图像：根 $-1, 1, 3$，和 $3 = -\tfrac ba$，积 $3 = -\tfrac da$。');
+    VIS('Polynomials/Rational roots', [AX([-2.5, 2.8], [-4, 4]), P('2x^3-3x^2-3x+2', 'y'), ...[-2, -1, -0.5, 0.5, 1, 2].map(x => ['pt', x, 0, '', { c: [-1, 0.5, 2].includes(x) ? 'g' : 'p', hollow: ![-1, 0.5, 2].includes(x) }]), LBL(-2.4, 3.4, R`2x^3 - 3x^2 - 3x + 2`, 'y')],
+      'On the graph of $2x^3 - 3x^2 - 3x + 2$: the candidates are $\pm1, \pm2, \pm\tfrac12$; three of them (green) really are roots.|Sur le graphe de $2x^3 - 3x^2 - 3x + 2$ : les candidats sont $\pm1, \pm2, \pm\tfrac12$ ; trois (en vert) sont vraiment racines.|En la gráfica de $2x^3 - 3x^2 - 3x + 2$: los candidatos son $\pm1, \pm2, \pm\tfrac12$; tres (en verde) son raíces.|$2x^3 - 3x^2 - 3x + 2$ のグラフ：候補 $\pm1, \pm2, \pm\tfrac12$ のうち 3 つ（緑）が本当の解。|$2x^3 - 3x^2 - 3x + 2$ 的图像：候选 $\pm1, \pm2, \pm\tfrac12$ 中有三个（绿色）是根。');
+
+    // ---------------- inequalities ----------------
+    {
+      const A = 3, B = 1.2, R0 = (A + B) / 2, h = Math.sqrt(A * B), arc = [...Array(41)].map((_, k) => Z(R0 + R0 * Math.cos(Math.PI * k / 40), R0 * Math.sin(Math.PI * k / 40)));
+      VIS('Inequalities/AM–GM', [S2([2.1, 1.0], 2.5), ...SEQ([['poly3', arc, { c: 'chalk', fill: 0.06, w: 2 }], SG([A, 0], [A, h], 'y', { w: 3 }), SG([R0, 0], [R0, R0], 'b', { w: 3 }), PT([R0, 0], '', 'b'),
+        LBs([A + 0.35, h / 2], '√ab', 'y', 18), LBs([R0 - 0.55, R0 / 2], '(a+b)/2', 'b', 16), ...DH(0, A, -0.3, 'a'), ...DH(A, A + B, -0.3, 'b')], 200, 120)],
+        'On the board: in a half-circle of diameter $a + b$, the yellow height is $\sqrt{ab}$ and the blue radius is $\tfrac{a + b}{2}$ — no height can beat the radius. They are equal when $a = b$.|Au tableau : dans un demi-cercle de diamètre $a + b$, la hauteur jaune vaut $\sqrt{ab}$ et le rayon bleu $\tfrac{a + b}{2}$ — aucune hauteur ne dépasse le rayon. Égalité si $a = b$.|En la pizarra: en un semicírculo de diámetro $a + b$, la altura amarilla es $\sqrt{ab}$ y el radio azul $\tfrac{a + b}{2}$; ninguna altura supera al radio. Iguales si $a = b$.|黒板：直径 $a + b$ の半円で、黄の高さは $\sqrt{ab}$、青の半径は $\tfrac{a + b}{2}$。高さは半径を超えない（$a = b$ で等号）。|黑板上：直径为 $a + b$ 的半圆中，黄色高为 $\sqrt{ab}$，蓝色半径为 $\tfrac{a + b}{2}$——高不会超过半径，$a = b$ 时相等。');
+    }
+    VIS('Inequalities/AM–GM for n numbers', [S2([1.8, 2.1], 2.6), ...SEQ([...[1, 4, 16].map((v, k) => RECT(k * 1.2, 0, k * 1.2 + 0.85, v * 0.26, 'b', 0.3)), ...[1, 4, 16].map((v, k) => LBs([k * 1.2 + 0.42, v * 0.26 + 0.25], String(v), 'chalk')),
+      SG([-0.3, 7 * 0.26], [3.8, 7 * 0.26], 'y', { w: 2.4 }), LBs([3.95, 7 * 0.26 + 0.3], 'AM = 7', 'y', 16), SG([-0.3, 4 * 0.26], [3.8, 4 * 0.26], 'p', { w: 2.4, dash: true }), LBs([3.95, 4 * 0.26 - 0.3], 'GM = 4', 'p', 16)], 200, 90)],
+      'On the board: for 1, 4 and 16 the average is 7 but the geometric mean $\sqrt[3]{64}$ is only 4 — uneven numbers pull the GM down.|Au tableau : pour 1, 4 et 16, la moyenne vaut 7 mais la moyenne géométrique $\sqrt[3]{64}$ seulement 4 — des nombres inégaux font baisser la MG.|En la pizarra: para 1, 4 y 16 la media es 7 pero la geométrica $\sqrt[3]{64}$ solo 4; los números desiguales bajan la MG.|黒板：1, 4, 16 の相加平均は 7、相乗平均 $\sqrt[3]{64}$ は 4。ばらつくほど相乗平均は小さい。|黑板上：1、4、16 的算术平均为 7，几何平均 $\sqrt[3]{64}$ 只有 4——数越不均匀，几何平均越小。');
+    {
+      const U = [3, 1], V = [1.2, 2.4];
+      VIS('Inequalities/Cauchy–Schwarz', [S2([1.6, 1.3], 2.2), ...SEQ([['vec', Z(0, 0), Z(...U), { c: 'b', w: 3 }], ['vec', Z(0, 0), Z(...V), { c: 'p', w: 3 }], LBs([3.2, 0.8], 'u = (a₁, a₂)', 'b', 15), LBs([1.3, 2.75], 'v = (b₁, b₂)', 'p', 15),
+        ['circ3', Z(0, 0), [0, 0, 1], 0.7, { c: 'y' }], LBs([0.95, 0.75], 'θ', 'y', 18), LBs([1.5, -0.45], 'u·v = |u||v| cos θ', 'y', 15)], 200, 120)],
+        'On the board: $\sum a_ib_i$ is the dot product $u\cdot v = |u||v|\cos\theta$, and $|\cos\theta| \le 1$. Equality when the vectors are parallel.|Au tableau : $\sum a_ib_i$ est le produit scalaire $u\cdot v = |u||v|\cos\theta$, et $|\cos\theta| \le 1$. Égalité si les vecteurs sont colinéaires.|En la pizarra: $\sum a_ib_i$ es el producto escalar $u\cdot v = |u||v|\cos\theta$, y $|\cos\theta| \le 1$. Igualdad si los vectores son paralelos.|黒板：$\sum a_ib_i$ は内積 $u\cdot v = |u||v|\cos\theta$、$|\cos\theta| \le 1$。平行のとき等号。|黑板上：$\sum a_ib_i$ 就是数量积 $u\cdot v = |u||v|\cos\theta$，而 $|\cos\theta| \le 1$；两向量平行时取等号。');
+    }
+
+    // ---------------- sums ----------------
+    {
+      const u = 0.62, sq = (x0, y0, x1, y1, c, lab) => TILE(x0 * u, y0 * u, x1 * u, y1 * u, c, lab, 0.3);
+      VIS('Sequences and sums/Sum of cubes', [S2([1.86, 1.86], 2.3), ...SEQ([...sq(0, 0, 1, 1, 'p', '1'), ...sq(1, 0, 3, 3, 'y', ''), ...sq(0, 1, 1, 3, 'y', ''), LBs([1.3 * u * 1.5, 1.6 * u * 1.4], '8', 'y', 20), ...sq(3, 0, 6, 6, 'b', ''), ...sq(0, 3, 3, 6, 'b', ''), LBs([4.5 * u, 3 * u], '27', 'b', 22),
+        ...DH(0, 6 * u, -0.3, '1 + 2 + 3 = 6'), LBs([1.86, 4.05], '1 + 8 + 27 = 6²', 'chalk', 18)], 200, 90)],
+      'On the board: the L-shaped layers have areas $1^3, 2^3, 3^3$ and together fill a square of side $1 + 2 + 3$.|Au tableau : les couches en L ont pour aires $1^3, 2^3, 3^3$ et remplissent ensemble un carré de côté $1 + 2 + 3$.|En la pizarra: las capas en L tienen áreas $1^3, 2^3, 3^3$ y juntas llenan un cuadrado de lado $1 + 2 + 3$.|黒板：L 字の層の面積は $1^3, 2^3, 3^3$ で、合わせて 1 辺 $1 + 2 + 3$ の正方形。|黑板上：L 形各层面积为 $1^3, 2^3, 3^3$，合起来是边长 $1 + 2 + 3$ 的正方形。');
+    }
+    {
+      const W = 5, ks = [1, 2, 3, 4, 5], cut = k => W * (1 - 1 / (k + 1)), col = ['b', 'y', 'p', 'g', 'o'];
+      const tele = [SG([0, 0], [W, 0], 'chalk', { w: 1.4 }), PT([0, 0], '0', 'chalk', { dy: 22 }), PT([W, 0], '1', 'chalk', { dy: 22 }),
+        ...ks.map(k => SG([k === 1 ? 0 : cut(k - 1), 0], [cut(k), 0], col[k - 1], { w: 6 })), ...ks.filter(k => k <= 3).map(k => LBs([((k === 1 ? 0 : cut(k - 1)) + cut(k)) / 2, 0.45 + (k % 2) * 0.45], '1/' + (k * (k + 1)), col[k - 1], 18)), LBs([cut(4), 1.35], '…', 'chalk', 18),
+        ...DH(cut(5), W, -0.7, '1/6', 'chalk')];
+      VIS('Sequences and sums/Telescoping', [S2([2.5, 0.3], 2.8), ...SEQ(tele, 200, 120)],
+        'On the board: the pieces $\tfrac12, \tfrac16, \tfrac1{12}, \dots$ fill the segment from 0 to 1; after $n$ pieces only $\tfrac{1}{n + 1}$ is left.|Au tableau : les morceaux $\tfrac12, \tfrac16, \tfrac1{12}, \dots$ remplissent le segment de 0 à 1 ; après $n$ morceaux il reste $\tfrac{1}{n + 1}$.|En la pizarra: los trozos $\tfrac12, \tfrac16, \tfrac1{12}, \dots$ llenan el segmento de 0 a 1; tras $n$ trozos solo falta $\tfrac{1}{n + 1}$.|黒板：$\tfrac12, \tfrac16, \tfrac1{12}, \dots$ が 0 から 1 を埋め、$n$ 個後の残りは $\tfrac{1}{n + 1}$。|黑板上：$\tfrac12, \tfrac16, \tfrac1{12}, \dots$ 依次填满 0 到 1，取 $n$ 段后只剩 $\tfrac{1}{n + 1}$。');
+      VIS('More on sequences/Telescoping fractions', [S2([2.5, 0.3], 2.8), ...SEQ(tele.map(x => JSON.parse(JSON.stringify(x))), 200, 120)],
+        'On the board ($d = 1$): consecutive pieces share their ends, so everything in the middle cancels.|Au tableau ($d = 1$) : les morceaux consécutifs partagent leurs extrémités, tout le milieu se simplifie.|En la pizarra ($d = 1$): los trozos consecutivos comparten extremos, así que todo lo del medio se cancela.|黒板（$d = 1$）：隣り合う区間は端を共有し、途中はすべて消える。|黑板上（$d = 1$）：相邻小段首尾相接，中间全部抵消。');
+    }
+    {
+      const a1 = [2, 3, 1.5, 2.5], S = a1.reduce((o, v) => o.concat((o[o.length - 1] || 0) + v), []), k = 0.42;
+      VIS('More on sequences/Terms from partial sums', [S2([1.9, 2.1], 2.7), ...SEQ([...S.map((v, i) => RECT(i * 1.05, 0, i * 1.05 + 0.75, v * k, i === 3 ? 'y' : 'b', 0.28)), RECT(3 * 1.05, S[2] * k, 3 * 1.05 + 0.75, S[3] * k, 'p', 0.55),
+        ...S.map((v, i) => LBs([i * 1.05 + 0.37, -0.3], 'S' + '₁₂₃₄'[i], 'chalk', 16)), LBs([3 * 1.05 + 1.25, (S[2] + S[3]) / 2 * k], 'a₄', 'p', 20), SG([2 * 1.05, S[2] * k], [3 * 1.05 + 0.75, S[2] * k], 'chalk', { dash: true, w: 1.2 })], 200, 100)],
+        'On the board: each bar is a partial sum; the pink top of $S_4$ above $S_3$ is the term $a_4 = S_4 - S_3$.|Au tableau : chaque barre est une somme partielle ; le haut rose de $S_4$ au-dessus de $S_3$ est le terme $a_4 = S_4 - S_3$.|En la pizarra: cada barra es una suma parcial; la parte rosa de $S_4$ por encima de $S_3$ es el término $a_4 = S_4 - S_3$.|黒板：棒は部分和。$S_4$ のうち $S_3$ を超える桃色部分が $a_4 = S_4 - S_3$。|黑板上：每根柱是部分和，$S_4$ 高出 $S_3$ 的粉色部分就是 $a_4 = S_4 - S_3$。');
+    }
+    VIS('More on sequences/Arithmetic and geometric means', [S2([2.5, 0.6], 2.9), ...SEQ([SG([0, 1.2], [5, 1.2], 'chalk', { w: 1.4 }), PT([0.5, 1.2], 'a = 2', 'b', { dy: -14 }), PT([2.5, 1.2], 'b = 6', 'y', { dy: -14 }), PT([4.5, 1.2], 'c = 10', 'b', { dy: -14 }),
+      ...DH(0.5, 2.5, 0.75, 'd', 'chalk'), ...DH(2.5, 4.5, 0.75, 'd', 'chalk'), ...[[0.5, 1, '1'], [2.0, 2, '2'], [3.8, 4, '4']].flatMap(([x, s, t]) => TILE(x - s * 0.18, -1.6, x + s * 0.18, -1.6 + s * 0.36, 'p', t, 0.3)), LBs([2.5, -2.2], '×2   ×2', 'p', 17)], 200, 100)],
+      'On the board: in an arithmetic sequence the middle term sits halfway (2, 6, 10); in a geometric one it is the same factor up and down (1, 2, 4).|Au tableau : dans une suite arithmétique le terme du milieu est à mi-chemin (2, 6, 10) ; dans une suite géométrique, c’est le même facteur de chaque côté (1, 2, 4).|En la pizarra: en una progresión aritmética el término central está a medio camino (2, 6, 10); en una geométrica, el mismo factor a cada lado (1, 2, 4).|黒板：等差では真ん中がちょうど中央（2, 6, 10）、等比では前後に同じ倍率（1, 2, 4）。|黑板上：等差数列中项在正中间（2, 6, 10）；等比数列中项两边是同一倍数（1, 2, 4）。');
+
+    // ---------------- exponential and logarithmic equations ----------------
+    VIS('Exponential, logarithmic and irrational equations/Same base', [AX([-1, 2.6], [-1, 10]), P('4^x', 'y'), P('8', 'b'), PTG(1.5, 8, 'x = 3/2', 'p'), LNG(1.5, 0, 1.5, 8, 'p', true)],
+      'On the graph: $y = 4^x$ meets $y = 8$ exactly once, at $x = \tfrac32$ — that is why equal powers of one base give equal exponents.|Sur le graphique : $y = 4^x$ coupe $y = 8$ une seule fois, en $x = \tfrac32$ — c’est pourquoi des puissances égales d’une même base ont des exposants égaux.|En la gráfica: $y = 4^x$ corta a $y = 8$ una sola vez, en $x = \tfrac32$; por eso potencias iguales de la misma base tienen exponentes iguales.|グラフ：$y = 4^x$ と $y = 8$ は $x = \tfrac32$ でただ 1 回交わる。だから底が同じなら指数も等しい。|图像：$y = 4^x$ 与 $y = 8$ 只在 $x = \tfrac32$ 处相交——同底幂相等则指数相等。');
+    VIS('Exponential, logarithmic and irrational equations/Substitution', [AX([-1.5, 3], [-3, 5]), P('4^x-5*2^x+4', 'y'), PTG(0, 0, 'x = 0', 'p'), PTG(2, 0, 'x = 2', 'p'), LBL(-1.4, 4.4, R`4^x - 5\cdot 2^x + 4`, 'y')],
+      'On the graph of $4^x - 5\cdot 2^x + 4$: with $t = 2^x$ it is $(t - 1)(t - 4)$, zero at $t = 1, 4$, that is $x = 0$ and $x = 2$.|Sur le graphe de $4^x - 5\cdot 2^x + 4$ : avec $t = 2^x$ c’est $(t - 1)(t - 4)$, nul pour $t = 1, 4$, soit $x = 0$ et $x = 2$.|En la gráfica de $4^x - 5\cdot 2^x + 4$: con $t = 2^x$ es $(t - 1)(t - 4)$, que se anula en $t = 1, 4$, es decir $x = 0$ y $x = 2$.|$4^x - 5\cdot 2^x + 4$ のグラフ：$t = 2^x$ で $(t - 1)(t - 4)$、$t = 1, 4$ すなわち $x = 0, 2$。|$4^x - 5\cdot 2^x + 4$ 的图像：令 $t = 2^x$ 得 $(t - 1)(t - 4)$，$t = 1, 4$，即 $x = 0$ 和 $x = 2$。');
+    VIS('Exponential, logarithmic and irrational equations/Logarithmic equations', [AX([-0.5, 7], [-3, 5]), P('ln(x)/ln(2)+ln(x-2)/ln(2)', 'y'), P('3', 'b'), PTG(4, 3, 'x = 4', 'p'), LNG(2, -3, 2, 5, 'p', true), LBL(0.1, -2.4, R`x > 2`, 'p')],
+      'On the graph of $\log_2 x + \log_2(x - 2)$: it only exists for $x > 2$ (dashed wall), and it reaches 3 at $x = 4$; the algebraic root $x = -2$ is outside and must be rejected.|Sur le graphe de $\log_2 x + \log_2(x - 2)$ : il n’existe que pour $x > 2$ (mur en pointillé) et atteint 3 en $x = 4$ ; la racine algébrique $x = -2$ est hors du domaine et doit être rejetée.|En la gráfica de $\log_2 x + \log_2(x - 2)$: solo existe para $x > 2$ (pared discontinua) y vale 3 en $x = 4$; la raíz algebraica $x = -2$ queda fuera y se descarta.|$\log_2 x + \log_2(x - 2)$ のグラフ：$x > 2$（点線）でのみ存在し、$x = 4$ で 3。代数的な解 $x = -2$ は定義域外で不適。|$\log_2 x + \log_2(x - 2)$ 的图像：只在 $x > 2$（虚线）存在，$x = 4$ 时为 3；代数解 $x = -2$ 不在定义域内，应舍去。');
+
+    // ---------------- binomial theorem ----------------
+    const PASCAL = (rows, hi, extra = []) => {
+      const o = [];
+      for (let n = 0; n <= rows; n++) for (let k = 0; k <= n; k++) {
+        const on = hi && hi(n, k); o.push(LBs([(k - n / 2) * 0.82, -n * 0.72], String(C(n, k)), on ? 'y' : n === rows ? 'b' : 'chalk', on ? 27 : 21));
+      }
+      return [S2([0.4, -rows * 0.36], 2.6), ...SEQ(o.concat(extra), 200, 45)];
+    };
+    VIS('Binomial theorem/Expansion', PASCAL(5, (n) => n === 4, [LBs([2.9, -4 * 0.72], '(a + b)⁴', 'y', 16)]),
+      'On the board: Pascal’s triangle — each number is the sum of the two above it. Row 4 (yellow) gives $a^4 + 4a^3b + 6a^2b^2 + 4ab^3 + b^4$.|Au tableau : le triangle de Pascal — chaque nombre est la somme des deux au-dessus. La ligne 4 (jaune) donne $a^4 + 4a^3b + 6a^2b^2 + 4ab^3 + b^4$.|En la pizarra: el triángulo de Pascal; cada número es la suma de los dos de encima. La fila 4 (amarilla) da $a^4 + 4a^3b + 6a^2b^2 + 4ab^3 + b^4$.|黒板：パスカルの三角形。各数は真上 2 つの和。4 段目（黄）が $a^4 + 4a^3b + 6a^2b^2 + 4ab^3 + b^4$。|黑板上：杨辉三角——每个数等于上方两数之和。第 4 行（黄）给出 $a^4 + 4a^3b + 6a^2b^2 + 4ab^3 + b^4$。');
+    VIS('Binomial theorem/General term', PASCAL(5, (n, k) => n === 5 && k === 2, [LBs([2.6, -5 * 0.72 - 0.6], 'C(5, 2) = 10', 'y', 16)]),
+      'On the board: in row 5 the term with $k = 2$ is the third number, $\binom52 = 10$ — counting starts at $k = 0$.|Au tableau : dans la ligne 5, le terme $k = 2$ est le troisième nombre, $\binom52 = 10$ — on compte à partir de $k = 0$.|En la pizarra: en la fila 5, el término $k = 2$ es el tercer número, $\binom52 = 10$; se empieza a contar en $k = 0$.|黒板：5 段目の $k = 2$ の項は 3 番目の数 $\binom52 = 10$（$k = 0$ から数える）。|黑板上：第 5 行中 $k = 2$ 的项是第三个数 $\binom52 = 10$——从 $k = 0$ 开始数。');
+    VIS('Binomial theorem/Sum of coefficients', PASCAL(5, null, [0, 1, 2, 3, 4, 5].map(n => LBs([3.3, -n * 0.72], '= ' + 2 ** n, 'y', 16))),
+      'On the board: every row of Pascal’s triangle adds up to a power of 2 — that is $(1 + 1)^n$.|Au tableau : chaque ligne du triangle de Pascal a pour somme une puissance de 2 — c’est $(1 + 1)^n$.|En la pizarra: cada fila del triángulo de Pascal suma una potencia de 2: es $(1 + 1)^n$.|黒板：パスカルの三角形の各段の和は 2 の累乗、つまり $(1 + 1)^n$。|黑板上：杨辉三角每行之和是 2 的幂——即 $(1 + 1)^n$。');
+  })();
+
   Cheats.tutor('algebra', L);
 })();

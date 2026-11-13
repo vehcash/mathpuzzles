@@ -43,7 +43,7 @@
   const initMatrix = () => {
     if (!window.BoardMatrix) return;
     if (BoardMatrix.ensureMarkup) BoardMatrix.ensureMarkup();   // older matrix.js builds lack it
-    BoardMatrix.draggable($('#sys-panel')); BoardMatrix.draggable($('#calc-panel')); BoardMatrix.draggable($('#graphs-panel'));
+    BoardMatrix.draggable($('#sys-panel')); BoardMatrix.draggable($('#calc-panel')); BoardMatrix.draggable($('#graphs-panel')); BoardMatrix.draggable($('#geo-panel'), '.gp-title'); BoardMatrix.draggable($('#ask-panel'));
     if ($('#mat-panel')) { ui.mat = BoardMatrix.MatrixPanel(board, $('#mat-panel')); window.ui_matrix = ui.mat; }
     const mb = $('#eq-matrix'); if (mb) { mb.hidden = !ui.mat; mb.onclick = () => ui.mat && ui.mat.toggle(); }
   };
@@ -73,6 +73,7 @@
   $('#reg-n').addEventListener('input', e => { board.regularN = +e.target.value || 6; });
   $('#reg-n').addEventListener('keydown', e => e.stopPropagation());
   $('#geo-measures').onchange = e => { board.geo.showMeasures = e.target.checked; board.render(); };
+  if ($('#geo-snap')) { $('#geo-snap').checked = board.snap; $('#geo-snap').onchange = e => { board.snap = e.target.checked; }; }
   $('#geo-angles').onchange = e => { board.geo.showAngles = e.target.checked; board.render(); };
   if ($('#eq-system')) $('#eq-system').onclick = () => ui.sys.toggle();   // older pages; the toolbox has System too
   $('#btn-undo').onclick = () => board.undo();

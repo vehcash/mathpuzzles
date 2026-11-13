@@ -29,7 +29,7 @@
 <meta name="theme-color" content="#17201c">
 <link rel="stylesheet" href="lib/fonts.css">
 <link rel="stylesheet" href="lib/katex/katex.min.css">
-<link rel="stylesheet" href="css/style.css?v=20261112b">
+<link rel="stylesheet" href="css/style.css?v=20261113a">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
@@ -148,7 +148,7 @@
     </div>
 
     <div class="subbar geobar" id="geobar" data-pane="geo" hidden>
-      <div class="grp">
+      <div class="grp geo-tools">
         <button class="tool" data-tool="g-select" title="Select & drag (V): click shapes, sides, points; Shift-click for several">↖ Select</button>
         <button class="tool" data-tool="g-point" title="Point: click anywhere (on a side or circle it stays on it)">• Point</button>
         <button class="tool" data-tool="g-seg" title="Segment: click–click or drag; snaps to points, auto horizontal/vertical">／ Segment</button>
@@ -161,6 +161,7 @@
       <div class="grp toggles">
         <label><input type="checkbox" id="geo-measures" checked> Measures</label>
         <label><input type="checkbox" id="geo-angles" checked> Angles</label>
+        <label title="Circles snap to the sides of polygons (tangent) and into corners · hold Alt to drag freely"><input type="checkbox" id="geo-snap" checked> Snap</label>
       </div>
       <span class="geo-hint">1 unit = 1 grid square · lengths in units</span>
     </div>
@@ -276,11 +277,14 @@
 <script src="js/geometry.js?v=20261111e"></script>
 <script src="js/vectors.js?v=20261112b"></script>
 <script src="js/board.js?v=20261112b"></script>
-<script src="js/ui.js?v=20261112b"></script>
-<script src="js/matrix.js?v=20261111e"></script>
+<script src="js/board-scene.js?v=20261113a"></script>
+<script src="js/geo-snap.js?v=20261113a"></script>
+<script src="js/ui.js?v=20261113a"></script>
+<script src="js/matrix.js?v=20261113a"></script>
 <script src="js/puzzles.js?v=20261111e"></script>
 <script src="puzzles/index.js"></script>
-<script src="js/app.js?v=20261112b"></script>
+<script src="js/app.js?v=20261113a"></script>
+<script src="js/local-tutor.js?v=20261113a"></script>
 <script>I18N.flags(document.getElementById('lang-host')); CookieUI.init();</script>
 </body>
 </html>

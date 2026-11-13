@@ -32,7 +32,7 @@
     </div>
     <div class="cm-cat muted">
       <div class="cm-row"><b>Statistics and marketing</b><span class="cm-always">Not used</span></div>
-      <p>This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them.</p>
+      <p>This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them. The optional local AI tutor downloads its model from Hugging Face and GitHub only when you switch it on; after that it runs on your own device and nothing you type is sent anywhere.</p>
     </div>
     <div class="cm-actions">
       <button class="cb-btn" data-c="reject">Reject optional</button>

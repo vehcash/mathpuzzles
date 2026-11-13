@@ -308,7 +308,7 @@ I18N.add('fr', {
 "The two one-sided limits differ": "Les deux limites latérales diffèrent",
 "The values approach": "Les valeurs s'approchent de",
 "The values keep oscillating — no single limit": "Les valeurs continuent d'osciller — pas de limite unique",
-"This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them.": "Ce site n'utilise aucun cookie d'analyse, de publicité ou de suivi, et ne charge aucun contenu tiers. Les boutons « Demander à une IA » n'ouvrent un autre site que lorsque vous cliquez dessus.",
+"This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them. The optional local AI tutor downloads its model from Hugging Face and GitHub only when you switch it on; after that it runs on your own device and nothing you type is sent anywhere.": "Ce site n'utilise aucun cookie d'analyse, de publicité ou de suivi, et ne charge aucun contenu tiers. Les boutons « Demander à une IA » n'ouvrent un autre site que lorsque vous cliquez dessus. Le tuteur IA local, facultatif, ne télécharge son modèle depuis Hugging Face et GitHub que lorsque vous l’activez ; il tourne ensuite sur votre appareil et rien de ce que vous tapez n’est envoyé.",
 "Toolbox": "Boîte à outils",
 "Triangle": "Triangle",
 "Trigonometry": "Trigonométrie",

@@ -744,3 +744,61 @@ a.brand { color: inherit; text-decoration: none; }
 .eqbar .act, .eqbar .tool { flex: none; white-space: nowrap; }
 .eqbar .act.steps { flex-direction: row; gap: 5px; margin-top: 0; display: inline-flex; }
 .eqbar:not(.can-steps) #eq-steps { display: none; }
+
+/* geometry palette: line icons */
+.tb-tool .ic svg { display: block; width: 22px; height: 22px; margin: 1px auto 2px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.tb-tool.small .ic svg { width: 19px; height: 19px; }
+.tb-tool .ic svg .d { fill: currentColor; stroke: none; }
+.tb-tool .ic svg .f { fill: currentColor; fill-opacity: .16; }
+.tb-tool .ic svg .h { stroke-dasharray: 2.2 2.6; stroke-width: 1.4; opacity: .8; }
+.tb-tool.on .ic svg .f { fill-opacity: .28; }
+.tb-snap { display: flex; align-items: center; gap: 6px; margin: 2px 0 8px; font: 600 11.5px var(--sans); color: #f6e9d6; opacity: .9; cursor: pointer; }
+.tb-snap input { accent-color: #7ee0c3; }
+/* any floating panel header can be a drag handle (geometry panel title included) */
+.drag-handle { cursor: grab; user-select: none; touch-action: none; }
+.float-panel.dragging .drag-handle { cursor: grabbing; }
+/* the geometry tools live in the right-hand toolbox; the row in the bar only comes back when the toolbox is hidden */
+.board-wrap:has(.toolbox:not(.collapsed)) .geobar .geo-tools { display: none; }
+/* ===================== local AI tutor (js/local-tutor.js) ===================== */
+.ait-panel { right: 12px; bottom: 12px; width: 340px; max-height: calc(100% - 24px); display: flex; flex-direction: column; overflow: hidden; }
+.ait-panel header b { display: flex; align-items: center; gap: 7px; }
+.ait-ic { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ait-setup, .ait-load, .ait-chat { padding: 10px 12px 12px; overflow: auto; }
+.ait-chat { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+.ait-chat[hidden], .ait-setup[hidden], .ait-load[hidden] { display: none; }
+.ait-intro { margin: 0 0 10px; line-height: 1.4; }
+.ait-row { display: grid; gap: 4px; font-weight: 600; font-size: 12.5px; }
+.ait-row select { font: inherit; font-weight: 400; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: #fff; }
+.ait-note { margin: 4px 0 8px; font-size: 12px; color: var(--ink-soft); line-height: 1.35; }
+.ait-chk { display: flex; gap: 7px; align-items: flex-start; margin: 8px 0; font-size: 13px; line-height: 1.3; }
+.ait-chk.small { font-size: 11.5px; margin: 0; color: var(--ink-soft); }
+.ait-on { width: 100%; justify-content: center; margin: 6px 0 4px; }
+.ait-err { color: #b3261e; font-size: 12.5px; line-height: 1.35; margin: 6px 0 0; }
+.ait-bar { height: 8px; border-radius: 6px; background: rgba(0,0,0,.08); overflow: hidden; }
+.ait-bar i { display: block; height: 100%; width: 0; background: #2e8a57; transition: width .3s; }
+.ait-ltext { font-size: 12px; color: var(--ink-soft); margin: 8px 0 0; word-break: break-word; }
+.ait-log { flex: 1 1 auto; min-height: 90px; max-height: 260px; overflow: auto; display: flex; flex-direction: column; gap: 6px; }
+.ait-msg { font-size: 13.5px; line-height: 1.4; padding: 6px 9px; border-radius: 10px; background: rgba(0,0,0,.04); }
+.ait-msg p { margin: 0 0 4px; } .ait-msg p:last-child { margin: 0; }
+.ait-msg.me { background: #e7f0fb; align-self: flex-end; max-width: 90%; }
+.ait-msg.sys { background: none; color: var(--ink-soft); font-size: 12.5px; padding: 0; }
+.ait-msg.ai { border-left: 3px solid #2e8a57; }
+.ait-dots { letter-spacing: 2px; animation: ait-blink 1s infinite; }
+@keyframes ait-blink { 50% { opacity: .3; } }
+.ait-quick { display: flex; flex-wrap: wrap; gap: 5px; }
+.ait-quick button { font: 600 12px var(--sans); border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 4px 9px; color: var(--ink); cursor: pointer; }
+.ait-quick button:hover { background: #f3d36b; }
+.ait-panel.busy .ait-quick button { opacity: .45; pointer-events: none; }
+.ait-ask { display: flex; gap: 6px; align-items: stretch; }
+.ait-ask textarea { flex: 1; resize: none; font: 13.5px var(--sans); padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); }
+.ait-foot { display: grid; gap: 4px; font-size: 11.5px; color: var(--ink-soft); }
+.ait-status { font-weight: 600; color: #2e8a57; }
+.ait-warn { font-style: italic; }
+.ait-off { justify-self: start; font-size: 12px; }
+.ai-local { width: 100%; justify-content: center; margin: 0 0 10px; white-space: normal; text-align: center; line-height: 1.3; }
+#btn-tutor .lbl { font: 600 12px var(--sans); margin-left: 4px; }
+#btn-tutor { width: auto !important; padding: 0 8px !important; gap: 2px; }
+.ait-row select { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
+.ait-stop { background: #b3261e !important; color: #fff !important; }
+.ait-stop[hidden], .ait-send[hidden] { display: none !important; }
+.ait-msg .ait-stopped { color: #b3261e; font-size: 12px; font-style: italic; }

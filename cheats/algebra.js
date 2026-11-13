@@ -27,8 +27,8 @@
         ['Swap base and argument|Échanger base et argument|Intercambiar base y argumento|底と真数の入れ替え|底数与真数互换', R`\log_a b = \frac{1}{\log_b a}`]
       ] },
       { t: 'Identities|Identités remarquables|Identidades notables|乗法公式|乘法公式', items: [
-        ['Square of a sum|Carré d’une somme|Cuadrado de una suma|和の2乗|和的平方', R`(a \pm b)^2 = a^2 \pm 2ab + b^2`],
-        ['Difference of squares|Différence de carrés|Diferencia de cuadrados|2乗の差|平方差', R`a^2 - b^2 = (a - b)(a + b)`],
+        ['Square of a sum|Carré d’une somme|Cuadrado de una suma|和の2乗|和的平方', R`(a \pm b)^2 = a^2 \pm 2ab + b^2`, null, { fig: 'sqsum' }],
+        ['Difference of squares|Différence de carrés|Diferencia de cuadrados|2乗の差|平方差', R`a^2 - b^2 = (a - b)(a + b)`, null, { fig: 'diffsq' }],
         ['Cube of a sum|Cube d’une somme|Cubo de una suma|和の3乗|和的立方', R`(a \pm b)^3 = a^3 \pm 3a^2b + 3ab^2 \pm b^3`],
         ['Sum and difference of cubes|Somme et différence de cubes|Suma y diferencia de cubos|3乗の和と差|立方和与立方差', R`a^3 \pm b^3 = (a \pm b)\left(a^2 \mp ab + b^2\right)`],
         ['Three terms|Trois termes|Tres términos|3項の2乗|三项和的平方', R`(a + b + c)^2 = a^2 + b^2 + c^2 + 2(ab + bc + ca)`],
@@ -48,7 +48,7 @@
         ['Rational roots|Racines rationnelles|Raíces racionales|有理数解|有理根', R`x = \frac pq \ \Rightarrow\ p \mid a_0,\ q \mid a_n`, R`Candidates for integer-coefficient polynomials.|Candidats pour un polynôme à coefficients entiers.|Candidatas para polinomios de coeficientes enteros.|整数係数の多項式の解の候補。|整系数多项式有理根的候选。`]
       ] },
       { t: 'Inequalities|Inégalités|Desigualdades|不等式|不等式', items: [
-        ['AM–GM|Moyennes arithmétique et géométrique|Medias aritmética y geométrica|相加平均と相乗平均|均值不等式', R`\frac{a + b}{2} \ge \sqrt{ab} \qquad (a, b \ge 0)`, R`Equality when $a = b$. Useful: $x + \frac kx \ge 2\sqrt k$.|Égalité si $a = b$. Utile : $x + \frac kx \ge 2\sqrt k$.|Igualdad si $a = b$. Útil: $x + \frac kx \ge 2\sqrt k$.|等号は $a = b$ のとき。便利：$x + \frac kx \ge 2\sqrt k$。|当 $a = b$ 时取等号。常用：$x + \frac kx \ge 2\sqrt k$。`],
+        ['AM–GM|Moyennes arithmétique et géométrique|Medias aritmética y geométrica|相加平均と相乗平均|均值不等式', R`\frac{a + b}{2} \ge \sqrt{ab} \qquad (a, b \ge 0)`, R`Equality when $a = b$. Useful: $x + \frac kx \ge 2\sqrt k$.|Égalité si $a = b$. Utile : $x + \frac kx \ge 2\sqrt k$.|Igualdad si $a = b$. Útil: $x + \frac kx \ge 2\sqrt k$.|等号は $a = b$ のとき。便利：$x + \frac kx \ge 2\sqrt k$。|当 $a = b$ 时取等号。常用：$x + \frac kx \ge 2\sqrt k$。`, { fig: 'amgm' }],
         ['AM–GM for n numbers|Pour n nombres|Para n números|n 個の場合|n 个数的情形', R`\frac{a_1 + \dots + a_n}{n} \ge \sqrt[n]{a_1\cdots a_n}`],
         ['Cauchy–Schwarz|Cauchy–Schwarz|Cauchy–Schwarz|コーシー・シュワルツ|柯西–施瓦茨', R`\left(\textstyle\sum a_ib_i\right)^2 \le \left(\sum a_i^2\right)\left(\sum b_i^2\right)`],
         ['Triangle inequality|Inégalité triangulaire|Desigualdad triangular|三角不等式|三角不等式', R`|a + b| \le |a| + |b|`],

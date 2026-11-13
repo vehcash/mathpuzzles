@@ -308,7 +308,7 @@ I18N.add('zh', {
 "The two one-sided limits differ": "左右极限不相等",
 "The values approach": "数值趋近于",
 "The values keep oscillating — no single limit": "数值不断振荡 —— 没有唯一的极限",
-"This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them.": "本网站不使用分析、广告或跟踪类 Cookie，也不加载任何第三方内容。“问问 AI”按钮只有在你点击时才会打开其他网站。",
+"This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them. The optional local AI tutor downloads its model from Hugging Face and GitHub only when you switch it on; after that it runs on your own device and nothing you type is sent anywhere.": "本网站不使用分析、广告或跟踪类 Cookie，也不加载任何第三方内容。“问问 AI”按钮只有在你点击时才会打开其他网站。 可选的本地 AI 老师只有在你启用时才会从 Hugging Face 和 GitHub 下载模型；之后它在你的设备上运行，你输入的内容不会发送到任何地方。",
 "Toolbox": "工具箱",
 "Triangle": "三角形",
 "Trigonometry": "三角函数",
