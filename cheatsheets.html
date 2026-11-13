@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- seo:start -->
-<title>Math cheat sheets — formulas for students and teachers | Daily Math Puzzle</title>
-<meta name="description" content="Free math formula sheets for students and teachers: algebra, trigonometry, geometry, vectors, limits, derivatives, integrals, combinatorics, probability and statistics, with figures and worked examples.">
+<title>Math cheat sheets — formulas and theorems explained step by step | Daily Math Puzzle</title>
+<meta name="description" content="Free math cheat sheets and formula compendium: every formula and theorem of algebra, trigonometry, geometry, vectors, limits, derivatives, integrals, probability and statistics explained step by step on a blackboard tutor, with graphs and worked examples for university entrance exams and math tests.">
 <link rel="canonical" href="https://dailymathpuzzle.com/cheatsheets.html">
 <link rel="alternate" hreflang="en" href="https://dailymathpuzzle.com/cheatsheets.html">
 <link rel="alternate" hreflang="fr" href="https://dailymathpuzzle.com/cheatsheets.html?lang=fr">
@@ -15,17 +15,18 @@
 <link rel="alternate" hreflang="x-default" href="https://dailymathpuzzle.com/cheatsheets.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Daily Math Puzzle">
-<meta property="og:title" content="Math cheat sheets — formulas for students and teachers | Daily Math Puzzle">
-<meta property="og:description" content="Free math formula sheets for students and teachers: algebra, trigonometry, geometry, vectors, limits, derivatives, integrals, combinatorics, probability and statistics, with figures and worked examples.">
+<meta property="og:title" content="Math cheat sheets — formulas and theorems explained step by step | Daily Math Puzzle">
+<meta property="og:description" content="Free math cheat sheets and formula compendium: every formula and theorem of algebra, trigonometry, geometry, vectors, limits, derivatives, integrals, probability and statistics explained step by step on a blackboard tutor, with graphs and worked examples for university entrance exams and math tests.">
 <meta property="og:url" content="https://dailymathpuzzle.com/cheatsheets.html">
 <meta property="og:image" content="https://dailymathpuzzle.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "LearningResource", "name": "Math cheat sheets", "description": "Free math cheat sheets and formula compendium: every formula and theorem of algebra, trigonometry, geometry, vectors, limits, derivatives, integrals, probability and statistics explained step by step on a blackboard tutor, with graphs and worked examples for university entrance exams and math tests.", "url": "https://dailymathpuzzle.com/cheatsheets.html", "learningResourceType": ["Cheat sheet", "Interactive explanation"], "educationalLevel": ["Upper secondary", "University entrance", "Undergraduate"], "inLanguage": ["en", "fr", "es", "ja", "zh-Hans"], "isAccessibleForFree": true, "teaches": ["Algebra", "Functions", "Geometry", "Trigonometry", "Analytic geometry", "3D geometry", "Vectors and matrices", "Complex numbers", "Limits", "Derivatives", "Integrals", "Combinatorics", "Probability", "Statistics", "Number theory", "Logic and sets"], "hasPart": {"@type": "CollectionPage", "name": "Math formula compendium", "url": "https://dailymathpuzzle.com/formulas/"}}</script>
 <!-- seo:end -->
 <meta name="theme-color" content="#17201c">
 <link rel="stylesheet" href="lib/fonts.css">
 <link rel="stylesheet" href="lib/katex/katex.min.css">
-<link rel="stylesheet" href="css/style.css?v=20261113a">
-<link rel="stylesheet" href="css/cheats.css">
+<link rel="stylesheet" href="css/style.css?v=20261113c">
+<link rel="stylesheet" href="css/cheats.css?v=20261113d">
 <link rel="stylesheet" href="css/tutor.css">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -49,7 +50,18 @@
     <div id="cs-topics" data-no-i18n></div>
     <p class="cs-tip">Click a formula for a step-by-step explanation on the blackboard · ⧉ copies its LaTeX</p>
   </nav>
-  <main id="cs-main" class="cs-main" data-no-i18n></main>
+  <div class="cs-col">
+    <section class="cs-about" aria-labelledby="cs-about-h">
+      <h2 id="cs-about-h">Math cheat sheets with every theorem explained</h2>
+      <p data-i18n-html>These math cheat sheets are a compendium of the formulas and theorems used from the last years of school to the first year of university. Click any formula and the blackboard tutor explains it step by step — the idea, a graph or a figure, a worked example and an exercise to check yourself. Use them to revise for a math test, university entrance exams such as the Selectividad (EBAU/PAU), the Bac, A-levels, the Gaokao or JEE, or as a quick reference during your studies.</p>
+      <p class="about-links" data-i18n-html><a href="formulas/">Printable formula compendium</a> · <a href="list.html">Practise with exam puzzles</a></p>
+    </section>
+    <main id="cs-main" class="cs-main" data-no-i18n></main>
+    <nav class="cs-foot" aria-label="Formula compendium">
+      <div class="cs-foot-h">Printable formula compendium</div>
+      <p data-no-i18n><a href="formulas/algebra.html">Algebra</a> · <a href="formulas/functions.html">Functions and graphs</a> · <a href="formulas/geometry.html">Geometry</a> · <a href="formulas/trigonometry.html">Trigonometry</a> · <a href="formulas/analytic.html">Analytic geometry</a> · <a href="formulas/space.html">3D geometry</a> · <a href="formulas/vectors.html">Vectors and matrices</a> · <a href="formulas/complex.html">Complex numbers</a> · <a href="formulas/limits.html">Limits and series</a> · <a href="formulas/derivatives.html">Derivatives</a> · <a href="formulas/integrals.html">Integrals</a> · <a href="formulas/combinatorics.html">Combinatorics</a> · <a href="formulas/probability.html">Probability</a> · <a href="formulas/statistics.html">Statistics</a> · <a href="formulas/number.html">Number theory</a> · <a href="formulas/logic.html">Sets and logic</a></p>
+    </nav>
+  </div>
 </div>
 <p id="cs-empty" class="lempty" hidden></p>
 <div id="cs-toast" class="cs-toast" role="status" aria-live="polite"></div>
@@ -57,12 +69,12 @@
 <script src="lib/katex/katex.min.js"></script>
 <script src="js/consent.js"></script>
 <script src="js/i18n.js"></script>
-<script src="js/lang/fr.js"></script>
-<script src="js/lang/es.js"></script>
-<script src="js/lang/ja.js"></script>
-<script src="js/lang/zh.js"></script>
+<script src="js/lang/fr.js?v=20261113d"></script>
+<script src="js/lang/es.js?v=20261113d"></script>
+<script src="js/lang/ja.js?v=20261113d"></script>
+<script src="js/lang/zh.js?v=20261113d"></script>
 <script>I18N.start();</script>
-<script src="js/consent-ui.js"></script>
+<script src="js/consent-ui.js?v=20261113c"></script>
 <script src="js/cheat-figs.js?v=20261113a"></script>
 <script>window.Cheats = { topics: [], topic(t) { this.topics.push(t); }, tutorials: {}, tutor(id, map) { this.tutorials[id] = map; } };</script>
 <script src="cheats/algebra.js?v=20261113a"></script>
@@ -82,8 +94,8 @@
 <script src="cheats/number.js"></script>
 <script src="cheats/logic.js"></script>
 <script src="cheats/symbols.js"></script>
-<script src="js/tutor.js?v=20261113a"></script>
-<script src="js/cheats.js"></script>
+<script src="js/tutor.js?v=20261113e"></script>
+<script src="js/cheats.js?v=20261113d"></script>
 <script>I18N.flags(document.getElementById('lang-host')); CookieUI.init();</script>
 </body>
 </html>

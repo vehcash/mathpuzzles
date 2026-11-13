@@ -308,7 +308,7 @@ I18N.add('ja', {
 "The two one-sided limits differ": "左右の極限が異なる",
 "The values approach": "値は次に近づく",
 "The values keep oscillating — no single limit": "値が振動し続ける — 極限は1つに定まらない",
-"This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them. The optional local AI tutor downloads its model from Hugging Face and GitHub only when you switch it on; after that it runs on your own device and nothing you type is sent anywhere.": "このサイトは分析・広告・トラッキング用の Cookie を使用せず、第三者のコンテンツも読み込みません。「AI にたずねる」ボタンは、クリックしたときだけ別のサイトを開きます。 任意のローカル AI 先生は、オンにしたときだけ Hugging Face と GitHub からモデルをダウンロードします。その後はお使いの端末で動き、入力内容はどこにも送信されません。",
+"This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them.": "このサイトは分析・広告・トラッキング用の Cookie を使用せず、第三者のコンテンツも読み込みません。「AI にたずねる」ボタンは、クリックしたときだけ別のサイトを開きます。",
 "Toolbox": "ツールボックス",
 "Triangle": "三角形",
 "Trigonometry": "三角比",
@@ -521,3 +521,14 @@ I18N.add("ja", {"Editing the formula on the board": "黒板の式を編集中", 
 // board worksheet: points, vectors, named results (js/vectors.js)
 I18N.add("ja", {"Plot": "描画", "Place": "配置", "Solve": "解く", "Equations": "方程式", "Vectors": "ベクトル", "unknowns": "未知数", "false": "偽", "Added — the next lines can use it": "追加しました — 他の行で使えます", "{x} is now defined: the lines you add below use it": "{x} を定義しました：他の行で使われます", "Only 2-D points and vectors can be drawn on the axes": "軸に描けるのは2次元の点とベクトルだけです", "give {v} a value to check it": "{v} に値を与えると確かめられます", "true for every {v}": "すべての {v} で成り立つ", "A number was expected here, not a vector": "ここにはベクトルではなく数が必要です", "A vector was expected here": "ここにはベクトルが必要です", "The vectors have different dimensions ({a} and {b})": "ベクトルの次元が違います（{a} と {b}）", "The cross product needs 3-D vectors": "外積には3次元ベクトルが必要です", "A number and a vector cannot be added": "数とベクトルは足せません", "A vector cannot be equal to a number": "ベクトルは数と等しくなりません", "Vectors can only be compared with =": "ベクトルは = でしか比べられません", "{n} is defined in terms of itself": "{n} が自分自身で定義されています", "Write one equation (or one comparison) per line": "1行に1つの式（または比較）を書いてください", "Both sides must be vectors of the same size": "両辺は同じ大きさのベクトルでなければなりません"});
 I18N.add("ja", {"Complex numbers can only be compared with =": "複素数は = でしか比べられません", "A vector was expected here, not a complex number": "ここには複素数ではなくベクトルが必要です", "Vectors and complex numbers cannot be multiplied": "ベクトルと複素数は掛けられません", "A vector cannot be divided by a complex number": "ベクトルは複素数で割れません", "{f} of a complex number is not supported": "複素数の {f} には対応していません"});
+/* search-engine texts (index and cheat-sheet pages) */
+I18N.add("ja", {
+"A math compendium and tutor for university entrance exams": "大学入試のための数学公式集と先生",
+"The <a href=\"formulas/\">math formula compendium</a> collects the formulas and theorems of algebra, calculus, geometry, trigonometry, vectors and matrices, complex numbers, combinatorics, probability and statistics. Every cheat sheet explains what each symbol means, why the theorem is true and how to use it in a worked example, and the blackboard tutor shows it step by step with graphs and figures — the reference to revise for a math test, the Selectividad, the Bac, A-levels, the Gaokao or your first year at university.": "<a href=\"formulas/ja/\">数学公式集</a>には、代数・微積分・幾何・三角法・ベクトルと行列・複素数・組合せ・確率・統計の公式と定理を収録。各チートシートは記号の意味、定理が成り立つ理由、例題での使い方を説明し、黒板の先生がグラフや図でステップごとに示します。数学のテスト、共通テスト、大学入試、大学 1 年の復習に。",
+"<a href=\"list.html\">Browse all math puzzles</a> · <a href=\"cheatsheets.html\">Math cheat sheets</a> · <a href=\"formulas/\">Formula compendium</a>": "<a href=\"list.html\">すべての問題を見る</a> · <a href=\"cheatsheets.html\">数学チートシート</a> · <a href=\"formulas/ja/\">公式集</a>",
+"Math cheat sheets with every theorem explained": "すべての定理を解説した数学チートシート",
+"These math cheat sheets are a compendium of the formulas and theorems used from the last years of school to the first year of university. Click any formula and the blackboard tutor explains it step by step — the idea, a graph or a figure, a worked example and an exercise to check yourself. Use them to revise for a math test, university entrance exams such as the Selectividad (EBAU/PAU), the Bac, A-levels, the Gaokao or JEE, or as a quick reference during your studies.": "この数学チートシートは、高校の終わりから大学 1 年までに使う公式と定理の公式集です。公式をクリックすると黒板の先生がステップごとに解説します——考え方、グラフや図、例題、確認問題。数学のテストや大学入試（共通テスト・個別試験）の復習、勉強中のリファレンスにどうぞ。",
+"<a href=\"formulas/\">Printable formula compendium</a> · <a href=\"list.html\">Practise with exam puzzles</a>": "<a href=\"formulas/ja/\">印刷用の公式集</a> · <a href=\"list.html\">入試問題で練習</a>",
+"{topic} formulas and theorems": "{topic}の公式と定理",
+"Printable formula compendium": "印刷用の公式集"
+});

@@ -103,10 +103,17 @@
   // ---------- loading the board scripts and topic tutorials on first use ----------
   const loaded = {};
   const script = src => loaded[src] || (loaded[src] = new Promise(ok => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ok; document.head.appendChild(s); }));
-  const BOARD_JS = ['js/mathcore.js', 'js/recognizer.js', 'js/intent.js', 'js/geometry.js', 'js/board.js', 'js/board-scene.js?v=20261113a'];
+  const BOARD_JS = ['js/mathcore.js', 'js/recognizer.js', 'js/intent.js', 'js/geometry.js', 'js/board.js', 'js/board-scene.js?v=20261113e'];
   const ready = () => (window.SmartBoard && window.SmartBoard.prototype.sScene ? Promise.resolve() : BOARD_JS.reduce((p, src) => p.then(() => script(src)), Promise.resolve()));
-  const TUT_V = '20261113a';  // bump when lesson files change, so browsers fetch the new version
-  const topicTutorials = id => script('cheats/tutorials/' + id + '.js?v=' + TUT_V).then(() => (window.Cheats.tutorials || {})[id] || {});
+  // plain lesson text as KaTeX: \text{…}, with the maths symbols typed in it (·, ≠, ≤, ⇒, …) set in maths mode
+  const TXM = { '·': '\\cdot', '≠': '\\ne', '≤': '\\le', '≥': '\\ge', '×': '\\times', '→': '\\to', '⇒': '\\Rightarrow', '⇔': '\\Leftrightarrow', '∈': '\\in', '±': '\\pm', '≈': '\\approx', '∞': '\\infty' };
+  const textTex = t => '\\text{' + String(t).replace(/([{}%#&_$])/g, '\\$1').replace(/~/g, '\\textasciitilde{}')
+    .replace(/\^(∞|[\w−+-]+)/g, (m, e) => '}\u0001{' + (e === '∞' ? '\\infty' : e.replace('−', '-')) + '}\\text{').replace(/\^/g, '\\textasciicircum{}').replace(/\u0001/g, '^')
+    .replace(/[·≠≤≥×→⇒⇔∈±≈∞]/g, m => '}' + TXM[m] + '\\text{') + '}';
+  const TUT_V = '20261113e';  // bump when lesson files change, so browsers fetch the new version
+  // lessons, then their pictures (cheats/pictures/<topic>.js, if there is one)
+  const topicTutorials = id => script('cheats/tutorials/' + id + '.js?v=' + TUT_V).then(() => script('cheats/pictures/_kit.js?v=' + TUT_V))
+    .then(() => script('cheats/pictures/' + id + '.js?v=' + TUT_V)).then(() => (window.Cheats.tutorials || {})[id] || {});
 
   // ---------- the player ----------
   let el = null, board = null, cur = null, idx = 0, timer = null, playing = false;
@@ -306,7 +313,7 @@
       if (o.c) o.c = col(o.c);
       try {
         if (kk === 'w' || kk === 't') {
-          const tex = kk === 't' ? '\\text{' + pick(x).replace(/([{}%#&_$])/g, '\\$1') + '}' : Array.isArray(x) ? pick(x) : x;
+          const tex = kk === 't' ? textTex(pick(x)) : Array.isArray(x) ? pick(x) : x;
           const head = o.head;
           const m = board.sWrite(tex, Object.assign({ s: 26 }, o, head ? { x: 0.04, y: 0.07 } : {}));
           if (!head) place(state, m, o);

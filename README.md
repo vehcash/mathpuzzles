@@ -101,13 +101,6 @@ Every typed line on the board can use what the others define, wherever they are 
 ## Calculus syntax
 `17 mod 5` (also `%`; exact for big powers like `2^100 mod 7`), `d/dx(x^2 sin(x))`, `diff(f, x, 2)`, `diff(f, x=2)`, `lim(sin(x)/x, x→0)` (`x→0+` one-sided, `x→∞`), `int(x^2, 0, 3)`, `tangent(x^2, 1)` — results show automatically; **Steps** explains them; **Plot** draws them. Plotted curves get **f′**, **tangent** and **∫ area** buttons in the Graphs panel.
 
-## Local AI tutor (WebGPU) — `js/local-tutor.js`
-
-- **🤖 AI tutor** button on the blackboard toolbar (and the first button inside “Ask an AI” under a puzzle) opens a draggable panel. *Switch on* loads a small model **in the browser** with [WebLLM](https://github.com/mlc-ai/web-llm) (vendored, minified: `lib/web-llm/web-llm.js` + `worker.js`, Apache-2.0, loaded only when switched on). Models: Qwen3.5 0.8B / 2B (default) / 4B / 9B, `q4f16_1` when the GPU has `shader-f16`, else `q4f32_1`. Weights come from huggingface.co and the WebGPU kernels from raw.githubusercontent.com the first time; the browser caches them.
-- The model writes one board command per line (`STEP:` caption in the panel, `TEX:`, `TEXT:`, `SOLVE:`, `EQ:`, `PLOT:`, `POINT:`, `ANSWER:`, `CLEAR`); each finished line is drawn immediately with automatic layout (text column on the left, graph on the right, new column/page when full). Captions are in the page language.
-- Context sent to the model: the puzzle statement and options; the true options and the official solution only once the student has answered, or asks for the solution / another method (hints never reveal it); the equations typed on the board; the last two exchanges. Nothing leaves the device.
-- “Start each answer on a clean board” pushes an undo step first, so Ctrl+Z brings the student's work back.
-
 ## Board scenes and geometry snapping
 
 - `js/board-scene.js` — the renderer for lesson pictures (`board.sScene`, `board.s3`): flat diagrams (tiles, Venn diagrams, number lines, bars) and turnable 3D pictures; drag to turn, wheel to zoom. Loaded by `js/tutor.js` and `index.html` after `js/board.js`.

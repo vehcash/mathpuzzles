@@ -19,12 +19,59 @@
   const DUR = { seg: 520, poly: 650, pt: 300, sph: 700, circ: 700, lab: 300 };
   let uid = 700000;
 
+  /* Flat scenes fit themselves: measure every shape (maths units) and every label (pixels), then pick the largest
+     scale — never larger than the author's r asks for — at which everything fits the box, and centre the content.
+     So a picture is never cut at the edges, whatever the board size or the language of its labels. */
+  let mctx = null;
+  const textW = (txt, size) => { if (!mctx) mctx = document.createElement('canvas').getContext('2d'); mctx.font = Math.round(size * 1.12) + 'px Kalam, cursive'; return mctx.measureText(String(txt)).width; };
+  function fitFlat(sc, W, H, s0) {
+    const key = sc.items.length + ':' + Math.round(W) + ':' + Math.round(H) + ':' + (document.fonts ? document.fonts.status : '');
+    if (sc._fitKey === key) return sc._fit;
+    const pts = [], labs = [];
+    for (const it of sc.items) {
+      if (it.k === 'seg') pts.push(it.a, it.b);
+      else if (it.k === 'poly') pts.push(...it.pts);
+      else if (it.k === 'circ' || it.k === 'sph') pts.push([it.o[0] - it.r, it.o[1] - it.r], [it.o[0] + it.r, it.o[1] + it.r]);
+      else if (it.k === 'pt') {
+        pts.push(it.p);
+        if (it.lab) { const w = textW(it.lab, 17), h = 22, dx = it.dx !== undefined ? it.dx : 8, dy = it.dy !== undefined ? it.dy : -10; labs.push([it.p[0], it.p[1], dx, dx + w, dy - h / 2, dy + h / 2]); }
+      } else if (it.k === 'lab' && it.s) {
+        const sz = it.size || 18, w = textW(it.s, sz), h = sz * 1.3, dx = it.dx || 0, dy = it.dy || 0;
+        labs.push([it.p[0], it.p[1], dx - w / 2, dx + w / 2, dy - h / 2, dy + h / 2]);
+      }
+    }
+    if (sc.axes) { const r = sc.r * 0.95; pts.push([sc.c[0] - r, sc.c[1] - r], [sc.c[0] + r + 0.3, sc.c[1] + r + 0.3]); }
+    if (!pts.length && !labs.length) { sc._fitKey = key; return (sc._fit = null); }
+    const ext = k => {
+      let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+      for (const p of pts) { const x = p[0] * k, y = -p[1] * k; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+      for (const L of labs) { const x = L[0] * k, y = -L[1] * k; x0 = Math.min(x0, x + L[2]); x1 = Math.max(x1, x + L[3]); y0 = Math.min(y0, y + L[4]); y1 = Math.max(y1, y + L[5]); }
+      return [x0, x1, y0, y1];
+    };
+    // shrink the shapes (never below 60% of the author's scale); if a label is still too wide, shrink the labels too
+    let fs = 1;
+    const ext2 = k => { const e = ext(k); return e; };
+    const fits = k => { const e = ext2(k); return e[1] - e[0] <= W - 14 && e[3] - e[2] <= H - 10; };
+    const shapes = k => { let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (const p of pts) { x0 = Math.min(x0, p[0] * k); x1 = Math.max(x1, p[0] * k); y0 = Math.min(y0, -p[1] * k); y1 = Math.max(y1, -p[1] * k); } return !pts.length || (x1 - x0 <= W - 14 && y1 - y0 <= H - 10); };
+    const search = (lo, hi, ok) => { if (ok(hi)) return hi; for (let i = 0; i < 26; i++) { const m = (lo + hi) / 2; if (ok(m)) lo = m; else hi = m; } return lo; };
+    const kG = search(s0 * 0.02, s0, shapes);                // the shapes always fit
+    let k = search(kG * 0.6, kG, fits);                       // then make room for the labels, within reason
+    for (let i = 0; i < 6 && !fits(k) && fs > 0.62; i++) { fs *= 0.9; for (const L of labs) { const o = L.o || (L.o = L.slice(2)); L[2] = o[0] * fs; L[3] = o[1] * fs; L[4] = o[2] * fs; L[5] = o[3] * fs; } }
+    const e = ext2(k);
+    sc._fitKey = key;
+    return (sc._fit = { s: k, fs, mx: (e[0] + e[1]) / 2, my: (e[2] + e[3]) / 2 });
+  }
+
   /** a projector for the scene in its current view: maths point → { x, y, z (depth: larger = nearer) } in board px */
   function projector(b, sc) {
     const X0 = sc.box[0] * b.W, Y0 = sc.box[1] * b.H, X1 = sc.box[2] * b.W, Y1 = sc.box[3] * b.H;
     const cx = (X0 + X1) / 2 + sc.px, cy = (Y0 + Y1) / 2 + sc.py;
     const s = Math.min(X1 - X0, Y1 - Y0) / (2 * sc.r) * (sc.flat ? 0.94 : 0.8) * sc.zoom;
-    if (sc.flat) return { s, f: p => ({ x: cx + (p[0] - sc.c[0]) * s, y: cy - (p[1] - sc.c[1]) * s, z: 0 }) };
+    if (sc.flat) {
+      const F = sc.fit !== false && fitFlat(sc, X1 - X0, Y1 - Y0, s / sc.zoom);
+      if (F) { const k = F.s * sc.zoom; return { s: k, f: p => ({ x: cx + (p[0] * F.s - F.mx) * sc.zoom, y: cy + (-p[1] * F.s - F.my) * sc.zoom, z: 0 }) }; }
+      return { s, f: p => ({ x: cx + (p[0] - sc.c[0]) * s, y: cy - (p[1] - sc.c[1]) * s, z: 0 }) };
+    }
     const cy_ = Math.cos(sc.yaw), sy = Math.sin(sc.yaw), cp = Math.cos(sc.pitch), sp = Math.sin(sc.pitch);
     return { s, f: p => {
       const x = p[0] - sc.c[0], y = p[1] - sc.c[1], z = (p[2] || 0) - sc.c[2];
@@ -87,7 +134,8 @@
     _sceneItem(c, sc, P, it, q) {
       const f = P.f;
       const label = (txt, at, dx = 8, dy = -8, size = 17) => {
-        if (!txt) return; c.save(); c.globalAlpha *= q; c.font = Math.round(size * 1.12) + 'px Kalam, cursive'; c.textBaseline = 'middle';
+        if (!txt) return; c.save(); c.globalAlpha *= q; const fs = sc.flat && sc._fit ? sc._fit.fs : 1; size *= fs; dx *= fs; dy *= fs;
+        c.font = Math.round(size * 1.12) + 'px Kalam, cursive'; c.textBaseline = 'middle';
         c.textAlign = it.k === 'lab' ? 'center' : 'left'; c.fillText(txt, at.x + dx, at.y + dy); c.restore();
       };
       switch (it.k) {

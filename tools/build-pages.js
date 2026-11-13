@@ -79,7 +79,7 @@ function build() {
 
   // ---- sitemap.xml ----
   const day = f => { try { return fs.statSync(path.join(ROOT, f)).mtime.toISOString().slice(0, 10); } catch (err) { return null; } };
-  const topics = fs.existsSync(path.join(ROOT, 'cheats')) ? fs.readdirSync(path.join(ROOT, 'cheats')).filter(f => f.endsWith('.js')).map(f => f.slice(0, -3)).sort() : [];
+  const topics = fs.existsSync(path.join(ROOT, 'cheats')) ? fs.readdirSync(path.join(ROOT, 'cheats')).filter(f => f.endsWith('.js') && f !== 'symbols.js').map(f => f.slice(0, -3)).sort() : [];
   const urls = [
     { loc: SITE, file: 'index.html', freq: 'daily', pr: '1.0' },
     { loc: SITE + 'list.html', file: 'puzzles/index.js', freq: 'weekly', pr: '0.8' },
@@ -98,9 +98,18 @@ function build() {
       ...LANGS.map(a => `    <xhtml:link rel="alternate" hreflang="${a === 'zh' ? 'zh-Hans' : a}" href="${xmlEsc(withLang(u.loc, a))}"/>`),
       `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEsc(u.loc)}"/>`, '  </url>');
   }
+  // the static formula compendium (tools/build-compendium.js): one URL per language, the others as alternates
+  let compendium = [];
+  try { compendium = require('./build-compendium')(); } catch (err) { console.warn('compendium:', err.message); }
+  const cpLoc = (l, f) => SITE + 'formulas/' + (l === 'en' ? '' : l + '/') + (f === 'index.html' ? '' : f);
+  for (const c of compendium) {
+    xml.push('  <url>', `    <loc>${xmlEsc(cpLoc(c.lang, c.file))}</loc>`, `    <changefreq>monthly</changefreq>`, `    <priority>${c.file === 'index.html' ? '0.8' : '0.7'}</priority>`,
+      ...LANGS.map(a => `    <xhtml:link rel="alternate" hreflang="${a === 'zh' ? 'zh-Hans' : a}" href="${xmlEsc(cpLoc(a, c.file))}"/>`),
+      `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEsc(cpLoc('en', c.file))}"/>`, '  </url>');
+  }
   xml.push('</urlset>', '');
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), xml.filter(x => x !== null).join('\n'));
-  return { pages: index.length, urls: urls.length * LANGS.length };
+  return { pages: index.length, urls: urls.length * LANGS.length + compendium.length };
 }
 
 module.exports = build;

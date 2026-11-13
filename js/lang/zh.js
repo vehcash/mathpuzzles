@@ -308,7 +308,7 @@ I18N.add('zh', {
 "The two one-sided limits differ": "左右极限不相等",
 "The values approach": "数值趋近于",
 "The values keep oscillating — no single limit": "数值不断振荡 —— 没有唯一的极限",
-"This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them. The optional local AI tutor downloads its model from Hugging Face and GitHub only when you switch it on; after that it runs on your own device and nothing you type is sent anywhere.": "本网站不使用分析、广告或跟踪类 Cookie，也不加载任何第三方内容。“问问 AI”按钮只有在你点击时才会打开其他网站。 可选的本地 AI 老师只有在你启用时才会从 Hugging Face 和 GitHub 下载模型；之后它在你的设备上运行，你输入的内容不会发送到任何地方。",
+"This site does not use analytics, advertising or tracking cookies, and loads no third-party content. The “Ask an AI” buttons only open another site when you click them.": "本网站不使用分析、广告或跟踪类 Cookie，也不加载任何第三方内容。“问问 AI”按钮只有在你点击时才会打开其他网站。",
 "Toolbox": "工具箱",
 "Triangle": "三角形",
 "Trigonometry": "三角函数",
@@ -521,3 +521,14 @@ I18N.add("zh", {"Editing the formula on the board": "正在编辑黑板上的公
 // board worksheet: points, vectors, named results (js/vectors.js)
 I18N.add("zh", {"Plot": "绘图", "Place": "放置", "Solve": "求解", "Equations": "方程", "Vectors": "向量", "unknowns": "未知数", "false": "假", "Added — the next lines can use it": "已添加 — 其他行可以使用它", "{x} is now defined: the lines you add below use it": "{x} 已定义：其他行会使用它", "Only 2-D points and vectors can be drawn on the axes": "只能在坐标轴上画二维的点和向量", "give {v} a value to check it": "给 {v} 一个值即可检验", "true for every {v}": "对所有 {v} 成立", "A number was expected here, not a vector": "这里需要数，而不是向量", "A vector was expected here": "这里需要向量", "The vectors have different dimensions ({a} and {b})": "向量维数不同（{a} 和 {b}）", "The cross product needs 3-D vectors": "叉积需要三维向量", "A number and a vector cannot be added": "数和向量不能相加", "A vector cannot be equal to a number": "向量不能等于一个数", "Vectors can only be compared with =": "向量只能用 = 比较", "{n} is defined in terms of itself": "{n} 用自身来定义", "Write one equation (or one comparison) per line": "每行写一个方程（或一个比较）", "Both sides must be vectors of the same size": "两边必须是同维向量"});
 I18N.add("zh", {"Complex numbers can only be compared with =": "复数只能用 = 比较", "A vector was expected here, not a complex number": "这里需要向量，而不是复数", "Vectors and complex numbers cannot be multiplied": "向量和复数不能相乘", "A vector cannot be divided by a complex number": "向量不能除以复数", "{f} of a complex number is not supported": "不支持复数的 {f}"});
+/* search-engine texts (index and cheat-sheet pages) */
+I18N.add("zh", {
+"A math compendium and tutor for university entrance exams": "面向高考与大学入学考试的数学公式大全与老师",
+"The <a href=\"formulas/\">math formula compendium</a> collects the formulas and theorems of algebra, calculus, geometry, trigonometry, vectors and matrices, complex numbers, combinatorics, probability and statistics. Every cheat sheet explains what each symbol means, why the theorem is true and how to use it in a worked example, and the blackboard tutor shows it step by step with graphs and figures — the reference to revise for a math test, the Selectividad, the Bac, A-levels, the Gaokao or your first year at university.": "<a href=\"formulas/zh/\">数学公式大全</a>汇集了代数、微积分、几何、三角、向量与矩阵、复数、组合、概率与统计的公式和定理。每张速查表都说明每个符号的含义、定理为何成立以及如何在例题中使用，黑板老师还会配合图像和图形逐步讲解——是复习数学考试、高考或大学一年级的参考资料。",
+"<a href=\"list.html\">Browse all math puzzles</a> · <a href=\"cheatsheets.html\">Math cheat sheets</a> · <a href=\"formulas/\">Formula compendium</a>": "<a href=\"list.html\">浏览全部题目</a> · <a href=\"cheatsheets.html\">数学速查表</a> · <a href=\"formulas/zh/\">公式大全</a>",
+"Math cheat sheets with every theorem explained": "每个定理都有讲解的数学速查表",
+"These math cheat sheets are a compendium of the formulas and theorems used from the last years of school to the first year of university. Click any formula and the blackboard tutor explains it step by step — the idea, a graph or a figure, a worked example and an exercise to check yourself. Use them to revise for a math test, university entrance exams such as the Selectividad (EBAU/PAU), the Bac, A-levels, the Gaokao or JEE, or as a quick reference during your studies.": "这些数学速查表是从高中后期到大学一年级所用公式与定理的大全。点击任意公式，黑板老师就会逐步讲解——思路、图像或图形、例题以及自测练习。可用于复习数学考试、高考等升学考试，或作为学习时的参考。",
+"<a href=\"formulas/\">Printable formula compendium</a> · <a href=\"list.html\">Practise with exam puzzles</a>": "<a href=\"formulas/zh/\">可打印的公式大全</a> · <a href=\"list.html\">用真题练习</a>",
+"{topic} formulas and theorems": "{topic}公式与定理",
+"Printable formula compendium": "可打印的公式汇编"
+});

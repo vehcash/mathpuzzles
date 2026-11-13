@@ -1,0 +1,81 @@
+/* Static math formula compendium pages (formulas/*.html, written by tools/build-compendium.js). */
+:root { --ink: #1f2a33; --ink-soft: #55636e; --paper: #f7f2e7; --line: #ddd2bd; --accent: #c4542f; --bg: #17201c; --c: #2e8a57; --cbg: #e3f3e8;
+  --sans: 'Source Sans 3', system-ui, sans-serif; --serif: 'Fraunces', Georgia, serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans); }
+a { color: #2f6f8f; }
+.cp-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 22px; color: #f6e9d6; }
+.cp-brand { color: #f6e9d6; text-decoration: none; font: 700 20px var(--serif); }
+.cp-brand span { color: #f3d36b; font-size: 26px; }
+.cp-langs a { color: #f6e9d6; opacity: .75; text-decoration: none; font-size: 14px; }
+.cp-langs a[aria-current] { opacity: 1; font-weight: 700; text-decoration: underline; }
+.cp-main { max-width: 1180px; margin: 0 auto 30px; background: var(--paper); border-radius: 18px; padding: 26px 30px 34px; }
+.cp-crumbs { font-size: 14px; color: var(--ink-soft); }
+h1 { font: 700 32px/1.2 var(--serif); margin: 8px 0 10px; }
+.cp-ico { display: inline-grid; place-items: center; min-width: 42px; height: 42px; border-radius: 12px; background: var(--cbg); color: var(--c); font: 700 20px var(--serif); padding: 0 8px; vertical-align: middle; }
+.cp-lead { font-size: 18px; color: var(--ink-soft); margin: 0 0 12px; }
+.cp-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px; }
+.cp-btn { display: inline-block; background: var(--c); color: #fff; text-decoration: none; font-weight: 700; padding: 9px 16px; border-radius: 10px; }
+.cp-btn.ghost { background: transparent; color: var(--c); border: 2px solid var(--c); }
+.cp-toc { background: #fff8; border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; margin-bottom: 18px; }
+.cp-toc summary { font-weight: 700; cursor: pointer; }
+.cp-toc ol { columns: 3 220px; margin: 8px 0 0; }
+.cp-sec { margin-top: 26px; }
+.cp-sec h2 { font: 700 23px var(--serif); border-bottom: 3px solid var(--c); padding-bottom: 4px; }
+.cp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
+.cp-card { background: #fffdf8; border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px 10px; min-width: 0; overflow: hidden; }
+.cp-card h3 { font: 700 17px var(--sans); color: var(--c); margin: 0 0 4px; }
+.cp-card h4 { font: 700 13px var(--sans); text-transform: uppercase; letter-spacing: .5px; color: var(--ink-soft); margin: 10px 0 2px; }
+.cp-card p { margin: 4px 0; }
+.cp-tex { font-size: 1.05em; overflow: hidden; padding: 2px 0; }
+.cp-tex .katex-display > .katex { white-space: nowrap; }
+.cp-card .katex { max-width: 100%; }
+.cp-tex .katex-display { margin: 6px 0; }
+.cp-note, .cp-sym, .cp-ex { font-size: 14.5px; color: var(--ink-soft); }
+.cp-ex { background: var(--cbg); border-radius: 8px; padding: 6px 10px; }
+.cp-go { text-align: right; font-size: 14px; }
+.cp-tbl table { border-collapse: collapse; width: 100%; } .cp-tbl th, .cp-tbl td { border: 1px solid var(--line); padding: 4px 8px; text-align: center; }
+.cp-topics { margin-top: 34px; } .cp-topics a { display: inline-block; margin: 4px 8px 4px 0; padding: 4px 10px; border: 1px solid var(--line); border-radius: 16px; text-decoration: none; }
+.cp-topics a[aria-current] { background: var(--cbg); font-weight: 700; }
+.cp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+.cp-topic { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-items: center; text-decoration: none; color: var(--ink); background: #fffdf8; border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 14px; padding: 12px; }
+.cp-topic b { font: 700 18px var(--serif); } .cp-topic small { grid-column: 2; color: var(--ink-soft); } .cp-topic .cp-ico { grid-row: span 2; }
+.cp-topic .cp-bl { grid-column: 1 / -1; font-size: 14px; color: var(--ink-soft); }
+.cp-foot { text-align: center; color: #f6e9d6; padding: 10px 0 30px; font-size: 14px; } .cp-foot a { color: #f3d36b; }
+/* figures shared with the interactive cheat sheets */
+/* figures: same rules as the interactive cheat sheets (css/cheats.css) */
+.cf { margin: 2px 0 6px; padding: 8px 6px 4px; background: rgba(255,255,255,.45); border: 1px solid var(--line); border-radius: 12px; }
+.cf svg { display: block; width: 100%; height: auto; max-height: 240px; }
+.cf .ln { stroke: var(--ink); stroke-width: 1.8; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.cf .th { stroke: var(--ink-soft); stroke-width: 1.2; fill: none; stroke-dasharray: 4 4; }
+.cf .ax { stroke: var(--ink-soft); stroke-width: 1.2; fill: none; }
+.cf .ac { stroke: var(--c); stroke-width: 2.6; fill: none; stroke-linecap: round; }
+.cf .ac2 { stroke: #c4542f; stroke-width: 2.4; fill: none; stroke-linecap: round; }
+.cf .fl { fill: var(--c); fill-opacity: .14; stroke: none; }
+.cf .fl2 { fill: #c4542f; fill-opacity: .14; stroke: none; }
+.cf .dt { fill: var(--ink); }
+.cf .dtc { fill: var(--c); }
+.cf text { font: italic 15px var(--serif); fill: var(--ink); dominant-baseline: middle; text-anchor: middle; }
+.cf text.tl { font: 700 10.5px var(--sans); font-style: normal; fill: var(--c); letter-spacing: .4px; }
+.cf text.sm { font-size: 12.5px; }
+.cf text.up { font-style: normal; }
+.cf .mk { fill: var(--c); }
+.cf text.hi { fill: var(--c); font-weight: 700; }
+.cf text.lo { fill: #c4542f; font-weight: 700; }
+.cf text.hb { paint-order: stroke; stroke: #fbf8f0; stroke-width: 5px; stroke-linejoin: round; font-size: 17px; }
+.cf text.fade { opacity: .55; }
+.cf text.lab { font: 700 12.5px var(--sans); font-style: normal; fill: var(--ink); paint-order: stroke; stroke: #fbf8f0; stroke-width: 5px; stroke-linejoin: round; letter-spacing: .2px; }
+.cf.mini { margin: 6px 0 2px; padding: 5px 4px 2px; }
+.cf.mini svg { max-height: 150px; }
+.cf .tall { max-height: 320px; }
+.cf tspan.a { fill: var(--c); }
+.cf tspan.b { fill: #c4542f; }
+.cf .bx { fill: #fffdf6; stroke: var(--ink-soft); stroke-width: 1.2; }
+.cf .pill { fill: var(--c); fill-opacity: .13; stroke: var(--c); stroke-width: 1.4; }
+.cf .bar { fill: var(--c); fill-opacity: .16; stroke: var(--c); stroke-width: 1; stroke-opacity: .7; }
+.cf .bar2 { fill: #c4542f; fill-opacity: .1; stroke: #c4542f; stroke-width: 1.2; }
+.cf .grid { stroke: var(--line); stroke-width: 1; fill: none; }
+.cf .seg { stroke: var(--ink-soft); stroke-width: 1.3; stroke-linecap: round; }
+.cf .arw { stroke: var(--c); stroke-width: 1.4; fill: none; }
+.cf .arw2 { stroke: #c4542f; stroke-width: 1.4; fill: none; }
+.cf .tall { max-height: 340px; }
