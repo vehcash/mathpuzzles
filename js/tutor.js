@@ -104,7 +104,7 @@
   const loaded = {};
   const script = src => loaded[src] || (loaded[src] = new Promise(ok => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ok; document.head.appendChild(s); }));
   const BOARD_JS = ['js/mathcore.js', 'js/recognizer.js', 'js/intent.js', 'js/geometry.js', 'js/board.js', 'js/board-scene.js?v=20261113a'];
-  const ready = () => BOARD_JS.reduce((p, src) => p.then(() => script(src)), Promise.resolve());
+  const ready = () => (window.SmartBoard && window.SmartBoard.prototype.sScene ? Promise.resolve() : BOARD_JS.reduce((p, src) => p.then(() => script(src)), Promise.resolve()));
   const TUT_V = '20261113a';  // bump when lesson files change, so browsers fetch the new version
   const topicTutorials = id => script('cheats/tutorials/' + id + '.js?v=' + TUT_V).then(() => (window.Cheats.tutorials || {})[id] || {});
 
