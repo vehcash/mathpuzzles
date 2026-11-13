@@ -415,6 +415,33 @@
       Join: '<path d="M5 17 19 7"/><circle cx="5" cy="17" r="2.4" class="d"/><circle cx="19" cy="7" r="2.4" class="d"/>',
       Triangle: '<path d="M12 4 20 19H4z" class="f"/><circle cx="12" cy="4" r="1.8" class="d"/><circle cx="20" cy="19" r="1.8" class="d"/><circle cx="4" cy="19" r="1.8" class="d"/>'
     };
+    // key faces: typeset labels and line icons (the label stays the key's id; words inside stay translatable)
+    const sv = d => '<svg viewBox="0 0 24 24" aria-hidden="true">' + d + '</svg>';
+    const KI = {
+      plot: sv('<path d="M4 4v16h16"/><path d="M6.5 16c2.5-8 5-8.5 7-3.5s3.5 3.5 6-5.5"/>'),
+      place: sv('<rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 8.5v7M8.5 12h7"/>'),
+      solve: sv('<path d="M4 9.5h9M4 14.5h9"/><path d="M15 12.5l2.2 2.2L21 10"/>'),
+      system: sv('<path d="M9 4c-2 0-2.3 1.4-2.3 3.4S6.4 11 4.8 12c1.6 1 1.9 2.6 1.9 4.6S7 20 9 20"/><path d="M12 8.5h8M12 15.5h8"/>'),
+      matrix: sv('<path d="M7.5 4H5v16h2.5M16.5 4H19v16h-2.5"/><circle cx="9.5" cy="9" r="1.2" class="f"/><circle cx="14.5" cy="9" r="1.2" class="f"/><circle cx="9.5" cy="15" r="1.2" class="f"/><circle cx="14.5" cy="15" r="1.2" class="f"/>'),
+      steps: sv('<path d="M10 6.5h10M10 12h10M10 17.5h10"/><path d="M3.5 6.5l1.4 1.4L7.5 5.2M3.5 12l1.4 1.4 2.6-2.7M3.5 17.5l1.4 1.4 2.6-2.7"/>')
+    };
+    const vec = t => '<span class="vec"><i>' + t + '</i></span>';
+    const FACE = {
+      'x': '<i>x</i>', 'y': '<i>y</i>', 'θ': '<i>θ</i>',
+      'x²': '<i>x</i><sup>2</sup>', 'xʸ': '<i>x</i><sup><i>y</i></sup>',
+      '√': sv('<path d="M3 13.5l2.6-1.2 3.6 7.2L14 4h7"/>'), '|x|': '|<i>x</i>|', 'eˣ': '<i>e</i><sup><i>x</i></sup>', 'n!': '<i>n</i>!',
+      'd/dx': '<span class="fr"><span>d</span><span>d<i>x</i></span></span>', 'd²/dx²': '<span class="fr"><span>d²</span><span>d<i>x</i>²</span></span>',
+      'f′(a)': '<i>f</i>′(<i>a</i>)',
+      '⟋ tan': sv('<path d="M3 20Q12-2 21 20"/><path d="M1.5 19L13.8 4" class="tl"/><circle cx="7.5" cy="11.75" r="1.7" class="f"/>'),
+      '∫ₐᵇ': '<span class="int"><b>∫</b><span class="lims"><i>b</i><i>a</i></span></span>',
+      'lim': '<span class="lim">lim<small><i>x</i>→<i>a</i></small></span>',
+      'x→a⁺': '<i>x</i>→<i>a</i><sup>+</sup>', 'e': '<i>e</i>',
+      '📝 Steps': KI.steps + '<span>Steps</span>',
+      'A=(,)': '<i>A</i><span class="args">(<i>x</i>,<i>y</i>)</span>', 'u=(,)': vec('u') + '<span class="args">(<i>x</i>,<i>y</i>)</span>', 'AB→': vec('AB'), '|u|': '|' + vec('u') + '|',
+      'u·v': vec('u') + '·' + vec('v'), 'u×v': vec('u') + '×' + vec('v'),
+      '∠': sv('<path d="M20 19H4L15 5"/><path d="M10.5 19a6.5 6.5 0 0 0-2.6-5.2"/>'),
+      'i': '<i>i</i>', 'z̄': '<span class="bar"><i>z</i></span>', '|z|': '|<i>z</i>|', 'eⁱᶿ': '<i>e</i><sup><i>iθ</i></sup>'
+    };
     const gicon = (name, fallback) => GI[name] ? '<svg viewBox="0 0 24 24" aria-hidden="true">' + GI[name] + '</svg>' : fallback;
     el.innerHTML = `
       <div class="tb-pane" data-pane="eq">
@@ -427,11 +454,11 @@
         <div class="tb-sub" title="z = 3 + 4i — equations in z are solved over the complex numbers; Plot draws them on the complex plane">Complex numbers</div>
         <div class="tb-calc tb-calculus tb-complex"></div>
         <div class="tb-actions">
-          <button class="tb-act plot" data-act="plot" title="Plot (Enter)">📈 Plot</button>
-          <button class="tb-act" data-act="place" title="Place on the board (Shift+Enter)">＋ Place</button>
-          <button class="tb-act solve" data-act="solve" title="Place with its solution">= Solve</button>
-          <button class="tb-act" data-act="system" title="System of equations">{ } System</button>
-          <button class="tb-act" data-act="matrix" title="Matrices and determinants">▦ Matrices</button>
+          <button class="tb-act plot" data-act="plot" title="Plot (Enter)">${KI.plot}<span>Plot</span></button>
+          <button class="tb-act" data-act="place" title="Place on the board (Shift+Enter)">${KI.place}<span>Place</span></button>
+          <button class="tb-act solve" data-act="solve" title="Place with its solution">${KI.solve}<span>Solve</span></button>
+          <button class="tb-act" data-act="system" title="System of equations">${KI.system}<span>System</span></button>
+          <button class="tb-act" data-act="matrix" title="Matrices and determinants">${KI.matrix}<span>Matrices</span></button>
         </div>
       </div>
       <div class="tb-pane" data-pane="geo" hidden>
@@ -448,7 +475,7 @@
       </div>`;
     const calcEl = el.querySelector('.tb-calc');
     const mkKey = host => ([label, text, close, fn, cls, tip]) => {
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'tb-key ' + (cls || ''); b.textContent = label; if (tip) b.title = tip;
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tb-key ' + (cls || ''); if (FACE[label]) { b.innerHTML = '<span class="k">' + FACE[label] + '</span>'; b.setAttribute('aria-label', tip || label); } else b.textContent = label; if (tip) b.title = tip;
       b.onmousedown = e => e.preventDefault();
       b.onclick = () => { if (fn) eq[fn](); else eq.insert(text, close); };
       host.appendChild(b);

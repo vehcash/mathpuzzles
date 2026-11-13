@@ -1,5 +1,14 @@
 /* zh — interface text. Keys are the English text. Puzzle text lives inside each puzzle file (puzzles/<category>/<id>.js). */
 I18N.add('zh', {
+"All puzzles": "所有题目",
+"Cheat sheets": "公式速查",
+"Random puzzle": "随机题目",
+"Plot": "画图",
+"Place": "放置",
+"Solve": "求解",
+"System": "方程组",
+"Compendium": "公式汇编",
+"Formula compendium: every formula and theorem, explained": "公式汇编：每个公式和定理都有讲解",
 "Math cheat sheets": "数学公式速查",
 "★ Puzzle of the day": "★ 每日一题",
 "Past daily puzzles": "往日的每日一题",

@@ -1,5 +1,14 @@
 /* es — interface text. Keys are the English text. Puzzle text lives inside each puzzle file (puzzles/<category>/<id>.js). */
 I18N.add('es', {
+"All puzzles": "Todos los problemas",
+"Cheat sheets": "Chuletas",
+"Random puzzle": "Problema al azar",
+"Plot": "Dibujar",
+"Place": "Colocar",
+"Solve": "Resolver",
+"System": "Sistema",
+"Compendium": "Compendio",
+"Formula compendium: every formula and theorem, explained": "Compendio de fórmulas: cada fórmula y teorema, explicados",
 "Math cheat sheets": "Chuletas de matemáticas",
 "★ Puzzle of the day": "★ Problema del día",
 "Past daily puzzles": "Problemas del día anteriores",

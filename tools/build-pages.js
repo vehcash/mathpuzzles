@@ -111,6 +111,7 @@ function build() {
   ];
   const puzzles = index.flatMap(e => group(SITE + 'puzzle/' + e.id + '.html', lastmod('puzzle:' + e.id, [JSON.stringify(e), JSON.stringify(titles[e.id] || ''), src('puzzles/' + e.file)])));
   // the static formula compendium (tools/build-compendium.js): one real page per language
+  try { require('./build-cheats-index')(); } catch (err) { console.warn('cheats index:', err.message); }   // js/cheats-index.js, the topic list cheatsheets.html loads first
   let compendium = [];
   try { compendium = require('./build-compendium')(); } catch (err) { console.warn('compendium:', err.message); }
   const cpLoc = (l, f) => SITE + 'formulas/' + (l === 'en' ? '' : l + '/') + (f === 'index.html' ? '' : f);

@@ -172,3 +172,13 @@ html[data-lang="ja"] .cs-ex b, html[data-lang="zh"] .cs-ex b { letter-spacing: .
 .cs-foot-h { font: 700 11px var(--sans); letter-spacing: 1.6px; text-transform: uppercase; color: rgba(244,241,232,.5); margin-bottom: 4px; }
 .cs-foot p { margin: 0; }
 @media (max-width: 760px) { .cs-about { font-size: 12.5px; padding: 10px 12px; } .cs-about h2 { font-size: 15px; } }
+
+/* topics are drawn when they come near the screen; until then an empty card keeps their place */
+.cs-topic.pending .cs-cards { border-radius: 14px; background: repeating-linear-gradient(180deg, rgba(255,255,255,.035) 0 120px, transparent 120px 150px); }
+/* an upright phone has no blackboard: a tap on a formula does nothing, ⧉ still copies */
+@media (max-width: 760px) and (orientation: portrait) {
+  .cs-tex, .cs-tbl { cursor: auto; }
+  .cs-tex:hover { background: none; }
+  .cs-tip { display: none; }
+}
+@media (max-width: 760px) and (orientation: portrait) { .cs-about { display: none; } }

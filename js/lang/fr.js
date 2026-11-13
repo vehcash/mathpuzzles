@@ -1,5 +1,14 @@
 /* fr — interface text. Keys are the English text. Puzzle text lives inside each puzzle file (puzzles/<category>/<id>.js). */
 I18N.add('fr', {
+"All puzzles": "Tous les problèmes",
+"Cheat sheets": "Fiches de formules",
+"Random puzzle": "Problème au hasard",
+"Plot": "Tracer",
+"Place": "Placer",
+"Solve": "Résoudre",
+"System": "Système",
+"Compendium": "Compendium",
+"Formula compendium: every formula and theorem, explained": "Compendium de formules : chaque formule et théorème expliqués",
 "Math cheat sheets": "Fiches de maths",
 "★ Puzzle of the day": "★ Problème du jour",
 "Past daily puzzles": "Problèmes du jour précédents",
