@@ -6,4 +6,6 @@
 
 - [Today's puzzle and the blackboard](https://dailymathpuzzle.com/)
 - [All puzzles](https://dailymathpuzzle.com/list.html)
-- [Cheat sheets](https://dailymathpuzzle.com/cheatsheets.html)
+- [Cheat sheets](https://dailymathpuzzle.com/cheatsheets.html): math formulas and theorems with step-by-step explanations on the blackboard
+- [Formula compendium](https://dailymathpuzzle.com/formulas/): printable static pages of every formula and theorem by topic, in five languages
+- [Sitemap](https://dailymathpuzzle.com/sitemap.xml)
