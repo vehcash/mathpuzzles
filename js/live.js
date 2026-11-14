@@ -277,7 +277,7 @@
           state.epoch = d.epoch; state.lastSeq = 0; state.cmds = []; state.rev = 0; await poll(); state.playing = true; rebuildTo(0); play(); return;
         }
         state.epoch = d.epoch; state.rev = d.rev;
-        if (d.title && d.title !== state.title) { state.title = d.title; $('#lv-title').textContent = d.title; document.title = d.title + ' — ' + tr('live lesson') + ' | Daily Math Puzzle'; }
+        if (d.title && d.title !== state.title) { state.title = d.title; $('#lv-title').textContent = d.title; document.title = d.title + ' — ' + tr('live lesson') + ' | Advanced Math Tutor'; }
         if (d.commands && d.commands.length) {
           lastChange = Date.now();
           const atEnd = state.pos >= state.cmds.length, first = !state.cmds.length;

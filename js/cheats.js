@@ -199,7 +199,7 @@
     side.querySelectorAll('.cs-tp').forEach(b => b.classList.toggle('on', !ws.length && b.dataset.topic === current));
     // a title and description per topic, for search engines and browser tabs
     const tp = META.find(t => t.id === current);
-    document.title = (tp ? tr('{topic} formulas and theorems', { topic: pick(tp.name) }) + ' — ' : '') + tr('Math cheat sheets') + ' | Daily Math Puzzle';
+    document.title = (tp ? tr('{topic} formulas and theorems', { topic: pick(tp.name) }) + ' — ' : '') + tr('Math cheat sheets') + ' | Advanced Math Tutor';
     const md = document.head.querySelector('meta[name="description"]'); if (md && tp) md.setAttribute('content', esc(pick(tp.blurb)).replace(/\$[^$]*\$/g, '').slice(0, 158));
     const cl = document.head.querySelector('link[rel="canonical"]'); if (cl) { const lang = new URLSearchParams(location.search).get('lang'); cl.setAttribute('href', 'https://dailymathpuzzle.com/cheatsheets.html' + (tp ? '?t=' + tp.id : '') + (lang && lang !== 'en' ? (tp ? '&' : '?') + 'lang=' + lang : '')); }
     document.body.classList.toggle('searching', !!ws.length);

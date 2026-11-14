@@ -164,7 +164,7 @@ I18N.add('zh', {
 "Move (M): drag equations, figures, axes and graphs": "移动 (M)：拖动方程、图形、坐标轴和图像",
 "My answer: {answer}. Tell me whether it is right and why.": "我的答案：{answer}。请告诉我是否正确以及原因。",
 "Source": "出处",
-"Original puzzle written for Daily Math Puzzle.": "为 Daily Math Puzzle 原创的题目。",
+"Original puzzle written for Advanced Math Tutor.": "为 Advanced Math Tutor 原创的题目。",
 "Based on:": "出自：",
 "This kind of question is typical of:": "此类题目常见于：",
 "Classic problem": "经典问题",
@@ -466,7 +466,7 @@ I18N.add('zh', {
 "A daily math puzzle for students and teachers": "面向学生和教师的每日数学题",
 "For students": "给学生",
 "For teachers and professors": "给教师",
-"Daily Math Puzzle gives you a new <b>daily math problem</b> to solve: pick the true statements, sketch your ideas on the smart blackboard and check every step of the solution. Each puzzle has eight options, so you have to think about every one of them.": "Daily Math Puzzle 每天提供一道新的<b>数学题</b>：选出正确的说法，在智能黑板上画出思路，并逐步核对解答。每道题有八个选项，需要逐一思考。",
+"Advanced Math Tutor gives you a new <b>daily math problem</b> to solve: pick the true statements, sketch your ideas on the smart blackboard and check every step of the solution. Each puzzle has eight options, so you have to think about every one of them.": "Advanced Math Tutor 每天提供一道新的<b>数学题</b>：选出正确的说法，在智能黑板上画出思路，并逐步核对解答。每道题有八个选项，需要逐一思考。",
 "Practise geometry, trigonometry, algebra, matrices, complex numbers, calculus, combinatorics, probability and number theory, from school level to university entrance. Many puzzles are real questions from the Gaokao, the Oxford MAT, JEE Advanced, ITA, IME and the EBAU.": "练习几何、三角、代数、矩阵、复数、微积分、组合、概率和数论，从中学水平到大学入学考试。许多题目是高考、牛津 MAT、印度 JEE Advanced、巴西 ITA 与 IME、西班牙 EBAU 的真题。",
 "Use the puzzles as warm-ups, homework or exam practice, project the blackboard in class and share the <a href=\"cheatsheets.html\">formula cheat sheets</a>. Every puzzle has its own link, its source and a worked solution, in English, French, Spanish, Japanese and Chinese — free and without sign-up.": "可用作课前热身、作业或考试复习，在课堂上投影黑板，并分享<a href=\"cheatsheets.html\">公式速查表</a>。每道题都有独立链接、出处和分步解答，支持英语、法语、西班牙语、日语和中文——免费，无需注册。",
 "<a href=\"list.html\">Browse all math puzzles</a> · <a href=\"cheatsheets.html\">Math cheat sheets</a>": "<a href=\"list.html\">浏览全部题目</a> · <a href=\"cheatsheets.html\">数学公式速查表</a>"

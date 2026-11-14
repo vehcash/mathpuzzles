@@ -164,7 +164,7 @@ I18N.add('ja', {
 "Move (M): drag equations, figures, axes and graphs": "移動 (M)：方程式・図形・座標軸・グラフをドラッグ",
 "My answer: {answer}. Tell me whether it is right and why.": "私の答え：{answer}。正しいかどうかと、その理由を教えてください。",
 "Source": "出典",
-"Original puzzle written for Daily Math Puzzle.": "Daily Math Puzzle のために作られたオリジナル問題。",
+"Original puzzle written for Advanced Math Tutor.": "Advanced Math Tutor のために作られたオリジナル問題。",
 "Based on:": "もとになった問題：",
 "This kind of question is typical of:": "このタイプの問題がよく出る試験：",
 "Classic problem": "古典的な問題",
@@ -466,7 +466,7 @@ I18N.add('ja', {
 "A daily math puzzle for students and teachers": "学生と先生のための毎日の数学パズル",
 "For students": "学生の方へ",
 "For teachers and professors": "先生・教員の方へ",
-"Daily Math Puzzle gives you a new <b>daily math problem</b> to solve: pick the true statements, sketch your ideas on the smart blackboard and check every step of the solution. Each puzzle has eight options, so you have to think about every one of them.": "Daily Math Puzzle では毎日新しい<b>数学の問題</b>に挑戦できます。正しい記述を選び、スマート黒板にアイデアを書き、解答の各ステップを確かめましょう。どの問題にも選択肢が8つあるので、一つひとつ考える必要があります。",
+"Advanced Math Tutor gives you a new <b>daily math problem</b> to solve: pick the true statements, sketch your ideas on the smart blackboard and check every step of the solution. Each puzzle has eight options, so you have to think about every one of them.": "Advanced Math Tutor では毎日新しい<b>数学の問題</b>に挑戦できます。正しい記述を選び、スマート黒板にアイデアを書き、解答の各ステップを確かめましょう。どの問題にも選択肢が8つあるので、一つひとつ考える必要があります。",
 "Practise geometry, trigonometry, algebra, matrices, complex numbers, calculus, combinatorics, probability and number theory, from school level to university entrance. Many puzzles are real questions from the Gaokao, the Oxford MAT, JEE Advanced, ITA, IME and the EBAU.": "図形・三角関数・代数・行列・複素数・微積分・場合の数・確率・整数を、高校レベルから大学入試レベルまで練習できます。多くの問題は高考、オックスフォード MAT、JEE Advanced、ITA、IME、EBAU の実際の入試問題です。",
 "Use the puzzles as warm-ups, homework or exam practice, project the blackboard in class and share the <a href=\"cheatsheets.html\">formula cheat sheets</a>. Every puzzle has its own link, its source and a worked solution, in English, French, Spanish, Japanese and Chinese — free and without sign-up.": "授業の導入、宿題、試験対策に使えます。黒板を教室で映し、<a href=\"cheatsheets.html\">公式集</a>を共有しましょう。各問題には専用リンク・出典・詳しい解答があり、英語・フランス語・スペイン語・日本語・中国語に対応。無料で登録も不要です。",
 "<a href=\"list.html\">Browse all math puzzles</a> · <a href=\"cheatsheets.html\">Math cheat sheets</a>": "<a href=\"list.html\">すべての問題を見る</a> · <a href=\"cheatsheets.html\">数学の公式集</a>"

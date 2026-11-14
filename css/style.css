@@ -809,3 +809,8 @@ a.brand { color: inherit; text-decoration: none; }
   .layout > .board-wrap { display: none; }
   .cheat-page .top > a.list-link[href="index.html"] { display: none; }
 }
+
+/* phone: the past-puzzles menu is a fixed sheet across the screen under the header buttons (js/app.js sets its top) */
+@media (max-width: 600px) {
+  .daily-pop.sheet { position: fixed; left: 12px; right: 12px; width: auto; }
+}

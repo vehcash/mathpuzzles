@@ -1,6 +1,6 @@
-# Daily Math Puzzle
+# Advanced Math Tutor
 
-> Daily Math Puzzle (dailymathpuzzle.com) is a free daily math problem site for students and teachers: a new puzzle every day with a step-by-step solution, real entrance-exam questions (Gaokao, Oxford MAT, JEE Advanced, EBAU), a smart blackboard that reads handwriting, plots, solves and does geometry, and formula cheat sheets. In English, French, Spanish, Japanese and Simplified Chinese.
+> Advanced Math Tutor (dailymathpuzzle.com) is a free daily math problem site for students and teachers: a new puzzle every day with a step-by-step solution, real entrance-exam questions (Gaokao, Oxford MAT, JEE Advanced, EBAU), a smart blackboard that reads handwriting, plots, solves and does geometry, and formula cheat sheets. In English, French, Spanish, Japanese and Simplified Chinese.
 
 ## Site
 

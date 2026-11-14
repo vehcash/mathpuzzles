@@ -1,4 +1,4 @@
-# Daily Math Puzzle (dailymathpuzzle.com) — math puzzles on a smart blackboard
+# Advanced Math Tutor (dailymathpuzzle.com) — math puzzles on a smart blackboard
 
 Open `index.html` in Chrome or Edge (double-click works; no server or internet needed — KaTeX is bundled in `lib/`).
 

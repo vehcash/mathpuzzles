@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Connect an AI assistant to the blackboard (MCP) | Daily Math Puzzle</title>
-<meta name="description" content="AI assistants can teach maths on the Daily Math Puzzle blackboard through MCP: create a board, share the link, and draw the explanation step by step while the student watches live.">
+<title>Connect an AI assistant to the blackboard (MCP) | Advanced Math Tutor</title>
+<meta name="description" content="AI assistants can teach maths on the Advanced Math Tutor blackboard through MCP: create a board, share the link, and draw the explanation step by step while the student watches live.">
 <link rel="canonical" href="https://dailymathpuzzle.com/mcp.html">
 <meta name="theme-color" content="#17201c">
 <link rel="stylesheet" href="lib/fonts.css">
@@ -31,21 +31,21 @@
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="index.html" title="Daily Math Puzzle — today’s puzzle"><span class="mark">∑</span><div><b>Daily Math Puzzle</b><small>for AI assistants</small></div></a>
+  <a class="brand" href="index.html" title="Advanced Math Tutor — today’s puzzle"><span class="mark">∑</span><div><b>Advanced Math Tutor</b><small>for AI assistants</small></div></a>
   <span style="flex:1"></span>
   <a href="index.html" class="btn ghost list-link">✎ Open the board</a>
 </header>
 
 <main class="paper doc">
   <h1>Teach on the blackboard — for AI assistants</h1>
-  <p class="lead">Any AI assistant that speaks <a href="https://modelcontextprotocol.io">MCP</a> can explain maths on the Daily Math Puzzle blackboard. It creates a board, gives you a link, and draws the explanation step by step — equations the board solves, graphs, shaded areas, tangents and geometry you can drag — while you watch it appear live.</p>
+  <p class="lead">Any AI assistant that speaks <a href="https://modelcontextprotocol.io">MCP</a> can explain maths on the Advanced Math Tutor blackboard. It creates a board, gives you a link, and draws the explanation step by step — equations the board solves, graphs, shaded areas, tangents and geometry you can drag — while you watch it appear live.</p>
 
   <div class="endpoint"><b>MCP server:</b> <code id="ep">https://dailymathpuzzle.com/api/mcp.php</code> <button class="btn small" onclick="navigator.clipboard.writeText(document.getElementById('ep').textContent);this.textContent='Copied ✓'">Copy</button></div>
   <p>Transport: <b>Streamable HTTP</b>. No account, no sign-in, free.</p>
 
   <h2>Connect it</h2>
   <ul>
-    <li><b>Claude</b> (claude.ai or the desktop app): in Settings, open <i>Connectors</i>, choose <i>Add custom connector</i> and paste the URL above. Then ask, for example, “Explain completing the square on the Daily Math Puzzle blackboard”.</li>
+    <li><b>Claude</b> (claude.ai or the desktop app): in Settings, open <i>Connectors</i>, choose <i>Add custom connector</i> and paste the URL above. Then ask, for example, “Explain completing the square on the Advanced Math Tutor blackboard”.</li>
     <li><b>ChatGPT</b>: in Settings, look for <i>Apps &amp; Connectors</i>; with developer mode turned on you can create a connector from the URL above.</li>
     <li><b>Claude Code</b>: <code>claude mcp add --transport http dailymathpuzzle https://dailymathpuzzle.com/api/mcp.php</code></li>
     <li><b>Cursor, VS Code and other MCP clients</b>: add a server to your MCP configuration:

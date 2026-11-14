@@ -136,7 +136,7 @@
     const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
     let h = '<span class="src-k">' + tr('Source') + '</span> ';
     if (s.from) h += s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + s.from + '</a>' : s.from;
-    else h += tr('Original puzzle written for Daily Math Puzzle.');
+    else h += tr('Original puzzle written for Advanced Math Tutor.');
     if (s.note) h += ' <span class="src-note">' + tr('Based on:') + ' ' + s.note + '</span>';
     if (s.exams && s.exams.length) h += '<span class="src-ex">' + tr('This kind of question is typical of:') + ' ' + s.exams.map(x => '<span class="src-chip">' + esc(x) + '</span>').join(' ') + '</span>';
     mathText(el, h);
@@ -166,7 +166,7 @@
     .replace(/_\{?(\d+)\}?/g, (_, d) => [...d].map(c => SUB[c]).join('')).replace(/\^\{?([23n])\}?(?![\d{])/g, (_, d) => SUP[d]).replace(/[{}]/g, '').replace(/_/g, '');
   const plainText = t => String(t || '').replace(/<[^>]+>/g, ' ').replace(/\$([^$]+)\$/g, (_, m) => texText(m)).replace(/\s+([.,;:?!。？])/g, '$1').replace(/\s+/g, ' ').trim();
   function seo(p, cat) {
-    const name = 'Daily Math Puzzle', what = state.daily ? tr('★ Puzzle of the day').replace(/^★\s*/, '') : tr(cat.name);
+    const name = 'Advanced Math Tutor', what = state.daily ? tr('★ Puzzle of the day').replace(/^★\s*/, '') : tr(cat.name);
     document.title = p.title + ' — ' + what + ' | ' + name;
     const desc = plainText(p.statement), d = desc.length > 156 ? desc.slice(0, 155).replace(/\s+\S*$/, '') + '…' : desc;
     const set = (sel, attr, v) => { const el = document.head.querySelector(sel); if (el) el.setAttribute(attr, v); };
@@ -458,10 +458,20 @@
         $('#btn-daily').onclick = () => open(today);
         const pop = $('#daily-pop'), more = $('#btn-daily-more');
         const close = () => { pop.hidden = true; more.setAttribute('aria-expanded', 'false'); };
+        // on a narrow phone the menu is a sheet across the screen just under the buttons, wherever ▾ sits in the header grid
+        const narrow = matchMedia('(max-width: 600px)');
+        const place = () => {
+          if (!narrow.matches) { pop.style.top = pop.style.maxHeight = ''; pop.classList.remove('sheet'); return; }
+          const b = wrap.getBoundingClientRect().bottom + 8;
+          pop.classList.add('sheet'); pop.style.top = b + 'px'; pop.style.maxHeight = Math.max(180, innerHeight - b - 12) + 'px';
+        };
+        addEventListener('resize', () => { if (!pop.hidden) place(); });
+        addEventListener('scroll', () => { if (!pop.hidden && narrow.matches) close(); }, { passive: true });
         more.onclick = e => {
           e.stopPropagation();
           if (!pop.hidden) return close();
           pop.hidden = false; more.setAttribute('aria-expanded', 'true');
+          place();
           renderPop(pop);
           if (!past) call('?list=1').then(r => { past = r && Array.isArray(r.days) ? r.days.filter(known) : []; renderPop(pop); });
         };

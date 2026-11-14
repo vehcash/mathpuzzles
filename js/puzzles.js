@@ -171,6 +171,7 @@
     amc:      { en: 'AMC 8/10 (USA)', fr: 'AMC 8/10 (États-Unis)', es: 'AMC 8/10 (EE. UU.)', ja: 'AMC 8/10（米国）', zh: '美国 AMC 8/10' },
     step:     { en: 'STEP (Cambridge, UK)', fr: 'STEP (Cambridge, Royaume-Uni)', es: 'STEP (Cambridge, Reino Unido)', ja: 'STEP（ケンブリッジ大学）', zh: 'STEP（剑桥大学）' },
     mat:      { en: 'MAT (Oxford, UK)', fr: 'MAT (Oxford, Royaume-Uni)', es: 'MAT (Oxford, Reino Unido)', ja: 'MAT（オックスフォード大学）', zh: 'MAT（牛津大学）' },
+    tmua:     { en: 'TMUA (UK universities)', fr: 'TMUA (universités britanniques)', es: 'TMUA (universidades británicas)', ja: 'TMUA（英国の大学）', zh: 'TMUA（英国大学）' },
     jee:      { en: 'JEE Advanced (India)', fr: 'JEE Advanced (Inde)', es: 'JEE Advanced (India)', ja: 'JEE Advanced（インド）', zh: 'JEE Advanced（印度）' },
     ime:      { en: 'IME (Brazil)', fr: 'IME (Brésil)', es: 'IME (Brasil)', ja: 'IME（ブラジル）', zh: 'IME（巴西）' },
     ita:      { en: 'ITA (Brazil)', fr: 'ITA (Brésil)', es: 'ITA (Brasil)', ja: 'ITA（ブラジル）', zh: 'ITA（巴西）' },

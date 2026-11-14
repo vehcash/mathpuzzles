@@ -41,6 +41,7 @@ for (const cat of fs.readdirSync(DIR).filter(d => fs.statSync(path.join(DIR, d))
     if (nOk > 2) problems.push(rel + ': ' + nOk + ' correct options (0–2 allowed)');
     if (!(p.steps || []).length) problems.push(rel + ': no solution steps');
     const src = p.source || {};
+    if (![1, 2, 3].includes(p.difficulty || 1)) problems.push(rel + ': difficulty must be 1, 2 or 3');
     if (!p.source) problems.push(rel + ': no source (add source: { kind, exams, note | from })');
     (src.exams || []).filter(k => !Bank.exams[k]).forEach(k => problems.push(rel + ': unknown exam "' + k + '" in source.exams (see EXAMS in js/puzzles.js)'));
     // translations

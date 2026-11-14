@@ -11,7 +11,7 @@
 const fs = require('fs'), path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const SITE = 'https://dailymathpuzzle.com/';
-const NAME = 'Daily Math Puzzle';
+const NAME = 'Advanced Math Tutor';
 const LANGS = ['en', 'fr', 'es', 'ja', 'zh'];
 const CAT_NAMES = { geometry: 'Geometry', trigonometry: 'Trigonometry', algebra: 'Algebra', matrix: 'Matrices', complex: 'Complex numbers', calculus: 'Calculus', combinatorics: 'Combinatorics', probability: 'Probability', number: 'Number theory' };
 
